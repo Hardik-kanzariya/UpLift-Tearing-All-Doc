@@ -1,0 +1,1252 @@
+1.Intro to Typescript
+2.Basic Types in TypeScript
+3.Type Annotation
+4.Object Types
+5.Narrowing
+6.Classes 
+7.Modules
+8.TypeScript for JavaScript Programmers
+9.Type Manipulation
+10.Creating Types from Types
+11.Generics
+12.Keyof Type Operator
+13.Typeof Type Operator
+14.Indexed Access Types
+15.Conditional Types
+16.Mapped Types
+17.Template Literal Types
+18.Utility Types
+19.Explicit Types & Inference
+20.TypeScript Async Programming
+21.Decorators
+
+========================== Intro to Typescript ===========================
+
+1. TypeScript kya hai?
+=> TypeScript JavaScript ka superset hai. Matlab, jitna JavaScript code hai, wo TypeScript me bhi kaam karega.
+=> TypeScript me types add kar sakte ho, jo JavaScript me nahi hote.
+=> Ye compile hota hai JavaScript me, kyunki browsers sirf JavaScript ko samajhte hain.
+
+💡 Fayda: TypeScript se errors compile time pe milte hain, runtime pe nahi. Isse bugs kam hote hain.
+
+2. TypeScript ke Features
+=> Static Typing – Variables aur function ke types declare kar sakte ho.
+=> Interfaces & Types – Object structure define karne ke liye.
+=> Classes & Inheritance – Object-oriented programming support.
+=> Enums – Named constants use kar sakte ho.
+=> Generics – Reusable functions aur classes create karne ke liye.
+
+3. Variable Typing
+let age: number = 25;
+let name: string = "Alice";
+let isActive: boolean = true;
+
+4. Function Typing
+function add(a: number, b: number): number {
+    return a + b;
+}
+function greet(name: string): string {
+    return `Hello, ${name}!`;
+}
+
+5. Arrays aur Tuples
+let numbers: number[] = [1, 2, 3];
+let names: string[] = ["Alice", "Bob"];
+let user: [string, number] = ["Alice", 25]; // tuple
+
+6. Interfaces
+=> Interface object ke structure ko define karta hai.
+interface Person {
+    name: string;
+    age: number;
+    isActive?: boolean; // optional property
+}
+let user: Person = {
+    name: "Alice",
+    age: 25
+};
+
+7. Enums
+enum Color {
+    Red,
+    Green,
+    Blue
+}
+let c: Color = Color.Green;
+
+8. Any & Unknown
+let data: any = 10;
+data = "Hello"; // Any allows any type
+
+let value: unknown = 5;
+// value = value + 1; // Error, unknown needs type check first
+
+=================================== Type Annotation ===========================================
+Type Annotation kya hai?
+=> Type annotation ek tarika hai variables, function parameters, aur return values ke types specify karne ka.
+Ye Python me mostly readability, debugging aur static type checking ke liye use hota hai.
+
+1.Type Annotation su che ?
+=>Type Annotation = Explicitly variable/function ne type assign karvi.
+
+ex:- let variableName: type = value;
+
+1. Variable
+let age: number = 21;        // only number allow
+let name: string = "Raj";    // only string allow
+let isAdmin: boolean = true; // only true/false allow
+
+2.Array 
+let numbers: number[] = [1, 2, 3];
+let fruits: string[] = ["apple", "banana"];
+
+3.Object
+let person: { name: string; age: number } = {
+  name: "Raj",
+  age: 22
+};
+
+4.Function
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+let result = add(5, 10); // ✅ OK
+// add("hi", "bye");    // ❌ Error
+
+5. Union Type (multiple types allow)
+let id: string | number;
+id = 101;      // OK
+id = "ABC123"; // OK
+
+6.Any (avoid karvu)
+let random: any = 5;
+random = "hello";   // works but unsafe
+
+======================== Basic Types in TypeScript ========================
+
+1. number
+➡️ Sare numeric values mate (integers, floats, etc.)
+let age: number = 25;
+let price: number = 99.99;
+
+2. string
+➡️ Text values mate.
+let name: string = "Ravi";
+let message: string = `Hello, ${name}!`;
+
+3. boolean
+➡️ true / false values mate.
+let isActive: boolean = true;
+let isDone: boolean = false;
+
+4. null and undefined
+➡️ Special types.
+let x: null = null;
+let y: undefined = undefined;
+
+5. any
+➡️ Any type allow kare che (not recommended, but useful when type unknown)
+let random: any = 10;
+random = "Hello";
+random = true;
+
+6.unknown
+➡️ Safer alternative of any. Type check karvo pade use karva pehla.
+let input: unknown = "Hello";
+
+if (typeof input === "string") {
+  console.log(input.toUpperCase());
+}
+// Out put:- HELLO
+
+7. void
+➡️ Functions je return na kare.
+function logMessage(): void {
+  console.log("This is a log");
+}
+
+8. never
+➡️ Functions je kabhi return nai kare (error throw kare ya infinite loop).
+function throwError(message: string): never {
+  throw new Error(message);
+}
+
+
+=============== Parameter Type Annotations in Functions =================
+
+1. Basic Example
+function greet(name: string, age: number): string {
+  return `Hello, my name is ${name} and I am ${age} years old.`;
+}
+console.log(greet("Raj", 22)); // ✅
+➡️ name: string → only string allow
+➡️ age: number → only number allow
+➡️ Function return type = string
+
+2. Return Type Annotation
+function add(a: number, b: number): number {
+  return a + b;
+}
+console.log(sumen(10, 2));// 12
+
+3. Void Functions (no return)
+➡️ void = function koi value return nathi kartu.
+function logMessage(message: string): void {
+  console.log("LOG:", message);
+}
+
+4. Optional Parameters
+➡️ ? means → parameter optional.
+function welcome(name: string, age?: number): string {
+  if (age) {
+    return `Welcome ${name}, age ${age}`;
+  }
+  return `Welcome ${name}`;
+}
+
+console.log(welcome("Raj"));        // ✅ Works
+console.log(welcome("Raj", 22));    // ✅ Works
+
+
+5. Default Parameters
+➡️ b = 2 → default value.
+function multiply(a: number, b: number = 2): number {
+  return a * b;
+}
+
+console.log(multiply(5));    // 10
+console.log(multiply(5, 3)); // 15
+
+6. Union Types in Parameters
+function printId(id: number | string): void {
+  console.log("Your ID is:", id);
+}
+
+printId(101);     // ✅ number
+printId("A123");  // ✅ string
+// printId(true); ❌ Error
+
+7. Arrow Functions with Annotations
+const square = (x: number): number => {
+  return x * x;
+};
+
+8. Functions Returning Promise
+🔹 Promise<string> → function ek Promise return kare che, je andar string resolve karse.
+async function fetchData(): Promise<string> {
+  return "Data loaded!";
+}
+
+9. Anonymous Functions
+=> Anonymous function etle koi naam vagar nu function.
+➡️ Mostly use thay che callbacks, event handlers, array methods (map, filter, etc.) ma.
+// Named function
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// Anonymous function (assigned to variable)
+const addAnon = function (a: number, b: number): number {
+  return a + b;
+};
+
+console.log(addAnon(5, 10)); // 15
+
+==================================== Object Types ====================================
+
+1.Basic 
+const user: Person = {
+  name: "Aman",
+  age: 22,
+  isStudent: true
+};
+
+2.Optional Properties
+type Person = {
+  name: string;      // required
+  age?: number;      // optional
+};
+const p1: Person = { name: "Aman", age: 22 };  // valid
+const p2: Person = { name: "Neha" };           // valid (age missing)
+
+
+3. Union Types( | )
+=> ek variable ya object ko multiple possible types assign karne ka tareeka.
+
+let value: string | number;
+
+value = "Hello"; // ✅ valid
+value = 42;      // ✅ valid
+value = true;    // ❌ error, kyunki boolean allowed nahi hai
+
+type Success = { status: "success"; data: string };
+type Error = { status: "error"; message: string };
+type Response = Success | Error;
+
+const res1: Response = { status: "success", data: "Loaded!" }; // ✅
+const res2: Response = { status: "error", message: "Failed!" }; // ✅
+
+4. Type Alias 
+=> TypeScript mein, Type Alias ek custom type create karne ka tarika hai. Isse hum apne complex types ko ek simple aur readable naam de sakte hain.
+
+Syntax: type Naam = Type;
+
+Example 1: Simple Type Alias
+type ID = string | number;
+let userId: ID;
+
+userId = 101;       // ✅ valid
+userId = "202A";    // ✅ valid
+// userId = true;   // ❌ invalid
+
+Example 2: Object Type Alias
+type User = {
+  name: string;
+  age: number;
+  isAdmin?: boolean; // optional property
+};
+
+let user1: User = {
+  name: "Rahul",
+  age: 25,
+  isAdmin: true
+};
+
+let user2: User = {
+  name: "Sneha",
+  age: 22
+};
+console.log(user1);  {id: 1, name: 'John Doe', age: 30}
+console.log(user2);  {id: 2, name: 'Jane Smith'}
+
+5.Interfaces
+=> interface TypeScript ma ek blueprint che je objects nu structure define kare che kay property che te no type kayo che.
+
+Syntax:
+interface InterfaceName {
+  propertyName: propertyType;
+  anotherProperty?: anotherType; // optional property
+} 
+
+Example 1: Simple Interface
+interface User {
+  name: string;
+  age: number;
+  isAdmin?: boolean; // optional
+}
+
+let user1: User = {
+  name: "Rahul",
+  age: 25,
+  isAdmin: true
+};
+
+let user2: User = {
+  name: "Sneha",
+  age: 22
+};
+
+Example 2: Interface with Function
+interface MathOperation {
+  (a: number, b: number): number;
+}
+
+const add: MathOperation = (x, y) => x + y;
+const multiply: MathOperation = (x, y) => x * y;
+
+console.log(add(5, 3));      // 8
+console.log(multiply(4, 2)); // 8
+
+6.Aliases vs Interfaces Type
+=>1.Interface: Hamesha extendable hai. Matlab aap ek interface ko re-open karke naye properties add kar sakte ho ya dusre interfaces se extend kar sakte ho.
+interface User {
+  name: string;
+}
+interface User {
+  age: number; // Reopened to add new property
+}
+let u: User = { name: "Rahul", age: 25 };
+
+=>2.Type Alias: Ek baar define ho gaya, fir aap usko re-open nahi kar sakte. Agar aapko naye properties add karne hain,
+toh intersection (&) ya naya type create karna padega.
+
+type User = { name: string };
+// type User = { age: number }; // ❌ Error
+type ExtendedUser = User & { age: number }; // ✅ Correct
+
+7.Assertions Type
+=> Kabhi TypeScript ko kisi value ka exact type nahi pata, lekin aapko pata hota hai. Aise mein type assertion use karte hain.
+
+// TypeScript ko sirf HTMLElement ya null pata hai
+const canvas = document.getElementById("myCanvas");
+
+// Hum jaante hai ki yeh HTMLCanvasElement hai
+const myCanvas = canvas as HTMLCanvasElement;
+
+// Canvas properties use kar sakte hain
+myCanvas.width = 800;
+myCanvas.height = 600;
+
+8.Literal Types
+=> TypeScript mein, sirf general types (string, number) nahi, specific values ko bhi type ke roop mein refer kar sakte hain.
+
+Example ke liye:
+let a: "hello";  // a sirf "hello" hi hold kar sakta hai
+a = "hello";     // ✅ valid
+// a = "world";  // ❌ invalid
+
+9. Literal Inference
+=> TypeScript kabhi-kabhi automatically literal types detect kar leta hai, is process ko literal inference kehte hain
+
+const a = "hello";  // TypeScript infers type as "hello" (literal type)
+let b = "hello";    // TypeScript infers type as string (general type)
+
+10.undefined
+=> Jab variable declare ho jaye, par usko value assign na ho → wo undefined hota hai.
+
+Example:
+let a: number;
+console.log(a); // undefined
+
+11.null
+=> Jab explicitly value “kuch bhi nahi” assign karni ho → use null dete hain.
+
+Example:let b: number | null = null;
+
+1.strictNullChecks off
+=> TypeScript mein agar strictNullChecks off ho, to:
+1.null aur undefined har type ke saath automatically allowed hote hain.
+2.Matlab aap directly number, string, ya object type variables ko null ya undefined assign kar sakte ho.
+
+Example:
+// tsconfig.json mein strictNullChecks: false
+let x: number = 10;
+
+x = null;       // ✅ allowed
+x = undefined;  // ✅ allowed
+
+2.strictNullChecks on
+=> TypeScript mein agar strictNullChecks on ho:
+1.null aur undefined kisi bhi type ke saath automatically allowed nahi hote.
+2.Agar aapko variable ko null ya undefined assign karna hai, to explicit union type dena padega.
+
+Example:
+// tsconfig.json mein strictNullChecks: true
+let x: number;
+
+x = 10;      // ✅ valid
+// x = null; // ❌ Error
+// x = undefined; // ❌ Error
+
+// Agar allow karna ho:
+let y: number | null | undefined;
+y = 5;       // ✅ valid
+y = null;    // ✅ valid
+y = undefined; // ✅ valid
+
+12. Non-null Assertion Operator (!)
+-> Purpose: Compiler ko bolne ke liye: “Yeh value null ya undefined nahi hai, trust karo!”
+Yeh mostly strictNullChecks: true ke sath useful hota hai.
+Agar value actual mein null ya undefined hai → runtime error aayega.
+
+Syntax: variable!
+
+Example:1
+const canvas = document.getElementById("myCanvas");
+
+// TypeScript warning dega: canvas might be null
+canvas!.width = 800;  // ✅ '!' se compiler ko bata diya ki null nahi hai
+canvas!.height = 600;
+
+Example:2
+const input = document.querySelector("input")!;
+input.value = "Hello"; // Compiler ko pata hai null nahi hai
+
+13.Enums
+=>Enums TypeScript ka feature hai jo aapko named constants ka group define karava mate.
+
+Syntax:
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Right
+}
+let move: Direction = Direction.Up; // 0
+
+Types of Enums :- 3 type
+
+1.Numeric Enums (default)
+
+enum Status {
+  Pending,   // 0
+  InProgress, // 1
+  Done        // 2
+}
+
+2.String Enums
+
+enum Status {
+  Pending = "PENDING",
+  InProgress = "IN_PROGRESS",
+  Done = "DONE"
+}
+
+3.Heterogeneous Enums (mix of string & number)
+
+enum Mixed {
+  No = 0,
+  Yes = "YES"
+}
+
+14. Less Common Primitives
+=> JavaScript mein kuch aur primitives bhi hote hain jo TypeScript ke type system mein represent hote hain.
+Ye common string, number, boolean ke alawa ke types hain.
+
+Example types:
+=> bigint → huge integers ke liye
+=> symbol → unique identifiers ke liye
+=> void → function return na karne par
+=> never → kabhi return na karne wale functions ke liye
+
+========================== Narrowing ===========================
+
+1.Narrowing
+=> Compiler ko batana ki ek broader type ka variable ab ek specific type mein hai.
+=> Narrowing se TypeScript ko safer code likhne mein help milti hai
+=> Compiler ab aapko invalid operations pe error dega
+
+1. typeof Narrowing
+=> typeof primitive types (string, number, boolean, symbol, bigint, undefined, function) ke liye use hota hai.
+
+Example:
+
+function formatValue(value: string | number) {
+    if (typeof value === "string") {
+        // Yahan TypeScript jaanta hai ki value ab string hai
+        return value.toUpperCase();
+    } else {
+        // Yahan TypeScript jaanta hai ki value number hai
+        return value.toFixed(2);
+    }
+}
+
+2. Truthiness Narrowing
+=> JavaScript me 0, null, undefined, "" sab false hote hain. Baaki values true.
+=> Truthiness → null/undefined check ke liye.
+
+function multiplyAll(values: number[] | undefined, factor: number): number[] | undefined {
+  if (!values) return values; // agar undefined hai, return kar do
+  return values.map(x => x * factor); // ab yaha values ka type number[]
+}
+
+3. Equality Narrowing
+=> != null JavaScript me null + undefined dono ko check karta hai.
+
+function multiplyValue(container: { value: number | null | undefined }, factor: number) {
+  if (container.value != null) { // null ya undefined check
+    container.value *= factor; // safe ab
+  }
+}
+
+4. in Operator Narrowing
+=> Object ke property ke existence se type narrow they hai:
+=> Object property check
+
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+
+function move(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    animal.swim(); // Fish branch
+  } else {
+    animal.fly();  // Bird branch
+  }
+}
+
+6. instanceof Narrowing
+=> Class instances check karne ke liye:
+=> JavaScript me x instanceof Foo check karta hai ki x ka prototype chain me Foo.prototype hai ya nahi.
+=> Mostly classes ya constructor objects ke liye use hota hai
+
+function logValue(x: Date | string) {
+  if (x instanceof Date) {
+    console.log(x.toUTCString()); // x Date
+  } else {
+    console.log(x.toUpperCase()); // x string
+  }
+}
+
+7. Assignments
+=> TypeScript control flow analysis use karta hai, matlab code ke flow ke hisaab se variable ka type narrow hota hai.
+
+Example 1: Simple assignment
+let x: string | number;
+
+x = 10;
+console.log(x); // TypeScript ab x ko number samajhta hai
+
+x = "hello";
+console.log(x); // TypeScript ab x ko string samajhta hai
+
+Example 2: Assignment + narrowing
+let x: string | number | boolean;
+
+x = Math.random() < 0.5; // boolean
+console.log(x); // ab x ka type boolean
+
+if (Math.random() < 0.5) {
+  x = "hello"; // ab x string
+  console.log(x);
+} else {
+  x = 100;  // ab x number
+  console.log(x);
+}
+
+console.log(x);// yaha TypeScript fir se declared type (string | number | boolean) ke hisaab se type dekhta
+
+
+8. Using type predicates
+=> Kabhi kabhi TypeScript ko apne logic ke basis pe type nahi pata hota.
+Tab hum apna type guard function bana sakte hain.
+
+Syntax:
+
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+
+Example usage:
+let pet: Fish | Bird = getSmallPet();
+
+if (isFish(pet)) {
+  pet.swim(); // TypeScript ab samajh gaya: Fish
+} else {
+  pet.fly();  // TypeScript ab samajh gaya: Bird
+}
+
+9.Discriminated Unions
+
+=>Union type ke objects me ek common literal property use karte hain, jaise kind.
+=>TypeScript is property se union narrow kar deta hai.
+
+interface Circle {
+  kind: "circle";
+  radius: number;
+}
+
+interface Square {
+  kind: "square";
+  sideLength: number;
+}
+
+type Shape = Circle | Square;
+
+10.never Type
+=> Sab cases handle ho gaye ki nahi check
+=> Jab union ke saare possible types remove ho jaate hain, TypeScript us situation ke liye never type use karta hai.
+=> never ka matlab hai: ye code kabhi execute nahi hona chahiye.
+ type Shape = Circle | Square;
+
+function getArea(shape: Shape) {
+  switch (shape.kind) {
+    case "circle": return Math.PI * shape.radius ** 2;
+    case "square": return shape.sideLength ** 2;
+    default:
+      const _exhaustiveCheck: never = shape; // agar naya type add hua toh error
+      return _exhaustiveCheck;
+  }
+}
+
+====================================== Classes ======================================
+
+1. Class Basics
+=> TypeScript me class ek blueprint hai objects create karne ke liye.
+class Person {
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+     greet() {
+        console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+    }
+}
+// Object create karna
+const person1 = new Person("Aman", 22);
+person1.greet(); // Hello, my name is Aman and I am 22 years old.
+
+2. Access Modifiers
+=> TypeScript me aap visibility control ke liye access modifiers use kar sakte ho:
+=> public → default, kisi bhi jagah access ho sakta hai
+=> private → class ke bahar access nahi ho sakta
+=> protected → class aur subclass me access ho sakta hai
+
+class Person {
+    public name: string;
+    private age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+
+    greet() {
+        console.log(`${this.name} is ${this.age} years old`);
+    }
+}
+
+const p = new Person("Neha", 25);
+console.log(p.name);  // ✅ accessible
+// console.log(p.age); // ❌ Error: age is private
+
+3. Readonly Properties
+=> Class me properties ko readonly bhi bana sakte ho, jo change nahi ho sakti.
+
+class Car {
+    readonly model: string;
+
+    constructor(model: string) {
+        this.model = model;
+    }
+}
+const car = new Car("Tesla");
+// car.model = "BMW"; // ❌ Error
+
+4. Inheritance (extends)
+=> Ek class ko dusre class se extend kar sakte ho:
+class Animal {
+    name: string;
+    constructor(name: string) {
+        this.name = name;
+    }
+    move(distance: number) {
+        console.log(`${this.name} moved ${distance}m`);
+    }
+}
+class Dog extends Animal {
+    bark() {
+        console.log("Woof! Woof!");
+    }
+}
+const dog = new Dog("Buddy");
+dog.bark();
+dog.move(10);
+
+5. Getters & Setters
+=> Properties ke liye getter aur setter define kar sakte ho:
+class Person {
+    private _age: number;
+    constructor(age: number) {
+        this._age = age;
+    }
+
+    get age() {
+        return this._age;
+    }
+
+    set age(value: number) {
+        if (value < 0) throw new Error("Age cannot be negative");
+        this._age = value;
+    }
+}
+
+const person = new Person(25);
+console.log(person.age); // 25
+person.age = 30;         // ✅ valid
+// person.age = -5;      // ❌ Error
+
+6. Static Properties & Methods
+=> Static properties aur methods class ke instance se nahi, class ke naam se access hote hain.
+
+class Calculator {
+    static PI: number = 3.14;
+
+    static square(x: number) {
+        return x * x;
+    }
+}
+console.log(Calculator.PI);       // 3.14
+console.log(Calculator.square(5)); // 25
+
+7. Abstract Classes
+=> Abstract class base class hoti hai jo directly instantiate nahi hoti. Subclass me implement karna zaroori hota hai.
+abstract class Shape {
+    abstract area(): number;
+
+    printArea() {
+        console.log(`Area: ${this.area()}`);
+    }
+}
+class Circle extends Shape {
+    radius: number;
+    constructor(radius: number) {
+        super();
+        this.radius = radius;
+    }
+
+    area() {
+        return Math.PI * this.radius ** 2;
+    }
+}
+const circle = new Circle(5);
+circle.printArea(); // Area: 78.53981633974483
+
+
+💡 Summary:
+1. class → blueprint for objects
+2. constructor → object initialize karne ke liye
+3. public/private/protected → access control
+4. readonly → immutable property
+5. extends → inheritance
+6. get/set → encapsulation
+7. static → class-level property/method
+8. abstract → base class with mandatory implementation
+
+=================================== Modules =======================================
+
+🔹 Modules kya hote hain?
+=> JavaScript mein code ko alag–alag chhote parts (files) mein todne ke liye modules use kiye jaate hain.
+=> Agar file ke andar import ya export likha hua hai → wo file ek module hai.
+=> Agar nahi hai → wo file ek script hai jo global scope mein chalti hai.
+
+👉 Module ke andar likhe variables, functions, classes apne aap bahar visible nahi hote, jab tak tum unhe export na karo aur dusri file mein import na karo.
+
+🔹 Non-modules (Scripts)
+Agar tumhari file mein import/export nahi hai, to wo ek global script hai.
+Example:
+
+let x = 10;
+
+Ye global scope mein add ho jayega.
+Agar tum chahte ho file module ban jaye (bhale hi export na ho), bas likh do:
+
+export {};
+
+🔹 ES Modules (Modern Style)
+=> 2015 mein introduce hue the, aur aaj browsers aur Node.js dono mein supported hain.
+
+Example 1: Default export
+// hello.ts
+export default function helloWorld() {
+  console.log("Hello, world!");
+}
+Use karna:
+import helloWorld from "./hello.js";
+helloWorld();
+
+Example 2: Named exports
+// maths.ts
+export const pi = 3.14;
+export function absolute(num: number) {
+  return num < 0 ? -num : num;
+}
+Use karna:
+import { pi, absolute } from "./maths.js";
+
+Import tricks
+
+=> Rename karna:-
+import { pi as π } from "./maths.js";
+
+=> Sab kuch ek namespace mein:- 
+import * as math from "./maths.js";
+console.log(math.pi);
+
+=> Bas file ko run karna (kuch import nahi):-
+import "./maths.js";
+
+🔹 TypeScript Specific Import/Export
+=> Tum types ko bhi export/import kar sakte ho:
+
+// animal.ts
+export type Cat = { breed: string; yearOfBirth: number };
+export interface Dog { breeds: string[]; yearOfBirth: number }
+
+// app.ts
+import { Cat, Dog } from "./animal.js";
+type Animals = Cat | Dog;
+
+Aur agar sirf type hi import karna hai:-
+
+import type { Cat } from "./animal.js";
+
+Ya inline type import:-
+import { type Cat, type Dog } from "./animal.js";
+
+🔹 CommonJS (Purana Style, npm mein common)
+=> Default Node.js ka style (require/exports).
+
+// maths.js
+function absolute(num) {
+  return num < 0 ? -num : num;
+}
+
+module.exports = {
+  pi: 3.14,
+  absolute,
+};
+
+
+Use karna:-
+const maths = require("./maths");
+console.log(maths.pi);
+
+
+Destructuring bhi kar sakte ho:-
+const { absolute } = require("./maths");
+
+🔹 CommonJS vs ES Module
+=> ES Module: import / export
+=> CommonJS: require / module.exports
+TypeScript mein ek option hota hai esModuleInterop jo dono ko smooth banata hai.
+
+🔹 Module Resolution
+=> Jab tum import "./file" likhte ho, TypeScript decide karta hai ki ye string kis file ko point kar rahi hai.
+=> Node strategy → Node.js jaise hi kaam karta hai.
+=> Classic strategy → purana backward compatibility.
+
+🔹 Module Output
+=> Tumhare tsconfig.json mein target aur module decide karta hai ki output JavaScript kaisa generate hoga.
+=> target: kaunse JavaScript version ke liye compile karna hai.
+=> module: kaunsa module system use hoga (ES2020, CommonJS, UMD, etc).
+
+Example:
+
+import { valueOfPi } from "./constants.js";
+export const twoPi = valueOfPi * 2;
+=> Agar module: "ES2020" hai → import/export as is rehega.
+=> Agar module: "CommonJS" hai → require syntax mein convert hoga.
+
+🔹 Namespaces (TypeScript ka apna style)
+=> Ye ek purana feature hai jo ES Modules ke aane se pehle tha. Aaj kal mostly definition files (DefinitelyTyped) mein use hota hai, lekin naye code mein recommend nahi hai.
+
+👉 Short mein:
+=> Aaj kal standard: ES Modules (import/export)
+=> Node.js ka purana style: CommonJS (require/module.exports)
+=> Sirf TS ka purana style: Namespaces
+
+========================================= Type Manipulation ===============================
+
+Type Manipulation
+=> TypeScript ka type system powerful isliye hai kyunki aap ek type ko dusre type ke terms me define kar sakte ho. Ye mainly generics aur type operators ke through hota hai.
+
+1. Generics
+=> Types jo parameters le sakte hain.
+=> Reusable aur flexible types banate hain.
+
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+2. keyof Operator
+=> Object ke keys ka union type banata hai.
+
+type Person = { name: string; age: number };
+type Keys = keyof Person; // "name" | "age"
+
+3. typeof Operator
+=> Existing value ka type nikalta hai.
+
+const x = 42;
+type XType = typeof x; // number
+
+4. Indexed Access Types
+=> Object ke ek property ka type nikalne ke liye.
+
+type Person = { name: string; age: number };
+type NameType = Person['name']; // string
+
+5. Conditional Types
+=> Type system me if-else logic apply karna.
+
+type MessageOf<T> = T extends { message: unknown } ? T["message"] : never;
+
+6. Mapped Types
+=> Existing type ke properties pe transformation apply karna.
+
+type Person = { name: string; age: number };
+type ReadOnlyPerson = { readonly [K in keyof Person]: Person[K] };
+
+7. Template Literal Types
+=> String-based transformations ke liye, mapped types ke saath.
+
+type Event = "click" | "hover";
+type PrefixedEvent = `on${Capitalize<Event>}`; // "onClick" | "onHover"
+
+
+======================================= Utility Types ============================
+
+1. Promise & Async Helper
+=> Awaited<Type> – Promise ka actual value type nikalta hai (nested Promise ke liye bhi)
+
+type A = Awaited<Promise<string>>;         // string
+type B = Awaited<Promise<Promise<number>>>; // number
+type C = Awaited<boolean | Promise<number>>; // boolean | number
+
+2. Property Modifiers 
+=>I. Partial<Type> – saare properties optional banata hai
+interface Todo { title: string; description: string; }
+type PartialTodo = Partial<Todo>; // { title?: string; description?: string }
+
+
+II. Required<Type> – saare properties required banata hai
+=> interface Props { a?: number; b?: string; }
+type AllRequired = Required<Props>; // { a: number; b: string }
+
+
+III. Readonly<Type> – saare properties ko read-only banata hai
+=> interface Todo { title: string; }
+const todo: Readonly<Todo> = { title: "Task" };
+// todo.title = "New"; // Error
+
+IV. Record<Keys, Type> – ek object banata hai jisme given keys aur values type hoti hai
+=> type CatName = "miffy" | "boris";
+interface CatInfo { age: number; breed: string; }
+const cats: Record<CatName, CatInfo> = { 
+  miffy: { age: 10, breed: "Persian" }, 
+  boris: { age: 5, breed: "Maine Coon" } 
+};
+
+3. Properties ko Pick/Omit karna
+
+I. Pick<Type, Keys> – specific properties pick karta hai
+=> interface Todo { title: string; completed: boolean; description: string; }
+type TodoPreview = Pick<Todo, "title" | "completed">;
+
+II. Omit<Type, Keys> – specific properties remove karta hai
+=> type TodoInfo = Omit<Todo, "completed" | "description">;
+
+4. Union Manipulation
+I. Exclude<UnionType, ExcludedMembers> – union se kuch members hata deta hai
+=> type T0 = Exclude<"a" | "b" | "c", "a">; // "b" | "c"
+
+II. Extract<Type, Union> – union me se sirf matching members nikalta hai
+=> type T1 = Extract<"a" | "b" | "c", "a" | "f">; // "a"
+
+III. NonNullable<Type> – null aur undefined remove karta hai
+=> type T2 = NonNullable<string | undefined | null>; // string
+
+5. Function Utilities
+I. Parameters<Type> – function ke parameters ka tuple type
+=> type Fn = (a: number, b: string) => void;
+type Params = Parameters<Fn>; // [number, string]
+
+II. ConstructorParameters<Type> – constructor ke parameters ka tuple
+=> class C { constructor(a: number, b: string) {} }
+type CParams = ConstructorParameters<typeof C>; // [number, string]
+
+III.ReturnType<Type> – function ka return type
+=> type FnReturn = ReturnType<() => string>; // string
+
+IV. InstanceType<Type> – constructor ka instance type
+=> class C { x = 0; }
+type CInstance = InstanceType<typeof C>; // C
+
+V. ThisParameterType<Type> – function me this ka type
+=> function toHex(this: Number) { return this.toString(16); }
+type ThisType = ThisParameterType<typeof toHex>; // Number
+
+VI. OmitThisParameter<Type> – function me se this hata deta hai
+=> const fn: OmitThisParameter<typeof toHex> = toHex.bind(5);
+
+VII. NoInfer<Type> – type inference block karta hai
+=> function f<C extends string>(arr: C[], val?: NoInfer<C>) {}
+
+6. Contextual this
+=> ThisType<Type> – object literals me this ka type define karta hai
+type ObjDesc<D, M> = { data?: D; methods?: M & ThisType<D & M> };
+=> noImplicitThis flag ON hona chahiye
+
+7. String Manipulation Types
+1. Uppercase<StringType> – uppercase karta hai
+2. Lowercase<StringType> – lowercase karta hai
+3. Capitalize<StringType> – first letter capitalize
+4. Uncapitalize<StringType> – first letter lowercase
+
+type T0 = Uppercase<"hello">; // "HELLO"
+type T1 = Capitalize<"hello">; // "Hello"
+
+
+================== TypeScript for JavaScript Programmers ======================
+
+1. TypeScript aur JavaScript ka Relation
+=> TypeScript basically JavaScript + type system hai.
+=> Matlab, tumhara existing JavaScript ka code TypeScript me valid hai.
+=> Farq ye hai ki TypeScript type errors catch kar sakta hai jo JS me runtime me hi dikhenge.
+
+let helloWorld = "Hello World"; // TypeScript infers type as string
+
+2. Types by Inference
+=> TypeScript automatically value se type infer karta hai.
+
+Example:-
+let num = 42; // num ka type = number
+let name = "Hayes"; // name ka type = string
+
+Agar type specify karna ho:-
+let num: number = 42;
+
+3. Explicit Types – Interfaces
+=> Object ka structure define karne ke liye interface use hoti hai:
+
+interface User {
+  name: string;
+  id: number;
+}
+const user: User = {
+  name: "Hayes",
+  id: 0
+};
+
+
+Agar wrong property use ki:-
+const user: User = {
+  username: "Hayes", // Error: 'username' does not exist in type 'User'
+  id: 0
+};
+
+4. Functions with Types
+=> Parameters aur return types ko bhi type se annotate kar sakte ho:
+
+function deleteUser(user: User) {
+  // ...
+}
+
+function getAdminUser(): User {
+  return { name: "Admin", id: 1 };
+}
+
+5. Primitive Types
+=> JavaScript: boolean, number, string, symbol, null, undefined, bigint
+=> TypeScript extra types: any, unknown, never, void
+
+6. Composing Types
+a. Union Types
+=> Ek variable multiple types le sakta hai:
+
+type WindowStates = "open" | "closed" | "minimized";
+
+function wrapInArray(obj: string | string[]) {
+  if (typeof obj === "string") return [obj];
+  return obj;
+}
+
+b. Generics
+=> Type ko variable banate hai, jaise array ka element type:
+
+type StringArray = Array<string>;
+type NumberArray = Array<number>;
+
+// Apna generic type
+interface Backpack<Type> {
+  add: (obj: Type) => void;
+  get: () => Type;
+}
+
+declare const backpack: Backpack<string>;
+const obj = backpack.get(); // Type = string
+backpack.add(23); // Error: number not assignable to string
+
+7. Structural Type System
+=> TypeScript duck typing use karta hai – shape important hai, class name nahi:
+
+interface Point { x: number; y: number }
+
+function logPoint(p: Point) {
+  console.log(`${p.x}, ${p.y}`);
+}
+
+const point = { x: 12, y: 26 };
+logPoint(point); // OK
+
+const point3 = { x: 12, y: 26, z: 89 };
+logPoint(point3); // OK, extra fields ignore
+
+
+Classes bhi same behave karti hai:-
+class VirtualPoint { 
+  x: number; 
+  y: number; 
+  constructor(x: number, y: number) { this.x = x; this.y = y; }
+}
+const newVPoint = new VirtualPoint(13, 56);
+logPoint(newVPoint); // OK
+
+======================== Explicit Types & Inference ==========================
+
+1️. Explicit Types
+👉 Jab tum khud se type declare karte ho variable / function ke liye.
+TypeScript ko clearly bata dete ho ki kaunsa type hoga.
+
+Example:
+let age: number = 25;        // explicit type (number)
+let name: string = "Vivek";  // explicit type (string)
+let isAdmin: boolean = true; // explicit type (boolean)
+
+function add(x: number, y: number): number {
+  return x + y;
+}
+⚡ Yahan pe : number, : string, : boolean explicitly likha gaya hai.
+
+2️. Type Inference
+👉 Jab tum type nahi likhte, TypeScript khud guess kar leta hai value ke basis pe.
+Compiler smart hai, aur automatically type assign kar deta hai.
+
+Example:
+let age = 25;         // inferred as number
+let name = "Vivek";   // inferred as string
+let isAdmin = true;   // inferred as boolean
+
+function add(x: number, y: number) {
+  return x + y;       // return type inferred as number
+}
+⚡ TypeScript ne khud hi number, string, boolean infer kar liya.
+
+3️. Difference (Explicit vs Inference)
+Feature	                    Explicit Types	          Inference (Compiler decides)
+Who decides type?	Tum khud likhte ho	        TypeScript khud guess karta hai
+Code Length	   Zyada (kyunki type likhni padti)	  Kam (compiler guess karta hai)
+Use Case	Jab clarity chahiye, API/large projects me	Jab simple initialization ho
+
+✅ Example Mix:
+// Explicit
+let score: number;
+score = 100;
+
+// Inferred
+let username = "Kanzariya";  // TypeScript infers as string
+
+// Function explicit return type
+function greet(name: string): string {
+  return `Hello ${name}`;
+}
+
+// Function inferred return type
+function square(x: number) {
+  return x * x;  // TypeScript infers return type as number
+}
+
+
+👉 Rule of Thumb:
+=> Simple variables/functions → inference use karo.
+=> Public APIs / Complex code → explicit types use karo clarity aur bugs avoid karne ke liye.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,2408 @@
+1. What is TailWind
+2. TailWind Installation
+3. @apply
+4. Core Concepts
+4.Styling with utility classes
+5.Hover, focus, and other states
+6.Layout
+7.Flexbox & Grid
+
+--------------------------------------------- 1. What is TailWind ----------------------------------------------
+
+1. TailWind Css su che ?
+=> Tailwind CSS = Ready-made CSS classes je tamne direct layout, color, spacing, typography, ane responsiveness control karva madad kare chhe.
+
+💡 Example:
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+  Click Me
+</button>
+
+
+🔍 Aa example ma:-
+1. bg-blue-500 → background color blue shade 500
+2. hover:bg-blue-700 → hover karata dark blue shade 700
+3. text-white → text color white
+4. font-bold → bold text
+5. py-2 px-4 → padding y-axis 2, x-axis 4
+6. rounded → rounded corners
+
+⚙️ Benefits:-
+🚀 Fast development
+🎨 Consistent design system
+📱 Responsive design easy (sm:, md:, lg: prefixes)
+🧼 No unused CSS (jit compiler removes unused classes)
+🔧 Highly customizable (tailwind.config.js file ma theme setup)
+
+-------------------------------------------- 2. TailWind Installation ----------------------------------
+
+2. TailWind Installation
+=> 1. npm install tailwindcss @tailwindcss/vite
+
+2. vite.config.ts
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})
+
+3. CSS
+@import "tailwindcss";
+
+4. Terminal
+npm run dev
+
+5. HTML
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/src/style.css" rel="stylesheet">
+</head>
+<body>
+  <h1 class="text-3xl font-bold underline">
+    Hello world!
+  </h1>
+</body>
+</html>
+
+--------------------------------------------- 3. @apply ----------------------------------------------
+
+3. @apply shu kare chhe?
+@apply Tailwind ma ek CSS directive chhe je tame Tailwind na utility classes ne CSS class ni andar reuse karva de chhe.
+
+👉 Simple words ma:-
+Instead of writing a long list of classes in HTML,
+you can bundle them together in one reusable CSS class.
+
+HTML:-
+<div class="card">
+  <h2 class="card-title">Welcome!</h2>
+  <p class="card-body">This is a Tailwind card example.</p>
+</div>
+
+CSS:-
+  .card {
+    @apply bg-white shadow-lg rounded-2xl p-6;
+  }
+
+  .card-title {
+    @apply text-xl font-bold mb-2;
+  }
+
+  .card-body {
+    @apply text-gray-600;
+  }
+
+---------------------------------------- 4. Styling with utility classes --------------------------------
+
+1. Tailwind ka main funda — “Utility Classes”
+=> Tailwind me hum CSS likhne ke bajaye direct HTML me chhoti-chhoti utility classes lagate hain.
+
+Example:-
+<div class="bg-white p-6 rounded-xl shadow-lg">
+  <p class="text-xl font-medium text-black">ChitChat</p>
+</div>
+
+Yahan:-
+bg-white → background white karta hai
+p-6 → padding deta hai
+rounded-xl → corner round karta hai
+shadow-lg → shadow lagata hai
+text-xl, font-medium, text-black → text styling
+🟢 Matlab: Tumhe alag CSS file me .card { ... } likhne ki zarurat nahi. Sab styling yahin class me ho jati hai.
+
+⚡ 2. Kyun Utility Classes ka use karte hain?
+
+Traditional CSS vs Tailwind
+
+| Traditional CSS             | Tailwind CSS                                  |
+| --------------------------- | --------------------------------------------- |
+| Alag se class likhni padti  | Direct utility lagao                          |
+| Style change risky hota     | Safe, kyunki har element apna class use karta |
+| Code maintain karna mushkil | Maintain karna easy                           |
+| CSS badi hoti jati          | CSS compact rehti hai                         |
+
+🟢 Tailwind me “1 class = 1 kaam”.
+
+🧠 3. Inline Styles se better kaise hai?
+=> Kahi log kehte hain: “Ye toh inline styles jaisa hi hai!”
+
+But nahin — Tailwind inline styles se zyada powerful hai:
+1. Responsive design bana sakte ho (sm:, md:, lg:)
+2. Hover/focus jaise states handle kar sakte ho (hover:bg-blue-500)
+3. Design system consistent rehta hai (values fixed scale me hoti hain)
+
+Example:-
+<button class="bg-sky-500 hover:bg-sky-700 text-white px-4 py-2 rounded">
+  Save changes
+</button>
+
+🌈 4. Responsive Design (Media Queries)
+=> Tailwind me directly breakpoint prefix laga sakte ho:
+
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+
+
+Yahan:-
+Mobile par → 2 columns
+Small screen (≥640px) → 3 columns
+Medium (≥768px) → 4 columns
+
+🌙 5. Dark Mode
+=> Dark mode handle karna super easy hai:
+
+<div class="bg-white dark:bg-gray-800 text-black dark:text-white">
+  Hello World
+</div>
+Dark mode me Tailwind dark: prefix use karta hai.
+
+🧩 6. Arbitrary Values (Custom values)
+=> Agar koi value theme me nahi milti, tum [ ] me likh sakte ho:
+
+<div class="bg-[#316ff6]">Facebook Blue</div>
+<div class="grid grid-cols-[24rem_2.5rem_1fr]"></div>
+
+
+Tum custom CSS variable bhi bana sakte ho:-
+<div class="[--gutter-width:1rem] lg:[--gutter-width:2rem]"></div>
+
+🧍‍♂️ 7. Group Hover / Complex selectors
+=> Agar kisi parent pe hover karne pe child style change karni ho:-
+
+<a class="group p-4">
+  <span class="group-hover:underline">Read more</span>
+</a>
+
+8. Repeat hone wale styles manage kaise kare?
+Agar tumhe baar-baar same classes lagani pad rahi hain:-
+1. Loop me likh do (React, Vue me map/each use karo)
+2. Ya component banao (e.g. <Button />)
+
+3. Ya custom class banao @layer components me:
+@layer components {
+  .btn-primary {
+    @apply bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-700;
+  }
+}
+
+
+Phir use karo:-
+<button class="btn-primary">Save</button>
+
+💣 9. Conflict ya important cases
+=> Agar 2 classes same property ko target karein, toh stylesheet me later wali jeetegi
+=> Force karna ho → ! lagao:
+
+<div class="bg-red-500!">Forced Red</div>
+=> Sabhi Tailwind classes ko !important banana ho →
+@import "tailwindcss" important;
+
+-------------------------------------- 5. Hover, focus, and other states ------------------------------------
+
+---------------------- Pseudo-classes ----------------
+
+🧠 Basic Idea — Variants kya hain?
+=> Tailwind me har utility class (jaise bg-red-500, text-xl, border) ko condition ke hisaab se apply kar sakte ho.
+
+Ye condition hoti hai jaise:-
+1. Hover karne par
+2. Focus hone par
+3. Disabled hone par
+4. Dark mode me, etc.
+
+Iske liye class ke aage prefix (variant) lagate hain:-
+hover:bg-sky-700
+focus:outline-none
+dark:text-white
+
+Soch le:-
+👉 “hover” = “jab mouse upar ho”
+👉 “focus” = “jab user ne element select kiya ho”
+
+🎨 1. Hover, Focus, Active States
+
+Example button:-
+<button class="bg-violet-500 hover:bg-violet-600 focus:outline-2 focus:outline-offset-2 focus:outline-violet-500 active:bg-violet-700">
+  Save changes
+</button>
+
+
+Isme kya ho raha hai:-
+1. Normal: background violet-500
+2. Hover: background change to violet-600
+3. Focus: ek violet outline show hoti hai
+4. Active: jab click hold karte ho to violet-700
+🟢 Ye sab CSS pseudo-classes (:hover, :focus, :active) Tailwind me easy bana diye gaye hain.
+
+👶 2. First, Last, Odd, Even — (List aur Table Rows)
+
+Example (List):-
+<ul>
+  <li class="py-4 first:pt-0 last:pb-0">Item 1</li>
+  <li class="py-4">Item 2</li>
+  <li class="py-4">Item 3</li>
+</ul>
+👉 first:pt-0 = pehle element ka top padding 0
+👉 last:pb-0 = last element ka bottom padding 0
+
+Example (Table):
+<tr class="odd:bg-white even:bg-gray-50 dark:odd:bg-gray-900/50 dark:even:bg-gray-950">
+  <td>Jane Cooper</td>
+  <td>Regional Paradigm Technician</td>
+</tr>
+👉 odd: aur even: alternate colors dene ke liye best hain (zebra table effect).
+
+🧾 3. :required aur :disabled — Form states
+
+Example:-
+<input
+  type="text"
+  class="invalid:border-pink-500 invalid:text-pink-600 focus:border-sky-500 disabled:bg-gray-50 disabled:text-gray-500"
+/>
+
+
+💡 Meaning:-
+1. Agar invalid input diya: red border aur red text
+2. Focus hone par: sky-blue border
+3. Disabled hone par: gray background/text
+🟢 Tumhe condition ke hisaab se JS likhne ki zarurat nahi, Tailwind khud handle karega.
+
+4. :has() — Parent based styling
+=> has-* variant use karke parent element ko style kar sakte ho agar uske andar koi particular child state ho.
+
+Example:-
+<label class="has-checked:bg-indigo-50 has-checked:text-indigo-900">
+  Google Pay
+  <input type="radio" checked />
+</label>
+👉 Jab andar ka input checked ho jaata hai, tab label ka background aur text color change ho jaata hai.
+
+👨‍👩‍👧 5. group aur group-hover
+=> Jab parent element pe hover karein aur child element ka style badalna ho, use group class.
+
+Example:
+
+<a href="#" class="group bg-white hover:bg-sky-500 p-4 rounded-lg">
+  <h3 class="text-gray-900 group-hover:text-white">New project</h3>
+  <p class="text-gray-500 group-hover:text-white">Create a new project</p>
+</a>
+Hover sirf parent pe ho raha hai, par color dono text elements pe badal raha hai.
+
+6. peer aur peer-invalid
+=> Agar input ki state ke hisaab se next element ko style karna ho, to use peer.
+
+Example:-
+<form>
+  <label>
+    <span>Email</span>
+    <input type="email" class="peer border p-2" />
+    <p class="invisible peer-invalid:visible text-red-500 text-sm">
+      Please provide a valid email address.
+    </p>
+  </label>
+</form>
+
+
+💡 Jab tak email invalid hai → warning visible
+Jab valid input dete ho → warning gayab
+
+🟢 Rule: peer sirf previous sibling par kaam karta hai (jaise + CSS selector).
+
+7. Named Groups aur Named Peers
+=> Agar tumhare paas multiple groups/peers hain, to confuse hone se bachne ke liye naam de sakte ho:
+
+<li class="group/item">
+  <a class="group-hover/item:text-blue-500">Edit</a>
+</li>
+
+<input type="radio" class="peer/published" />
+<label class="peer-checked/published:text-green-500">Published</label>
+🟢 group/item aur peer/published jaisa naam tum kuch bhi rakh sakte ho.
+
+⚙️ 8. not- Variant
+=> Kisi condition ke opposite me style dena ho to use not-
+
+Example:-
+<button class="bg-indigo-600 hover:not-focus:bg-indigo-700">
+  Save changes
+</button>
+👉 Yahan hover color tabhi lagega jab button focused nahi ho.
+
+🧠 9. Implicit Groups (in-*)
+=> Agar parent pe group class na bhi lagao, to in-focus jaisi variant se kaam ho jaata hai:
+
+<div tabindex="0">
+  <div class="opacity-50 in-focus:opacity-100">
+    Focus karne pe ye visible ho jaata hai
+  </div>
+</div>
+
+| Variant            | Meaning                      | Example                       |
+| ------------------ | ---------------------------- | ----------------------------- |
+| `hover:`           | Jab mouse hover ho           | `hover:bg-blue-600`           |
+| `focus:`           | Jab element focused ho       | `focus:outline-none`          |
+| `active:`          | Jab click hold ho            | `active:bg-blue-700`          |
+| `disabled:`        | Jab element disable ho       | `disabled:opacity-50`         |
+| `group-hover:`     | Jab parent pe hover ho       | `group-hover:text-white`      |
+| `peer-invalid:`    | Jab sibling input invalid ho | `peer-invalid:block`          |
+| `not-`             | Jab condition false ho       | `hover:not-focus:bg-gray-600` |
+| `first:` / `last:` | First / Last child           | `first:pt-0`                  |
+| `odd:` / `even:`   | Alternate styling            | `odd:bg-gray-50`              |
+
+----------------------------- Pseudo-elements -------------------------------
+
+1. ::before aur ::after
+=> Ye dono pseudo-elements hotey hain — matlab ye HTML me actual element nahi hote, par CSS ke zariye extra content ya decoration add karne ke liye use kiye jaate hain.
+
+Tailwind me inhe use karne ke liye:-
+before:
+after:
+prefix lagate hain.
+
+🔸 Example 1 — Label pe * (required field)
+<label>
+  <span class="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+    Email
+  </span>
+  <input type="email" name="email" placeholder="you@example.com" />
+</label>
+
+Yahan Tailwind automatically content: '' add karta hai by default,
+par humne after:content-['*'] diya hai — matlab ye “*” red color me aayega Email ke baad.
+
+🔸 Example 2 — Highlighted background using ::before
+<blockquote class="text-center text-2xl font-semibold text-gray-900 italic">
+  When you look
+  <span class="relative inline-block before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-pink-500">
+    <span class="relative text-white">annoyed</span>
+  </span>
+  all the time, people think that you're busy.
+</blockquote>
+💡 before pseudo-element yahan ek pink background shape bana raha hai “annoyed” word ke peeche.
+
+✅ Tip:
+Zyada tar cases me ::before aur ::after ki jagah extra <span> tag use karna aasan aur readable hota hai.
+
+Example:-
+<span class="relative">
+  <span class="absolute -inset-1 block -skew-y-3 bg-pink-500"></span>
+  <span class="relative text-white">annoyed</span>
+</span>
+
+💬 2. ::placeholder
+=> Input field ke placeholder text ko style karne ke liye placeholder: variant use hota hai.
+
+Example:-
+<input
+  type="text"
+  placeholder="Search for anything..."
+  class="placeholder:text-gray-500 placeholder:italic border rounded-md p-2"
+/>
+
+🎨 Output:
+Placeholder text gray aur italic dikhai dega.
+
+📁 3. ::file
+=> File input ke andar jo "Choose file" button aata hai, use style karne ke liye file: variant use karte hain.
+
+Example:-
+<input
+  type="file"
+  class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100"
+/>
+Ye default ugly file button ko Tailwind style me badal deta hai (rounded, colored, hover effect).
+
+🔘 4. ::marker
+=> List items (bullets or numbers) ke marker (• ya 1., 2., 3.) ko style karne ke liye marker: variant use karte hain.
+
+Example:-
+<ul class="list-disc marker:text-sky-400 pl-5">
+  <li>5 cups chopped Porcini mushrooms</li>
+  <li>1/2 cup of olive oil</li>
+  <li>3lb of celery</li>
+</ul>
+👉 Ab list ke bullets sky-blue color ke ho jayenge.
+
+🟣 5. ::selection
+=> Text select karne (highlight karne) par jo background aur text color aata hai, usko style karne ke liye selection: use hota hai.
+
+Example:-
+<div class="selection:bg-fuchsia-300 selection:text-fuchsia-900">
+  <p>
+    Try selecting this text with your mouse or keyboard!
+  </p>
+</div>
+🪄 Jab user text select karega, tab background pinkish ho jaayega.
+
+💡 Is variant ko <body> tag me bhi use kar sakte ho taaki pura site pe ek hi selection color rahe:
+<body class="selection:bg-pink-300">
+
+🅰️ 6. ::first-line aur ::first-letter
+🔹 first-line: — pehli line ka style
+🔹 first-letter: — pehla letter ka style (drop cap jaise)
+
+Example:-
+<p class="first-line:uppercase first-line:tracking-widest first-letter:float-left first-letter:mr-3 first-letter:text-7xl first-letter:font-bold first-letter:text-gray-900">
+  Well, let me tell you something funny boy...
+</p>
+=> Isse pehla letter bada aur bold ho jaata hai (newspaper style), aur first line uppercase.
+
+🎞️ 7. ::backdrop
+=> <dialog> element ke background overlay ko style karne ke liye use hota hai.
+
+Example:
+
+<dialog class="backdrop:bg-gray-50 p-6 rounded-lg">
+  <form method="dialog">
+    <p>Are you sure?</p>
+    <button>Close</button>
+  </form>
+</dialog>
+=> Jab dialog open hoga, uske peeche halka gray overlay dikhega.
+
+| Variant              | Kya style karta hai         | Example                     |
+| -------------------- | --------------------------- | --------------------------- |
+| `before:` / `after:` | Extra content ya decoration | `after:content-['*']`       |
+| `placeholder:`       | Input placeholder text      | `placeholder:text-gray-400` |
+| `file:`              | File input button           | `file:bg-blue-100`          |
+| `marker:`            | List bullets ya counters    | `marker:text-sky-400`       |
+| `selection:`         | Selected text               | `selection:bg-pink-300`     |
+| `first-line:`        | First line of paragraph     | `first-line:uppercase`      |
+| `first-letter:`      | First letter of paragraph   | `first-letter:text-7xl`     |
+| `backdrop:`          | Dialog background overlay   | `backdrop:bg-gray-50`       |
+
+---------------------- Media and feature queries  ------------------------------
+
+📱 Responsive breakpoints
+=> Responsive design ma different screen size par alag style apply karva mate Tailwind ma predefined breakpoints chhe:-
+
+1. sm (small)
+2. md (medium)
+3. lg (large)
+4. xl, 2xl (bada screen)
+
+👉 Example:-
+<div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+  <!-- ... -->
+</div>
+➡️ Mobile par 3 columns
+➡️ Medium screen par 4 columns
+➡️ Large screen par 6 columns
+Ane tame parent container ni width par base karva @md, @lg pan use kari shako.
+
+🌗 prefers-color-scheme (Dark mode)
+=> Aa media query user ne light ke dark mode pasand chhe e check kare chhe.
+
+<div class="bg-white dark:bg-gray-900">
+  <h3 class="text-gray-900 dark:text-white">Writes upside-down</h3>
+  <p class="text-gray-500 dark:text-gray-400">
+    The Zero Gravity Pen can be used to write in any orientation.
+  </p>
+</div>
+➡️ Light mode ma white background
+➡️ Dark mode ma dark background
+
+🚫 prefers-reduced-motion
+=> Aa query check kare chhe ke user ne animation kam karvani preference chhe ke nahi.
+motion-reduce: — motion kam kare
+motion-safe: — motion sirf tyaare chalu kare jyaare user ne problem na hoy.
+
+<button class="transition hover:-translate-y-0.5 motion-reduce:transition-none">
+  Save changes
+</button>
+
+🌓 prefers-contrast
+=> User ne more contrast ke less contrast pasand hoy to e check kare chhe.
+
+<input class="border-gray-200 contrast-more:border-gray-400" />
+<p class="opacity-10 contrast-more:opacity-100">We need this to steal your identity.</p>
+➡️ High contrast mode ma text clear dekhay.
+
+🖍️ forced-colors
+=> Jyaare user forced color mode use kare chhe (system ni accessibility setting thi), Tailwind ma forced-colors: use thai shake chhe.
+
+<div class="bg-cyan-200 forced-colors:hidden">
+  <!-- ... -->
+</div>
+
+🌓 inverted-colors
+=> Aa variant tyare use thay jyaare user ne inverted colors enable kare chhe.
+
+<div class="shadow-xl inverted-colors:shadow-none">
+  <!-- ... -->
+</div>
+
+🖱️ pointer / any-pointer
+=> Aa queries check kare chhe ke device ma pointing device (mouse, touch) chhe ke nahi ane ketlu accurate chhe.
+
+1. pointer-fine: → accurate pointing (mouse, trackpad)
+2. pointer-coarse: → touch screen
+3. any-pointer-fine: / any-pointer-coarse: → koi ek pointing device check karva mate
+
+<div class="grid grid-cols-6 pointer-coarse:grid-cols-3 pointer-coarse:gap-4">
+  <!-- ... -->
+</div>
+
+🔄 orientation
+=> Screen portrait (vertical) chhe ke landscape (horizontal) e check kare.
+
+<div class="portrait:hidden">Landscape view only</div>
+<div class="landscape:hidden">Please rotate your device</div>
+
+⚙️ scripting
+=> Aa check kare chhe ke JavaScript enable chhe ke nahi.
+
+<div class="hidden noscript:block">
+  <p>Please enable JavaScript to continue.</p>
+</div>
+
+🖨️ print
+=> Print time ma alag CSS apply karva print: use thay chhe.
+
+<article class="print:hidden">
+  <h1>My Secret Pizza Recipe</h1>
+</article>
+
+<div class="hidden print:block">
+  Are you seriously trying to print this? 😂
+</div>
+
+💪 @supports
+=> Browser koi particular CSS property support kare chhe ke nahi e check karva supports-[...] use karo.
+
+<div class="flex supports-[display:grid]:grid">
+  <!-- ... -->
+</div>
+
+
+Ane agar browser support nathi karta, to:
+<div class="not-supports-[display:grid]:flex">
+  <!-- ... -->
+</div>
+
+🌀 @starting-style
+=> Aa use thay chhe element jyaare first time visible thay tyaare initial transition mate.
+
+<div popover id="my-popover" class="opacity-0 starting:open:opacity-0">
+  <!-- ... -->
+</div>
+
+------------------------- Attribute Selectors ------------------
+
+1. ARIA States (Accessibility Attributes)
+=> Tailwind me tum aria-* attributes ke base pe styling kar sakte ho.
+Ye mainly accessibility aur component states ke liye use hota hai (like checked, expanded, disabled, etc.)
+
+💡 Example:
+<div aria-checked="true" class="bg-gray-600 aria-checked:bg-sky-700">
+  ✅ Selected Item
+</div>
+➡️ Jab aria-checked="true" hoga, tab background sky-700 ho jayega.
+
+⚙️ Common ARIA variants:
+Variant	CSS Selector
+| Variant       | CSS Selector            |
+| ------------- | ----------------------- |
+| aria-busy     | &[aria-busy="true"]     |
+| aria-checked  | &[aria-checked="true"]  |
+| aria-disabled | &[aria-disabled="true"] |
+| aria-expanded | &[aria-expanded="true"] |
+| aria-hidden   | &[aria-hidden="true"]   |
+| aria-pressed  | &[aria-pressed="true"]  |
+| aria-readonly | &[aria-readonly="true"] |
+| aria-required | &[aria-required="true"] |
+| aria-selected | &[aria-selected="true"] |
+
+👉 Ye sab built-in aate hain Tailwind me.
+
+🧩 Custom ARIA Variant
+=> Agar tumhe apna custom ARIA attribute chahiye (jaise aria-sort), to use define kar sakte ho:
+
+@custom-variant aria-asc (&[aria-sort="ascending"]);
+@custom-variant aria-desc (&[aria-sort="descending"]);
+
+
+Phir use karo:-
+<th aria-sort="ascending" class="aria-asc:text-green-600">
+  Invoice #
+</th>
+
+🔹 One-time (Arbitrary) ARIA Variant
+=> Agar tumhe ek hi jagah pe custom use karna ho, to square brackets me likh do:
+
+<th aria-sort="ascending"
+  class="aria-[sort=ascending]:bg-[url('/img/down.svg')] aria-[sort=descending]:bg-[url('/img/up.svg')]">
+  Invoice #
+</th>
+➡️ Yahan attribute ke specific value ke base pe background image change ho rahi hai.
+
+👥 group-aria aur peer-aria
+=> Jaise normal group-hover ya peer-focus hote hain, waise hi ye bhi kaam karte hain — bas ARIA ke liye.
+
+<th aria-sort="ascending" class="group">
+  Invoice #
+  <svg class="group-aria-[sort=ascending]:rotate-0 group-aria-[sort=descending]:rotate-180"></svg>
+</th>
+➡️ Agar parent (group) ka aria-sort change hoga, child SVG rotate ho jayega.
+
+📦 2. Data Attributes
+=> Tum data-* attributes ke base pe bhi styling kar sakte ho (custom JS states ya frameworks ke liye).
+
+✅ Example:
+<div data-active class="border border-gray-300 data-active:border-purple-500">
+  Active Box
+</div>
+➡️ Agar data-active hai, to border purple ho jayega.
+
+🎯 Check for Specific Value
+<div data-size="large" class="data-[size=large]:p-8">
+  Large Size
+</div>
+➡️ Sirf jab data-size="large" hoga tab padding lagega.
+
+🧩 Custom Data Variant
+=> Agar tum repeatedly koi data attribute use kar rahe ho, to apna variant bana lo:
+
+@custom-variant data-checked (&[data-ui~="checked"]);
+
+
+Ab use kar sakte ho:-
+<div data-ui="checked active" class="data-checked:underline">
+  Checked and Active
+</div>
+
+🌍 3. RTL (Right-to-Left) Support
+=> Arabic ya Hebrew jaise languages ke liye layout reverse karne me kaam aata hai.
+
+<div class="ltr:ml-3 rtl:mr-3">
+  <p>Text Content</p>
+</div>
+➡️ Agar layout RTL mode me hoga to margin right lagega, warna left.
+👉 Sirf tab chahiye jab tumhara site multiple languages (LTR/RTL) support karta ho.
+
+4. Open/Closed State
+=> Tailwind me tum open: variant se <details> ya <dialog> ke open hone par style laga sakte ho.
+
+<details class="border border-transparent open:border-black/10 open:bg-gray-100" open>
+  <summary>Why do they call it Ovaltine?</summary>
+  <p>The mug is round. The jar is round.</p>
+</details>
+➡️ Jab open hoga, background aur border change ho jayegi.
+
+💬 Popover Example:
+<div>
+  <button popovertarget="my-popover">Open Popover</button>
+  <div popover id="my-popover" class="opacity-0 open:opacity-100">
+    Popover content here...
+  </div>
+</div>
+➡️ Jab popover open hoga, opacity badh jayegi.
+
+🚫 5. inert Elements
+=> inert attribute se pata chalta hai ki koi element non-interactive hai (jaise disabled section).
+
+<fieldset inert class="inert:opacity-50">
+  <input type="text" placeholder="Can't edit this" />
+</fieldset>
+➡️ Opacity 50% ho jayegi — user samjhega ye section disabled hai.
+
+| Feature   | Kaam                                                    |
+| --------- | ------------------------------------------------------- |
+| `aria-*`  | Accessibility attributes ke base pe styling             |
+| `data-*`  | JS ya custom states ke base pe styling                  |
+| `rtl/ltr` | Left-to-right ya Right-to-left layout ke liye           |
+| `open:`   | `<details>` ya `<dialog>` ke open hone par style        |
+| `inert:`  | Disabled ya non-interactive section style karne ke liye |
+
+--------------------------- Child selectors -----------------------
+
+🧒 1. Styling Direct Children (*: variant)
+=> Normally Tailwind me hum classes direct element pe lagate hain,
+lekin kabhi-kabhi aise situations hote hain jahan child elements pe control nahi hota
+(jaise — CMS ya 3rd party component ke andar ke <li> ya <p> tag).
+
+Aise time pe Tailwind me *: variant use hota hai.
+Ye sirf direct children pe style lagata hai.
+
+💡 Example:
+<div>
+  <h2>Categories</h2>
+  <ul class="*:rounded-full *:border *:border-sky-100 *:bg-sky-50 *:px-2 *:py-0.5">
+    <li>Sales</li>
+    <li>Marketing</li>
+    <li>SEO</li>
+  </ul>
+</div>
+➡️ Yahaan *: ka matlab hai:
+“is <ul> ke har direct child (<li>) ko ye style do.”
+
+🧠 To ye classes <li> elements par lag jaayengi automatically:
+1. rounded-full
+2.border
+3.border-sky-100
+4.bg-sky-50
+5.px-2
+6.py-0.5
+
+⚠️ Important Note:
+=> Agar tum child element pe manually koi aur class lagate ho (jaise bg-red-50),
+to wo parent ke *: style ko override nahi karegi,
+kyunki dono ki specificity same hoti hai aur Tailwind me parent style baad me apply hoti hai.
+
+❌ Example (ye kaam nahi karega):
+<ul class="*:bg-sky-50">
+  <li class="bg-red-50">Sales</li> <!-- ye override nahi karega -->
+  <li>Marketing</li>
+</ul>
+👉 To *: ka use tab karo jab tumhe read-only children ko style karna ho,
+jahan unke upar class directly lagana possible nahi ho.
+
+🌳 2. Styling All Descendants (**: variant)
+=> Ab agar tumhe sirf direct children nahi,
+balki unke andar ke children bhi (nested elements) ko style karna ho,
+to **: variant use hota hai.
+
+**: = apply to all descendants (matlab poore subtree me).
+
+💡 Example:
+<ul class="**:data-avatar:size-12 **:data-avatar:rounded-full">
+  <li>
+    <img src="user.jpg" data-avatar />
+    <p>Leslie Abbott</p>
+  </li>
+  <li>
+    <img src="user2.jpg" data-avatar />
+    <p>Hector Adams</p>
+  </li>
+</ul>
+➡️ Yahaan Tailwind ye karega:
+=> data-avatar wale har descendant element (chahe kitna bhi nested ho)
+ko size-12 aur rounded-full class apply karega.
+
+So agar koi <img> tag hai jisme data-avatar hai — usko ye styles milenge,
+chahe wo <li> ke andar ho ya <div> ke andar.
+
+
+| Variant | Apply hota hai kis pe | Use kab karein                                |
+| ------- | --------------------- | --------------------------------------------- |
+| `*:`    | Direct children only  | Jab child elements pe direct control nahi hai |
+| `**:`   | Sab descendants pe    | Jab nested elements ko bhi style karna ho     |
+
+
+💬 Example Combo (Dono saath me):
+<ul class="*:border *:rounded-lg **:text-gray-600 **:hover:text-black">
+  <li>
+    <div>
+      <p>Inner text</p>
+    </div>
+  </li>
+</ul>
+➡️ *: se har <li> pe border aur rounded lagega.
+➡️ **: se andar ke sab elements (jaise <p>) pe text color aur hover effect lagega.
+
+---------------------------- Custom variants --------------------------
+
+🧩 Arbitrary Variants ka use
+=> Jaise arbitrary values allow karte hain custom values utility classes ke liye,
+waise arbitrary variants allow karte hain custom CSS selectors directly HTML me likhne ke liye.
+
+🔹 1. Simple Example
+Maan lo hume cursor grabbing karna hai jab <li> element me is-dragging class lage:
+
+<ul role="list">
+  <li class="[&.is-dragging]:cursor-grabbing">Item 1</li>
+  <li class="[&.is-dragging]:cursor-grabbing">Item 2</li>
+</ul>
+
+=> [&.is-dragging] = ye selector ka matlab hai:
+“agar ye element .is-dragging class rakhta hai to ye style apply karo.”
+=> Tailwind automatically ye CSS generate karega.
+
+🔹 2. Stacking Variants
+Arbitrary variants ko built-in variants ke saath bhi stack kar sakte ho:
+
+<li class="[&.is-dragging]:active:cursor-grabbing">Item 1</li>
+
+=> Yahaan pe active state ke liye cursor grabbing lagega,
+sirf jab element pe .is-dragging class ho.
+
+🔹 3. Descendant Selector
+=> Agar selector me spaces chahiye (nested elements select karna ho),
+to Tailwind me _ ka use hota hai:
+
+<div class="[&_p]:mt-4">
+  <p>Paragraph 1</p>
+  <ul>
+    <li>
+      <p>Paragraph 2</p>
+    </li>
+  </ul>
+</div>
+=> [&_p] = ye poore element ke andar ke <p> tags ko target karega.
+=> Tailwind automatically unko mt-4 add karega.
+
+🔹 4. At-rules (Media / Supports)
+=> Arbitrary variants me @media ya @supports bhi use kar sakte ho:
+
+<div class="flex [@supports(display:grid)]:grid">
+  <!-- ... -->
+</div>
+=> Ye check karega agar browser display: grid support karta hai,
+tab ye element grid ban jayega.
+=> Note: At-rule variants me & placeholder ki zarurat nahi hoti.
+
+🔹 5. Custom Variant Register Karna
+=> Agar same arbitrary variant baar-baar use ho raha hai,
+to @custom-variant se ek reusable variant bana sakte ho:
+
+@custom-variant theme-midnight (&:where([data-theme="midnight"] *));
+
+
+Phir HTML me:-
+<html data-theme="midnight">
+  <button class="theme-midnight:bg-black ...">Click Me</button>
+</html>
+=> theme-midnight: variant ab reusable hai.
+=> Isse multiple places pe baar-baar likhne ki zarurat nahi.
+
+🔹 Summary
+| Concept           | Syntax Example                       | Matlab                                                    |
+| ----------------- | ------------------------------------ | --------------------------------------------------------- |
+| Arbitrary variant | `[&.is-dragging]:cursor-grabbing`    | Agar element pe `.is-dragging` hai, cursor grab karo      |
+| Descendants       | `[&_p]:mt-4`                         | Is element ke andar ke `<p>` tags ko margin-top do        |
+| At-rules          | `[@supports(display:grid)]:grid`     | Agar browser grid support karta hai, element grid ho jaye |
+| Custom variant    | `@custom-variant theme-midnight ...` | Reusable arbitrary variant banayein                       |
+
+----------------------- Appendix -----------------
+
+🔹 Hover / Focus / Active / Visited
+| Variant          | Matlab                                     |
+| ---------------- | ------------------------------------------ |
+| `hover:`         | Jab user mouse se element pe hover kare    |
+| `focus:`         | Jab element focus me ho (input ya button)  |
+| `focus-within:`  | Jab element ya uska koi child focus me ho  |
+| `focus-visible:` | Keyboard se focus hone pe style apply ho   |
+| `active:`        | Jab element press ho raha ho (mouse click) |
+| `visited:`       | Link visit ho chuka ho                     |
+| `target:`        | Element ka ID URL fragment se match kare   |
+
+Example:-
+<button class="bg-blue-500 hover:bg-blue-600 focus:outline-2 active:bg-blue-700">
+  Click Me
+</button>
+
+🔹 Child / Sibling / Group Selectors
+| Variant                  | Matlab                              |
+| ------------------------ | ----------------------------------- |
+| `first:`                 | Pehla child                         |
+| `last:`                  | Last child                          |
+| `only:`                  | Sirf child hai                      |
+| `odd:`                   | Odd numbered child                  |
+| `even:`                  | Even numbered child                 |
+| `first-of-type:`         | Pehla type ka element               |
+| `last-of-type:`          | Last type ka element                |
+| `only-of-type:`          | Sirf type ka element                |
+| `nth-[...]`              | Specific child position (nth-child) |
+| `nth-last-[...]`         | Specific position from end          |
+| `nth-of-type-[...]`      | Specific type ka position           |
+| `nth-last-of-type-[...]` | Last se type ka position            |
+
+Example:
+<ul>
+  <li class="first:pt-0 odd:bg-gray-100 even:bg-white">Item 1</li>
+  <li class="first:pt-0 odd:bg-gray-100 even:bg-white">Item 2</li>
+</ul>
+
+🔹 Form States
+| Variant              | Matlab                            |
+| -------------------- | --------------------------------- |
+| `disabled:`          | Input disabled ho                 |
+| `enabled:`           | Input enabled ho                  |
+| `checked:`           | Checkbox / radio checked ho       |
+| `indeterminate:`     | Checkbox indeterminate ho         |
+| `default:`           | Default value pe ho               |
+| `optional:`          | Optional input                    |
+| `required:`          | Required input                    |
+| `valid:`             | Valid input                       |
+| `invalid:`           | Invalid input                     |
+| `user-valid:`        | User interact karke valid input   |
+| `user-invalid:`      | User interact karke invalid input |
+| `in-range:`          | Input value range me ho           |
+| `out-of-range:`      | Input range se bahar ho           |
+| `placeholder-shown:` | Placeholder visible ho            |
+| `autofill:`          | Browser ne input autofill kiya    |
+| `read-only:`         | Input read-only ho                |
+
+Example:
+
+<input type="text" required class="border required:border-red-500 valid:border-green-500 user-invalid:border-red-600">
+
+🔹 Details / Popover / Open States
+| Variant            | Matlab                                                        |
+| ------------------ | ------------------------------------------------------------- |
+| `details-content:` | `<details>` ke content ko style kare                          |
+| `open:`            | `<details>` ya `<dialog>` open state me ho ya popover open ho |
+
+Example:-
+<details class="border open:bg-gray-100">
+  <summary>Click me</summary>
+  Content inside details
+</details>
+
+
+🔹 Aria / Data / Direction / Dark / Motion
+| Variant          | Matlab                        |
+| ---------------- | ----------------------------- |
+| `aria-checked:`  | `[aria-checked="true"]`       |
+| `aria-disabled:` | `[aria-disabled="true"]`      |
+| `aria-expanded:` | `[aria-expanded="true"]`      |
+| `data-[...]`     | Custom data attribute ke liye |
+| `rtl:`           | Right-to-left layouts ke liye |
+| `ltr:`           | Left-to-right layouts ke liye |
+| `dark:`          | Dark mode                     |
+| `motion-safe:`   | Reduced motion disabled ho    |
+| `motion-reduce:` | Reduced motion enabled ho     |
+
+Example:
+
+<div aria-checked="true" class="bg-gray-200 aria-checked:bg-green-500">Checked!</div>
+
+---------------------------------- 6. Layout --------------------------------
+
+----------------- 1. Aspect-ratio-----------------
+
+1.What is aspect-ratio?
+=> aspect-ratio property ka matlab hota hai —
+📏 element ni width ane height no proportion (ratio) fix karvu.
+
+🔹 Simple definition:-
+It defines the width-to-height ratio of an element.
+
+For example:-
+aspect-[1/1] → square (width = height)
+
+aspect-[16/9] → widescreen rectangle (like YouTube video)
+
+aspect-[4/3] → old monitor size
+
+🔹 Tailwind ma use kem karvu:
+🧠 Syntax:-
+<div class="aspect-[ratio] ..."></div>
+
+🔸 Example 1 — Square Box
+<div class="w-48 aspect-[1/1] bg-blue-400"></div>
+
+🔸 Example 2 — 16:9 Video Frame
+<div class="w-full max-w-lg aspect-[16/9] bg-gray-300">
+  <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
+</div>
+
+🔸 Example 3 — Instagram Post Style (4:5)
+<div class="w-64 aspect-[4/5] bg-pink-400"></div>
+
+Class                                            Styles
+aspect-<ratio>                            aspect-ratio: <ratio>;
+aspect-square                             aspect-ratio: 1 / 1;
+aspect-video                              aspect-ratio: var(--aspect-video); /* 16 / 9 */
+aspect-auto                               aspect-ratio: auto;
+aspect-(<custom-property>)                aspect-ratio: var(<custom-property>);
+aspect-[<value>]                          aspect-ratio: <value>;
+
+
+----------------------------- 2. columns ----------------------
+
+2.What is columns?
+=> columns Tailwind ma ek CSS Multi-column Layout property che — je element ni content ne multiple columns ma split kare che, jaise newspaper ya magazine layout.
+
+🔹 Simple Definition:-
+columns define kare che ke content ketla vertical columns ma divide thavu joiye.
+
+🔸 Basic Example
+<div class="columns-3 gap-4">
+  <p>Lorem ipsum dolor sit amet...</p>
+  <p>Consectetur adipiscing elit...</p>
+  <p>Aliquam vitae lorem...</p>
+  <p>Donec malesuada eros...</p>
+  <p>Curabitur feugiat ligula...</p>
+</div>
+
+🧾 Explanation:-
+=> columns-3 → content ne 3 columns ma divide kare che
+=> gap-4 → columns vachche spacing add kare che
+
+| Column 1       | Column 2         | Column 3             |
+| -------------- | ---------------- | -------------------- |
+| Lorem ipsum... | Aliquam vitae... | Curabitur feugiat... |
+
+
+| Class         | CSS               | Approx Width |
+| ------------- | ----------------- | ------------ |
+| `columns-3xs` | `columns: 16rem;` | 256px        |
+| `columns-2xs` | `columns: 18rem;` | 288px        |
+| `columns-xs`  | `columns: 20rem;` | 320px        |
+| `columns-sm`  | `columns: 24rem;` | 384px        |
+| `columns-md`  | `columns: 28rem;` | 448px        |
+| `columns-lg`  | `columns: 32rem;` | 512px        |
+| `columns-xl`  | `columns: 36rem;` | 576px        |
+| `columns-2xl` | `columns: 42rem;` | 672px        |
+| `columns-3xl` | `columns: 48rem;` | 768px        |
+| `columns-4xl` | `columns: 56rem;` | 896px        |
+| `columns-5xl` | `columns: 64rem;` | 1024px       |
+| `columns-6xl` | `columns: 72rem;` | 1152px       |
+| `columns-7xl` | `columns: 80rem;` | 1280px       |
+
+
+---------------------------- 3. break-after ------------------------ 
+
+3. What is break-after?
+=> break-after Tailwind CSS ma ek layout control property che je browser ne batave che ke —
+“page, column, ya region ke baad break (navi line / page / column) karvi ke nahi.”
+=> Aa property mostly print layouts (page-break), multi-column layouts, ane grid content wrapping ma useful che.
+=> break-after nu kaam che —“Aa element pachhi ek new column / page / region start kar.”
+
+Example 1 — Using in Multi-column Layout
+<div class="columns-3 gap-4">
+  <p class="bg-blue-100 p-2">Paragraph 1</p>
+  <p class="bg-blue-100 p-2 break-after-column">Paragraph 2 — break column after me!</p>
+  <p class="bg-blue-100 p-2">Paragraph 3</p>
+  <p class="bg-blue-100 p-2">Paragraph 4</p>
+</div>
+
+🧾 Output Visualization:-
+Column 1: [Para 1]
+Column 2: [Para 2]  ← break-after-column applied
+Column 3: [Para 3, Para 4]
+💡 break-after-column → forces next content to jump to the next column.
+
+
+
+| Class                    | CSS Equivalent             | Description                                    |
+| ------------------------ | -------------------------- | ---------------------------------------------- |
+| `break-after-auto`       | `break-after: auto;`       | Default behavior                               |
+| `break-after-avoid`      | `break-after: avoid;`      | Avoid breaking after this element              |
+| `break-after-all`        | `break-after: all;`        | Force break after every region (columns/pages) |
+| `break-after-column`     | `break-after: column;`     | Break to new column after this element         |
+| `break-after-page`       | `break-after: page;`       | Break to new page (useful for printing)        |
+| `break-after-left`       | `break-after: left;`       | Page break for left pages                      |
+| `break-after-right`      | `break-after: right;`      | Page break for right pages                     |
+| `break-after-avoid-page` | `break-after: avoid-page;` | Avoid breaking between pages                   |
+
+
+------------------------------------ 4. break-before ----------------------------------
+
+4. What is break-before?
+=> break-before Tailwind CSS ma ek layout utility che je browser ne kahe che:
+➡️ “Aa element pehla break karo (navi page, column, or region start karo).”
+
+So basically, it controls where a new page / column / region should begin before the element.
+
+It’s mostly used in:-
+📰 Multi-column layouts
+📄 Print pages (PDF/export)
+📚 Reports or book-like layouts
+
+| Class                     | CSS Equivalent              | Description                                  |
+| ------------------------- | --------------------------- | -------------------------------------------- |
+| `break-before-auto`       | `break-before: auto;`       | Default behavior (no forced break)           |
+| `break-before-avoid`      | `break-before: avoid;`      | Avoid breaking before this element           |
+| `break-before-all`        | `break-before: all;`        | Always break before this element             |
+| `break-before-column`     | `break-before: column;`     | Start new column before element              |
+| `break-before-page`       | `break-before: page;`       | Start new page before element (for printing) |
+| `break-before-left`       | `break-before: left;`       | Page break before left pages                 |
+| `break-before-right`      | `break-before: right;`      | Page break before right pages                |
+| `break-before-avoid-page` | `break-before: avoid-page;` | Avoid breaking between pages                 |
+
+🧩 Example 1 — Multi-column layout
+<div class="columns-3 gap-4">
+  <p class="bg-sky-100 p-2">Column 1 — para 1</p>
+  <p class="bg-sky-100 p-2">Column 1 — para 2</p>
+  <p class="bg-sky-100 p-2 break-before-column">
+    Start a new column before me!
+  </p>
+  <p class="bg-sky-100 p-2">Column 2 — para 4</p>
+</div>
+
+
+🧾 Visual output:-
+Column 1: [para 1, para 2]
+Column 2: [“Start a new column before me!”, para 4]
+
+
+------------------------ 5. break-inside --------------------
+
+5. What is break-inside?
+=> break-inside property browser ne kahe che ke “element ni andar page ya column break karvu chhe ke nahi.”
+
+Simple words ma:-
+“Element ni andar content split (tooti) nahi thai — ek sathe rakhvu chhe.”
+
+
+Tailwind Classes + CSS :-
+| Class                       | CSS                           | Meaning                           |
+| --------------------------- | ----------------------------- | --------------------------------- |
+| `break-inside-auto`         | `break-inside: auto;`         | Browser default — split allowed   |
+| `break-inside-avoid`        | `break-inside: avoid;`        | Try to **avoid** breaking inside  |
+| `break-inside-avoid-page`   | `break-inside: avoid-page;`   | Avoid page break inside element   |
+| `break-inside-avoid-column` | `break-inside: avoid-column;` | Avoid column break inside element |
+
+
+🧩 Example 1 — Multi-column layout
+<div class="columns-3 gap-4">
+  <div class="p-4 bg-blue-100">
+    <p>Small content...</p>
+  </div>
+
+  <div class="p-4 bg-blue-200 break-inside-avoid">
+    <p>Large content block that should stay together...</p>
+    <p>More text more text more text...</p>
+  </div>
+
+  <div class="p-4 bg-blue-100">
+    <p>Another block...</p>
+  </div>
+</div>
+🧾 Visual output:- 
+🟦 break-inside-avoid vala block ne browser break nahi kare between columns —
+it will stay in one column completely (no half content in column 1 & half in column 2).
+
+🧩 Example 2 — Printing / PDF Layout
+<article>
+  <section class="break-inside-avoid-page p-4 bg-green-100">
+    <h2>Invoice Summary</h2>
+    <p>All these details should be on the same printed page.</p>
+  </section>
+
+  <section class="p-4 bg-green-200">
+    <h2>Notes</h2>
+    <p>Can continue on next page...</p>
+  </section>
+</article>
+
+
+🧾 Output (When Printed):-
+=> “Invoice Summary” section won’t be split between 2 pages.
+=> It will stay intact on one page.
+
+🧩 Example 3 — Grid or Masonry Layout (Real-world use case)
+<div class="columns-2 md:columns-3 gap-4">
+  <div class="bg-sky-200 p-4 break-inside-avoid">
+    <h3>Card 1</h3>
+    <p>Content that should stay together.</p>
+  </div>
+  <div class="bg-sky-200 p-4 break-inside-avoid">
+    <h3>Card 2</h3>
+    <p>Another card, not broken in middle.</p>
+  </div>
+  <div class="bg-sky-200 p-4">
+    <h3>Card 3</h3>
+  </div>
+</div>
+🧾 Output (Visual Masonry Layout):
+=> Cards look nice and don’t get broken between columns — perfect for Pinterest-like grids or news cards.
+
+
+----------------------------- 6. box-decoration-break ---------------------------
+
+6. What is box-decoration-break?
+=> box-decoration-break property kahe che browser ne ke —
+“Jare ek element multiple line, column, ya page ma split thai jay, to uska background, border, padding, margin vagere kaise render karvu chhe?”
+
+Tailwind Classes + CSS
+| Class                  | CSS                            | Meaning                                                                                        |
+| ---------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `box-decoration-slice` | `box-decoration-break: slice;` | Default behavior — decoration **continuous** rehshe                                            |
+| `box-decoration-clone` | `box-decoration-break: clone;` | Every line/fragment ne **alag border, background, padding** apply thashe (like cloned element) |
+
+🔍 Simple Understanding:-
+👉 Imagine ek <span> ma background-color ane padding apply kari che.
+Text ek line ma fit nathi thato, to 2 line ma split thai gayu.
+
+Now, question —
+Background ane padding 2 line ma continuous rehshe ke alag-alag box ma dikhse?
+
+🧩 Example 1 — Default (Slice)
+<p class="text-xl w-40">
+  <span class="bg-yellow-300 p-1 box-decoration-slice">
+    This is a long highlighted text that wraps to next line.
+  </span>
+</p>
+
+🧾 Visual Output (slice):-
+| This is a long highlighted text
+| that wraps to next line.   ← background continuous
+
+🔹 Background & padding ek continuous rectangle ma lage chhe —
+border ya background line-break pe nahi duplicate thaye.
+
+
+🧩 Example 2 — Clone
+<p class="text-xl w-40">
+  <span class="bg-yellow-300 p-1 box-decoration-clone">
+    This is a long highlighted text that wraps to next line.
+  </span>
+</p>
+
+
+🧾 Visual Output (clone):-
+| [This is a long highlighted text]
+| [that wraps to next line.]   ← background cloned per line
+
+🔹 Har line jya break thai,
+background, border, padding navi line mate duplicate thaye —
+like 2 alag <span> hoye em.
+
+🧩 Example with Border
+<p class="text-lg w-40">
+  <span class="border-2 border-red-500 p-1 box-decoration-clone">
+    Multi-line border clone example in Tailwind CSS
+  </span>
+</p>
+🧾 Output:
+Har line ma border pura box ni around aavse (not continuous).
+Useful if you want clean individual boxes per line.
+
+----------------------------- 7. box-sizing -------------------------
+
+7. What is box-sizing?
+=> box-sizing property browser ne kahe chhe ke:-
+“Element ni total width ane height kem calculate karvi?”
+
+=> By default, CSS ma element ni size content par based hoy chhe,
+but border ane padding add thaye to element bado vadhai jay.
+
+Aa behavior control karva mate box-sizing use thay chhe.
+
+Tailwind Classes + CSS :-
+
+| Class         | CSS                        | Explanation                                                     |
+| ------------- | -------------------------- | --------------------------------------------------------------- |
+| `box-border`  | `box-sizing: border-box;`  | Total width/height ma **padding + border** include thay         |
+| `box-content` | `box-sizing: content-box;` | Total width/height **sirf content** mate hoy (default behavior) |
+
+
+🧩 Example 1 — box-content
+<div class="box-content w-32 border-4 p-4 bg-yellow-200">
+  Content Box
+</div>
+🧾 Explanation:-
+w-32 → width = 8rem (128px)
+p-4 → padding = 1rem (16px)
+border-4 → border = 4px
+👉 Total width = 128 (content) + 162 (padding) + 42 (border) = 168px
+
+🧩 Example 2 — box-border
+<div class="box-border w-32 border-4 p-4 bg-green-200">
+  Border Box
+</div>
+🧾 Explanation:-
+w-32 → total width = 128px (includes padding + border)
+👉 Browser calculate kare che:
+content = 128 - (padding + border)
+So total box size fix rehshe 128px.
+
+🎯 Visual Difference
+| Type          | What Happens                           | Total Size              |
+| ------------- | -------------------------------------- | ----------------------- |
+| `box-content` | Width + padding + border add thay      | Bigger than given width |
+| `box-border`  | Padding & border included inside width | Exact given width       |
+
+
+🧩 Real-life Example
+
+💡 Suppose tamne 3 cards banaava chhe side-by-side —
+tame exact width rakhva mange cho ke border ane padding add thaya pachi pan layout bigde nahi.
+👉 Use:
+<div class="box-border w-64 border p-4">Card 1</div>
+<div class="box-border w-64 border p-4">Card 2</div>
+<div class="box-border w-64 border p-4">Card 3</div>
+
+Aa thi har card same width ma rehshe, layout perfect thashe ✅
+
+----------------------- 8. display -----------------------
+
+8. What is display?
+=> display CSS property decide kare chhe ke element kem behave karse layout ma —
+like inline, block, flex, grid, etc.
+=> Tailwind ma, display mate ready-made utility classes chhe —
+just ek class add karo ane behavior badlai jaay. ⚡
+
+
+🧩 Example 1 — block vs inline
+<p class="block bg-blue-200">Block Element</p>
+<span class="inline bg-pink-200">Inline Element</span>
+<span class="inline bg-green-200">Inline Element 2</span>
+
+🧾 Output Explanation:-
+=> block → paragraph puri line occupy kare chhe.
+=> inline → span ek j line ma side-by-side aave chhe.
+
+kare
+🧩 Example 1 — block vs inline
+<p class="block bg-blue-200">Block Element</p>
+<span class="inline bg-pink-200">Inline Element</span>
+<span class="inline bg-green-200">Inline Element 2</span>
+
+🧩 Example 2 — inline-block
+<span class="inline-block bg-yellow-300 w-24 h-12 text-center">Box</span>
+<span class="inline-block bg-orange-300 w-24 h-12 text-center">Box 2</span>
+
+🧾 Output:-
+=> Dono side-by-side (inline) aavse,
+=> Pan tamne width ane height set karva mali chhe.
+
+🧩 Example 3 — flex
+<div class="flex gap-4 bg-gray-200 p-4">
+  <div class="bg-blue-300 p-2">1</div>
+  <div class="bg-green-300 p-2">2</div>
+  <div class="bg-red-300 p-2">3</div>
+</div>
+🧾 Output:
+=> Elements ek line ma side-by-side align thay.
+=> Flexbox ni properties (like justify-center, items-center) apply kari shako.
+
+🧩 Example 4 — grid
+<div class="grid grid-cols-3 gap-4">
+  <div class="bg-pink-200 p-2">1</div>
+  <div class="bg-yellow-200 p-2">2</div>
+  <div class="bg-purple-200 p-2">3</div>
+</div>
+🧾 Output:
+=> 3 columns ma layout bane.
+=> Grid ni powerfull features use kari shako (like grid-rows, col-span etc).
+
+🧩 Example 5 — hidden
+<div class="hidden">
+  This will not be visible at all.
+</div>
+🧾 Output:
+=> Element bilkul hide thai jay — layout ma space pan nai le.
+
+🧩 Example 6 — sr-only
+sr-only = “screen reader only”
+Accessible content ma use thay chhe (a11y purpose mate).
+<button>
+  🔍
+  <span class="sr-only">Search</span>
+</button>
+🧾 Output:
+=> User visually sirf 🔍 icon dekhse.
+=> Screen reader "Search" read karse for accessibility. ✅
+
+🧩 Example 7 — flow-root
+<div class="flow-root bg-gray-100 p-4">
+  <div class="float-left w-24 h-24 bg-blue-300"></div>
+  <p>Flow-root clears floating elements automatically.</p>
+</div>
+🧾 Output:
+=> flow-root ek new block formatting context create kare chhe,
+=> etle floated elements container ma properly fit thai jay.
+
+🧱 Display Utilities Table (Tailwind CSS)
+| 🏷️ **Class**        | 💡 **CSS Style**               | 🗣️ **Meaning / Use (Hinglish Explanation)**                        |
+| -------------------- | ------------------------------ | ------------------------------------------------------------------- |
+| `inline`             | `display: inline;`             | Ek line ma aave (width/height effect nai kare)                      |
+| `block`              | `display: block;`              | Full width le ane new line par aave                                 |
+| `inline-block`       | `display: inline-block;`       | Inline jivu chhe pan width/height control kari shako                |
+| `flow-root`          | `display: flow-root;`          | Floating elements ne contain kare (clear fix jivu)                  |
+| `flex`               | `display: flex;`               | Flexbox layout — side-by-side elements align kare                   |
+| `inline-flex`        | `display: inline-flex;`        | Flexbox jivu, pan inline level par                                  |
+| `grid`               | `display: grid;`               | Grid layout — rows ane columns banava mate                          |
+| `inline-grid`        | `display: inline-grid;`        | Grid jivu pan inline level par                                      |
+| `contents`           | `display: contents;`           | Element remove thay layout ma, pan children visible rahe            |
+| `table`              | `display: table;`              | Element ne table jivu behave karave                                 |
+| `inline-table`       | `display: inline-table;`       | Inline version of table                                             |
+| `table-caption`      | `display: table-caption;`      | Table caption add kare (like `<caption>`)                           |
+| `table-cell`         | `display: table-cell;`         | Table cell jivu behave kare (like `<td>`)                           |
+| `table-column`       | `display: table-column;`       | Table ni ek column represent kare                                   |
+| `table-column-group` | `display: table-column-group;` | Group of columns (like `<colgroup>`)                                |
+| `table-footer-group` | `display: table-footer-group;` | Table footer (`<tfoot>`) jivu                                       |
+| `table-header-group` | `display: table-header-group;` | Table header (`<thead>`) jivu                                       |
+| `table-row-group`    | `display: table-row-group;`    | Table row group (`<tbody>`) jivu                                    |
+| `table-row`          | `display: table-row;`          | Table row (`<tr>`) jivu                                             |
+| `list-item`          | `display: list-item;`          | List marker (like `<li>`) show kare                                 |
+| `hidden`             | `display: none;`               | Element hide kare — bilkul invisible                                |
+| `sr-only`            | *(multiple styles)*            | Visually hide kare pan screen reader ma visible (for accessibility) |
+| `not-sr-only`        | *(reverse of sr-only)*         | Sr-only effect hatai de chhe (visible banave chhe)                  |
+
+
+------------------------------- 9. float ------------------------
+
+9. what is float ?
+=> Float ek CSS property che je element ne normal document flow mathi nikaalne side ma (left or right) “float” karave che,
+ane baaki content (like text) uske chaaro taraf wrap thai jaye che.
+
+🧠 Simple meaning in Hinglish:-
+“Float” ek element ne left ya right side ma chipkai de che,
+ane baki text ya elements uske around ghumi ne place thai jaye che.
+
+
+🧭 Float Utilities (Tailwind CSS)
+| 🏷️ **Class** | 💡 **CSS Style**       | 🗣️ **Meaning / Use (Hinglish Explanation)**                                 |
+| ------------- | ---------------------- | ---------------------------------------------------------------------------- |
+| `float-right` | `float: right;`        | Element right side ma chipkai jase, ane bijo content left side ma wrap thase |
+| `float-left`  | `float: left;`         | Element left side ma chipkai jase, ane bijo content right side ma wrap thase |
+| `float-start` | `float: inline-start;` | Text direction pramane start side ma float (LTR ma left, RTL ma right)       |
+| `float-end`   | `float: inline-end;`   | Text direction pramane end side ma float (LTR ma right, RTL ma left)         |
+| `float-none`  | `float: none;`         | Koi float effect nai, normal flow ma j rahe                                  |
+
+
+💡 Real-Life Example — Image with Text Wrapping
+<div class="p-4">
+  <img src="https://via.placeholder.com/100"
+       class="float-left mr-4 mb-2 rounded-lg"
+       alt="Example" />
+  <p>
+    Tailwind CSS makes it easy to float images or boxes left or right
+    and let the text wrap around them beautifully. You can use
+    <code>float-left</code> or <code>float-right</code> depending on
+    where you want your element to appear.
+  </p>
+</div>
+
+
+🖼️ Output (visual idea):
+
+[IMG] Tailwind CSS makes it easy to float images or boxes left or right...
+      and let the text wrap around them beautifully...
+
+
+👉 Image left side ma aavse, ane text uske right side ma wrap thase.
+
+💡 Example 2 — Right Float
+<div class="p-4">
+  <img src="https://via.placeholder.com/100"
+       class="float-right ml-4 mb-2 rounded-lg"
+       alt="Example" />
+  <p>
+    This image is floated to the right using <code>float-right</code>,
+    so the text flows on its left side.
+  </p>
+</div>
+
+
+🖼️ Output:
+
+Tailwind float-right thi text left ma wrap thase ... [IMG]
+
+💡 Example 3 — float-none (Reset)
+<img src="https://via.placeholder.com/100" class="float-left" />
+<img src="https://via.placeholder.com/100" class="float-none" />
+
+
+➡️ float-none no use karso to biji image normal position ma aavse — koi side stick nai thase.
+
+🧩 Real-life Use Case
+1. Blog ma image ne left/right float karva.
+2.Product detail page ma product image ne left/right side ma muki text wrap karvo.
+3. News article layout banavva.
+
+
+------------------------ 10. clear --------------------
+
+10. What is clear?
+=> clear property batave che ke ek element float thayela elements ni side ma javu joye ke nahi.
+Agar koi element pehle float: left ya float: right che, to clear ni madad thi tame navo element niche move kari sako cho.
+
+🧠 meaning:-
+“Clear” ek element ne kahe che ke —
+“Float thayela elements ni side ma nahi javu, niche thi start kar.”
+
+🔧 Syntax:
+clear: left;   /* left side float element niche javu */
+clear: right;  /* right side float element niche javu */
+clear: both;   /* left ane right banne float elements niche javu */
+clear: none;   /* koi effect nahi */
+
+🧩 Example:
+<div class="float-left bg-blue-300 w-32 h-32">Left Box</div>
+<div class="float-right bg-pink-300 w-32 h-32">Right Box</div>
+
+<p class="bg-yellow-200 clear-both p-2">
+  This paragraph appears **below both floated boxes**, because of clear-both.
+</p>
+
+🖼️ Visual Output (Conceptually):
+[Left Box]                  [Right Box]
+           (both floated)
+
+-----------------------------------------
+This paragraph starts below both boxes.
+
+
+👆
+Here, clear-both ensures that the paragraph does not overlap or appear beside the floated boxes —
+it starts below them.
+
+
+Tailwind Classes:-
+| Class         | CSS Output             | Description                            |
+| ------------- | ---------------------- | -------------------------------------- |
+| `clear-left`  | `clear: left;`         | Float-left elements niche javu         |
+| `clear-right` | `clear: right;`        | Float-right elements niche javu        |
+| `clear-both`  | `clear: both;`         | Left & Right float elements niche javu |
+| `clear-none`  | `clear: none;`         | Default — no clearing                  |
+| `clear-start` | `clear: inline-start;` | LTR ma left, RTL ma right              |
+| `clear-end`   | `clear: inline-end;`   | LTR ma right, RTL ma left              |
+
+
+🧱 Real-Life Use:
+✅ Floated images or sidebars niche content start karva
+✅ Layout break karva jya float use thayu hoy
+✅ Footer ne floated elements niche rakhva
+
+
+-------------------------- 11. isolation ------------------------
+
+11. What is isolation?
+=> isolation property decide kare che ke ek element navi stacking context create kare ke nahi.
+👉 Stacking context ek aavi layer system che je browser use kare che elements ne ek bijana upar / niche draw karva (using z-index).
+
+🧠  Explanation:-
+“Isolation” batave che ke —
+“Aa element ne alag layer ma rakho (isolate karo) ke existing layer ma j rahva do.”
+
+🧩 Classes & CSS
+| Tailwind Class   | CSS Output            | Explanation                                                  |
+| ---------------- | --------------------- | ------------------------------------------------------------ |
+| `isolate`        | `isolation: isolate;` | Element ek **navi stacking context** banave che              |
+| `isolation-auto` | `isolation: auto;`    | Default — element parent ni stacking context follow kare che |
+
+
+🎨 Example:
+<div class="relative z-10 bg-blue-200 p-4">
+  Parent Box (z-10)
+  <div class="absolute top-4 left-4 z-50 bg-red-400 p-4 isolation-auto">
+    Child with isolation-auto
+  </div>
+  <div class="absolute top-20 left-4 z-50 bg-green-400 p-4 isolate">
+    Child with isolate
+  </div>
+</div>
+
+🖼️ Visual Concept:-
+=> Without isolate → child z-index = 50 overlaps everything (even outside parent).
+=> With isolate → child z-index = 50 only inside parent context, not outside.
+
+🧱 Real-Life Use Case:
+✅ When you use z-index heavily (tooltips, modals, dropdowns)
+✅ Prevent one component’s z-index from messing with another
+✅ Maintain clean, predictable layering
+
+⚙️ Analogy:-
+=> Think of “stacking context” like a separate layer group in Photoshop or Figma.
+=> isolate → “Create a new group”
+=> isolation-auto → “Use parent’s group”
+
+--------------------------- 11. object-fit -------------------
+
+11. 🖼️ object-fit — kya use thay che?
+=> object-fit define kare che ke ek image/video (ya koi media element) container ma fit kev rite thavu joiye.
+=> When image ni aspect ratio (width:height) container karta different hoy —
+object-fit decide kare che ke image stretch, crop, ya resize thashe.
+🧠 Explanation:-
+=> "Object-fit" kahe che ke "image ne container ma fit karva mate shu logic use karvo."
+
+
+| Tailwind Class      | CSS Output                | Description                                                                          |
+| ------------------- | ------------------------- | ------------------------------------------------------------------------------------ |
+| `object-contain`    | `object-fit: contain;`    | Image **container ma fit** thashe, aspect ratio maintain thashe. Blank space aavshe. |
+| `object-cover`      | `object-fit: cover;`      | Image **container ne cover** karse, extra part **crop** thashe.                      |
+| `object-fill`       | `object-fit: fill;`       | Image **stretch** thashe container ma fit karva (aspect ratio **break** thashe).     |
+| `object-none`       | `object-fit: none;`       | Image **original size ma** rahe, container ma adjust nahi thashe.                    |
+| `object-scale-down` | `object-fit: scale-down;` | Image contain & none vachche — smaller size select kare.                             |
+
+
+🎨 Real-Life Example:
+<div class="grid grid-cols-5 gap-4">
+  <img src="https://picsum.photos/200/300" class="w-32 h-32 object-contain border" alt="Contain">
+  <img src="https://picsum.photos/200/300" class="w-32 h-32 object-cover border" alt="Cover">
+  <img src="https://picsum.photos/200/300" class="w-32 h-32 object-fill border" alt="Fill">
+  <img src="https://picsum.photos/200/300" class="w-32 h-32 object-none border" alt="None">
+  <img src="https://picsum.photos/200/300" class="w-32 h-32 object-scale-down border" alt="Scale Down">
+</div>
+
+🔍 Output samjho:-
+| Class               | Visual Result                              |
+| ------------------- | ------------------------------------------ |
+| `object-contain`    | Full image visible, some empty space       |
+| `object-cover`      | Fills box perfectly, image may crop        |
+| `object-fill`       | Image stretched, shape distorted           |
+| `object-none`       | Original size — overflow visible           |
+| `object-scale-down` | Image shows smaller of `none` or `contain` |
+
+🎬 Real-life Use Case:
+| Scenario                           | Recommended      |
+| ---------------------------------- | ---------------- |
+| Profile picture (square container) | `object-cover`   |
+| Product image gallery              | `object-contain` |
+| Background hero section            | `object-cover`   |
+| Logo display (avoid distortion)    | `object-contain` |
+
+🧠 In short:
+| Class               | Use for                              |
+| ------------------- | ------------------------------------ |
+| `object-cover`      | Full coverage (crop thashe)          |
+| `object-contain`    | Full visibility (blank space aavshe) |
+| `object-fill`       | Stretch karva                        |
+| `object-none`       | Original size                        |
+| `object-scale-down` | Smallest safe fit                    |
+
+
+------------------------- 12. Object-position -----------------------
+
+12. object-position ?
+=> object-position decide kare che ke ek image/video (ya koi replaced element) ne container ni andar kya place karvu.
+Aa mostly object-fit: cover sathe use thay che — jya image crop thay che, to tame decide kari sako ke kya side thi crop karvu.
+
+🧠 Hinglish Explanation:-
+=> “Jya object-fit: cover image ne crop kare che, tya object-position kahe che ke crop kya thi karvu — top, bottom, center, left-right…”
+
+| Tailwind Class        | CSS Property                           |
+| --------------------- | -------------------------------------- |
+| `object-top-left`     | `object-position: top left;`           |
+| `object-top`          | `object-position: top;`                |
+| `object-top-right`    | `object-position: top right;`          |
+| `object-left`         | `object-position: left;`               |
+| `object-center`       | `object-position: center;`             |
+| `object-right`        | `object-position: right;`              |
+| `object-bottom-left`  | `object-position: bottom left;`        |
+| `object-bottom`       | `object-position: bottom;`             |
+| `object-bottom-right` | `object-position: bottom right;`       |
+| `object-[<value>]`    | Custom value (e.g. `object-[25%_75%]`) |
+
+🎨 Real-life Example:
+<div class="grid grid-cols-3 gap-4">
+  <img src="https://picsum.photos/400/300" class="w-40 h-40 object-cover object-top border" alt="Top">
+  <img src="https://picsum.photos/400/300" class="w-40 h-40 object-cover object-center border" alt="Center">
+  <img src="https://picsum.photos/400/300" class="w-40 h-40 object-cover object-bottom border" alt="Bottom">
+</div>
+
+Output :-
+| Class           | Image Behavior                          |
+| --------------- | --------------------------------------- |
+| `object-top`    | Image upar ni side thi crop thay che    |
+| `object-center` | Image center ma perfectly crop thay che |
+| `object-bottom` | Image niche ni side thi crop thay che   |
+
+----------------------------- 12. overflow --------------------
+
+12. overflow — su che?
+=> Jare ek element ni andar no content container karta moto hoy, to browser ne decide karvu pade ke extra content su karvu?
+
+💡 Hinglish Explanation:-
+"Jare div ma content vadhare hoy to scroll ave ke content hide thay ke bahar nikde — ena upar control karva mate overflow use thay che."
+
+| Tailwind Class      | CSS Property          |
+| ------------------- | --------------------- |
+| `overflow-auto`     | `overflow: auto;`     |
+| `overflow-hidden`   | `overflow: hidden;`   |
+| `overflow-clip`     | `overflow: clip;`     |
+| `overflow-visible`  | `overflow: visible;`  |
+| `overflow-scroll`   | `overflow: scroll;`   |
+| `overflow-x-auto`   | `overflow-x: auto;`   |
+| `overflow-y-auto`   | `overflow-y: auto;`   |
+| `overflow-x-hidden` | `overflow-x: hidden;` |
+| `overflow-y-hidden` | `overflow-y: hidden;` |
+| `overflow-x-scroll` | `overflow-x: scroll;` |
+| `overflow-y-scroll` | `overflow-y: scroll;` |
+
+
+🎨 Example 1 — Hidden overflow
+<div class="w-40 h-24 overflow-hidden bg-sky-100 border border-sky-400">
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Integer ac eros non nulla tincidunt luctus.
+  </p>
+</div>
+
+🧾 Output Explanation:-
+1. Container ni height fix che (h-24).
+2. Text vadhare che → but extra content hide thai jashe.
+3. No scrollbar shown.
+
+🎨 Example 2 — Scrollable overflow
+<div class="w-40 h-24 overflow-auto bg-green-100 border border-green-400">
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Integer ac eros non nulla tincidunt luctus.
+  </p>
+</div>
+
+🧾 Output:-
+1. Content vadhare hoy to scrollbar automatically show thashe.
+2. User scroll kari ne baki text joi shake che.
+
+🎨 Example 3 — Visible overflow
+<div class="w-40 h-24 overflow-visible bg-yellow-100 border border-yellow-400">
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Integer ac eros non nulla tincidunt luctus.
+  </p>
+</div>
+
+🧾 Output:-
+1. Extra text container ni bahar nikli jashe — koi clipping or scroll nahi.
+2. Useful for tooltips or shadows that overflow container.
+
+
+🎨 Example 4 — Overflow in one direction
+<div class="w-40 h-24 overflow-x-scroll overflow-y-hidden whitespace-nowrap bg-purple-100 border border-purple-400">
+  <p>
+    This_is_a_very_long_line_without_breaks_so_it_scrolls_horizontally.
+  </p>
+</div>
+
+🧾 Output:-
+1. Only horizontal (X-axis) scrolling allow kare che.
+2. Vertical (Y-axis) overflow hide thai jashe.
+
+--------------------- 13. overscroll-behavior ---------------------------
+
+13.  What is overscroll-behavior?
+=> Jare tame koi scrollable area (div) ma scroll karta karta end sudhi pohncho — to browser ni default action su hoy?
+— e decide kare che overscroll-behavior!
+
+| Tailwind Class         | CSS Property                      |
+| ---------------------- | --------------------------------- |
+| `overscroll-auto`      | `overscroll-behavior: auto;`      |
+| `overscroll-contain`   | `overscroll-behavior: contain;`   |
+| `overscroll-none`      | `overscroll-behavior: none;`      |
+| `overscroll-x-auto`    | `overscroll-behavior-x: auto;`    |
+| `overscroll-x-contain` | `overscroll-behavior-x: contain;` |
+| `overscroll-x-none`    | `overscroll-behavior-x: none;`    |
+| `overscroll-y-auto`    | `overscroll-behavior-y: auto;`    |
+| `overscroll-y-contain` | `overscroll-behavior-y: contain;` |
+| `overscroll-y-none`    | `overscroll-behavior-y: none;`    |
+
+
+🎨 Example 1 — Default Behavior (auto)
+<div class="h-40 w-64 overflow-y-scroll overscroll-auto bg-sky-100 p-3 border border-sky-400">
+  <p>Scroll inside this box... (normal behavior)</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
+  <p>Scroll more...</p>
+</div>
+🧾 Output:-
+=> Jare tame end sudhi scroll karo → page ni scroll pan sathe move thayi shake che.
+=> Mobile par “rubber band” effect dekhay.
+
+🎨 Example 2 — Contain (stop bounce, but allow parent scroll)
+<div class="h-40 w-64 overflow-y-scroll overscroll-contain bg-green-100 p-3 border border-green-400">
+  <p>Scroll inside — no bounce here!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
+  <p>Keep scrolling...</p>
+</div>
+
+🧾 Output:-
+=> Scroll div ni andar limited che — bounce effect nai.
+=> Parent page still scroll thayi shake che.
+
+🎨 Example 3 — None (completely restrict scroll chaining)
+<div class="h-40 w-64 overflow-y-scroll overscroll-none bg-orange-100 p-3 border border-orange-400">
+  <p>Scroll inside — fully independent!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
+  <p>Keep scrolling...</p>
+</div>
+🧾 Output:-
+=> No bounce, no scroll chaining, no pull-to-refresh.
+=> Useful for modals, side panels, popups, etc.
+
+-------------------- 14. position ------------------------
+
+14. What is position in CSS?
+👉 position property decide kare che ke element page ma kya ane kai logic thi place thashe.
+
+
+| Tailwind Class | CSS Property          |
+| -------------- | --------------------- |
+| `static`       | `position: static;`   |
+| `fixed`        | `position: fixed;`    |
+| `absolute`     | `position: absolute;` |
+| `relative`     | `position: relative;` |
+| `sticky`       | `position: sticky;`   |
+
+🎯 1. static (Default Position)
+=> By default, badha elements static hoy che.
+
+<div class="static bg-sky-200 p-4">
+  I am static (normal flow ma)
+</div>
+🧾 Output:-
+=> Element normal flow ma che.
+=> top, left, bottom, right — properties kam nai kare.
+
+🎯 2. relative
+=> Element ne slightly move karva mate — bina document flow todya.
+
+<div class="relative top-4 left-6 bg-green-200 p-4">
+  I am relative (shifted 4px down, 6px right)
+</div>
+🧾 Output:-
+=> Original jagya reserved rahe che.
+=> Move thayi ne offset position ma jaye che.
+=> 📘 Mostly used as parent for absolute positioned child elements.
+
+🎯 3. absolute
+=> Element ne normal flow mathi hataavi ne place kare che —
+nearest relative, absolute, fixed, or sticky parent ni andar.
+
+<div class="relative bg-gray-200 h-40">
+  <div class="absolute bottom-0 right-0 bg-blue-400 p-2">
+    I am absolute (bottom-right corner)
+  </div>
+</div>
+🧾 Output:-
+=> Child div parent ni niche-right side ma fix thayi gayu.
+=> Parent relative hovu jaruri che position reference mate.
+
+🎯 4. fixed
+=> Element viewport ni sathesathe fix thayi jaye che — scroll karo to pan same jagya ma rahe.
+
+<div class="fixed top-0 left-0 w-full bg-red-500 text-white p-3">
+  Fixed Header (stays even when scrolling)
+</div>
+🧾 Output:-
+=> Header top ma stick rahe che.
+=> Page scroll karo to pan header same jagya ma.
+=> 📱 Used for: Navbars, floating buttons, sticky ads, etc.
+
+🎯 5. sticky
+=> Element scroll ma normal behave kare che,
+=> pan jare threshold cross kare to sticky thai jaye (like pinned header).
+
+<div class="h-64 overflow-y-scroll bg-gray-100">
+  <h2 class="sticky top-0 bg-yellow-300 p-2">Sticky Header</h2>
+  <p>Scroll content... Lorem ipsum...</p>
+  <p>More content...</p>
+  <p>Keep scrolling...</p>
+</div>
+🧾 Output:-
+=> h2 initially scroll sathesathe move kare che.
+=> Jare top pohnche, e stop thai ne sticky thai jaye.
+=> 📘 Used in: Table headers, section titles, etc.
+
+-------------------------- 15. visibility ------------------------
+
+15. What is Visibility in Tailwind CSS?
+➡️ visibility property decide kare che ke element dekhay che ke nahi,
+but important point — element layout ma jagya occupy kare che ke nahi te display thi alag che.
+
+| Class       | CSS                     | Description                                                          |
+| ----------- | ----------------------- | -------------------------------------------------------------------- |
+| `visible`   | `visibility: visible;`  | Element **visible** chhe                                             |
+| `invisible` | `visibility: hidden;`   | Element **hide** chhe but **space occupy** kare che                  |
+| `collapse`  | `visibility: collapse;` | Mainly table elements ma use thay che — row/column collapse kare che |
+
+🎯 Example 1: visible / invisible
+<div class="flex gap-4">
+  <div class="bg-blue-500 text-white p-4">Visible Box</div>
+  <div class="bg-red-500 text-white p-4 invisible">Invisible Box</div>
+  <div class="bg-green-500 text-white p-4">Another Box</div>
+</div>
+🧾 Output:-
+=> Blue and Green boxes dekhay chhe
+Red box dekhay nahi (because invisible),
+but je jagya te occupy kare chhe, te still reserved rahe che (space khali dekhaay).
+
+🎯 Example 2: Difference between invisible and hidden
+<div class="flex gap-4">
+  <div class="bg-yellow-400 p-4">1</div>
+  <div class="bg-orange-500 p-4 invisible">2 (invisible)</div>
+  <div class="bg-green-500 p-4">3</div>
+</div>
+🔹 invisible → element hide che but space chhodi didhi
+🔹 hidden (display: none) → element totally remove thai jaye from layout
+
+🎯 Example 3: collapse (table use case)
+<table class="border w-full text-center">
+  <tr class="border">
+    <td class="p-2">Row 1</td>
+  </tr>
+  <tr class="border collapse">
+    <td class="p-2 bg-red-200">Row 2 (Collapsed)</td>
+  </tr>
+  <tr class="border">
+    <td class="p-2">Row 3</td>
+  </tr>
+</table>
+
+
+🧾 Output:-
+=> Row 2 collapse thai gayu (completely hidden — no height, no space).
+=> collapse majorly table rows/columns ma effective hoy che.
+
+💡 Real-Life Use Case
+✅ Temporarily hide element without disturbing layout:
+
+<p class="invisible">Loading...</p>
+
+(so space fixed rahe UI ma — koi flickering na thay)
+
+✅ Show on hover:-
+<div class="relative group">
+  <button class="bg-blue-500 text-white p-2">Hover Me</button>
+  <div class="absolute top-full mt-2 p-2 bg-gray-700 text-white invisible group-hover:visible">
+    Tooltip text
+  </div>
+</div>
+🧾 Output:-
+=> Tooltip hide rahe che by default.
+=> On hover, visible thai jaye.
+
+-------------------------- 16. z-index -------------------
+
+16. What is z-index in Tailwind CSS?
+➡️ z-index property control kare che ke element stack order ma upar che ke niche.
+Matlab — koi elements overlap thai (ek bijani upar aave), to z-index decide kare ke kayo element visible
+
+| Class                  | CSS                          | Description            |
+| ---------------------- | ---------------------------- | ---------------------- |
+| `z-auto`               | `z-index: auto;`             | Default stacking order |
+| `z-0`                  | `z-index: 0;`                | Base level             |
+| `z-10`                 | `z-index: 10;`               | Higher than 0          |
+| `z-20`                 | `z-index: 20;`               | Higher than 10         |
+| `z-30`, `z-40`, `z-50` | `z-index: 30`, `40`, `50`    | Even higher            |
+| `z-[9999]`             | `z-index: 9999;`             | Custom value           |
+| `z-[var(--layer-top)]` | `z-index: var(--layer-top);` | Using CSS variable     |
+
+
+🎨 Example 1: Basic z-index
+<div class="relative w-64 h-64 bg-gray-200">
+  <div class="absolute top-8 left-8 w-32 h-32 bg-blue-500 z-10">Box 1 (z-10)</div>
+  <div class="absolute top-16 left-16 w-32 h-32 bg-red-500 z-20">Box 2 (z-20)</div>
+  <div class="absolute top-24 left-24 w-32 h-32 bg-green-500 z-30">Box 3 (z-30)</div>
+</div>
+🧾 Output Visualization:-
+1. Green box (z-30) → sabse upar
+2. Red box (z-20) → beech me
+3.Blue box (z-10) → sabse niche
+
+🎯 Example 2: Negative z-index
+<div class="relative w-64 h-64 bg-gray-300">
+  <div class="absolute inset-0 bg-blue-400 z-0">z-0</div>
+  <div class="absolute inset-8 bg-red-400 z-[-1]">z-[-1]</div>
+</div>
+🧾 Output:-
+1. Red box z-[-1] hoy etle gray background ni niche chali jay.
+2. Blue box z-0 par rahe che.
+
+💡 Real-Life Example: Modal / Popup
+<div class="relative">
+  <!-- Page content -->
+  <div class="p-4 bg-gray-100">Main content here...</div>
+
+  <!-- Modal overlay -->
+  <div class="absolute inset-0 bg-black/50 z-20"></div>
+
+  <!-- Modal box -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+              bg-white p-6 rounded-lg z-30">
+    Modal content here
+  </div>
+</div>
+🧾 Output:-
+1. z-20 → semi-transparent black overlay
+2. z-30 → white modal box on top of overlay
+
+----------------------------------------- 7. Flexbox & Grid --------------------------
+
+------------------------------- 1. flex-basis --------------------------
+
+1. What is flex-basis?
+➡️ flex-basis batave che ke flex-item ni initial (starting) size shu hovi joiye —
+yaani, jab browser flex layout calculate kare, tab item kitna space occupy kare pehle.
+
+🎯 Short ma:-
+flex-basis = “Flex-item kitni jagya le shuruat ma.”
+
+| Class           | CSS                              | Meaning                                    |
+| --------------- | -------------------------------- | ------------------------------------------ |
+| `basis-auto`    | `flex-basis: auto;`              | Size based on content or width             |
+| `basis-full`    | `flex-basis: 100%;`              | Full width of container                    |
+| `basis-1/2`     | `flex-basis: 50%;`               | Half of parent                             |
+| `basis-1/3`     | `flex-basis: 33.333%;`           | One-third                                  |
+| `basis-1/4`     | `flex-basis: 25%;`               | One-fourth                                 |
+| `basis-0`       | `flex-basis: 0;`                 | No initial width (useful with `flex-grow`) |
+| `basis-[200px]` | `flex-basis: 200px;`             | Custom width                               |
+| `basis-md`      | `flex-basis: 28rem; /* 448px */` | Fixed container size                       |
+| `basis-2xl`     | `flex-basis: 42rem; /* 672px */` | Larger container size                      |
+
+
+🎨 Example 1: Basic Flex Basis
+<div class="flex gap-4 bg-gray-100 p-4">
+  <div class="basis-1/4 bg-blue-400 p-2 text-center">1/4</div>
+  <div class="basis-1/2 bg-red-400 p-2 text-center">1/2</div>
+  <div class="basis-1/4 bg-green-400 p-2 text-center">1/4</div>
+</div>
+🧾 Output:-
+1. Blue box = 25% width
+2. Red box = 50% width
+3. Green box = 25% width
+Total 100% parent width — neatly divided!
+
+🎨 Example 2: Fixed Size with basis-[value]
+<div class="flex gap-4 bg-gray-200 p-4">
+  <div class="basis-[150px] bg-pink-400 p-2 text-center">150px</div>
+  <div class="basis-[300px] bg-yellow-400 p-2 text-center">300px</div>
+  <div class="flex-1 bg-blue-400 p-2 text-center">Flexible</div>
+</div>
+🧾 Output:-
+1. First box = 150px
+2. Second box = 300px
+3. Third box = baki jagya (flex-grow)
+
+💡 Example 3: With basis-0 and flex-grow
+<div class="flex bg-gray-100">
+  <div class="basis-0 flex-grow bg-red-400 p-4 text-center">Grow 1</div>
+  <div class="basis-0 flex-grow bg-blue-400 p-4 text-center">Grow 2</div>
+  <div class="basis-0 flex-grow bg-green-400 p-4 text-center">Grow 3</div>
+</div>
+🧾 Output:-
+1. Sab boxes equal width lenge
+2. Because basis-0 se start hota hai aur sab grow karte hai equally
+
+✅ Pro Tip:
+flex-basis + flex-grow + flex-shrink milke element ka total flex size control kare che.
+
+-------------------------------- 2. flex-direction -------------------------
+
+2. What is flex-direction?
+=> flex-direction batave che ke flex container ni andar na items kya direction ma arrange thashe.
+Matlab — elements row (horizontal) ma hase ke column (vertical) ma.
+
+🎯 Simple words ma:-
+"Flex-direction decides items line-up kem thashe — left to right ke top to bottom."
+
+| Class              | CSS                               | Meaning            |
+| ------------------ | --------------------------------- | ------------------ |
+| `flex-row`         | `flex-direction: row;`            | Items left → right |
+| `flex-row-reverse` | `flex-direction: row-reverse;`    | Items right → left |
+| `flex-col`         | `flex-direction: column;`         | Items top → bottom |
+| `flex-col-reverse` | `flex-direction: column-reverse;` | Items bottom → top |
+
+
+🎨 Example 1: flex-row (default)
+<div class="flex flex-row gap-4 bg-gray-100 p-4">
+  <div class="bg-red-400 p-4">1</div>
+  <div class="bg-blue-400 p-4">2</div>
+  <div class="bg-green-400 p-4">3</div>
+</div>
+🧾 Output:
+➡️ Items arranged left to right
+🟥 🟦 🟩
+
+🎨 Example 2: flex-row-reverse
+<div class="flex flex-row-reverse gap-4 bg-gray-100 p-4">
+  <div class="bg-red-400 p-4">1</div>
+  <div class="bg-blue-400 p-4">2</div>
+  <div class="bg-green-400 p-4">3</div>
+</div>
+🧾 Output:
+⬅️ Items arranged right to left
+🟩 🟦 🟥
+
+🎨 Example 3: flex-col
+<div class="flex flex-col gap-4 bg-gray-100 p-4 h-40">
+  <div class="bg-red-400 p-4">1</div>
+  <div class="bg-blue-400 p-4">2</div>
+  <div class="bg-green-400 p-4">3</div>
+</div>
+🧾 Output:
+⬆️ Items arranged top to bottom
+1
+2
+3
+
+🎨 Example 4: flex-col-reverse
+<div class="flex flex-col-reverse gap-4 bg-gray-100 p-4 h-40">
+  <div class="bg-red-400 p-4">1</div>
+  <div class="bg-blue-400 p-4">2</div>
+  <div class="bg-green-400 p-4">3</div>
+</div>
+🧾 Output:
+⬇️ Items arranged bottom to top
+3
+2
+1
+
+📚 Quick Summary
+| Class              | Layout Direction          | Example Use                      |
+| ------------------ | ------------------------- | -------------------------------- |
+| `flex-row`         | Horizontal (left → right) | Default navbar layout            |
+| `flex-row-reverse` | Horizontal (right → left) | Right-aligned nav                |
+| `flex-col`         | Vertical (top → bottom)   | Sidebar / mobile layout          |
+| `flex-col-reverse` | Vertical (bottom → top)   | Chat messages (latest at bottom) |
+
+
+💡 Real-life Example:-
+1. Navbar → use flex-row
+2. Sidebar or form → use flex-col
+3. Chat app (latest msg bottom) → use flex-col-reverse
+
+--------------------------- 3. flex-wrap -------------------------
+
+3. What is flex-wrap?
+=> By default, flex container ma saare items ek hi line ma fit thay che —
+even agar space kam hoy, toh bhi squeeze thay jaay.
+=> flex-wrap ni madad thi apde control kariye ke items ek line ma j raheshe ke next line ma wrap thashe.
+
+🎯 Simple words ma:-
+"Flex-wrap batave che ke flex items ek line ma j raheshe ke neeche next line ma jase."
+
+| Class               | CSS                        | Description                                                  |
+| ------------------- | -------------------------- | ------------------------------------------------------------ |
+| `flex-nowrap`       | `flex-wrap: nowrap;`       | All items stay in one line (default)                         |
+| `flex-wrap`         | `flex-wrap: wrap;`         | Items move to next line if space kam hoy                     |
+| `flex-wrap-reverse` | `flex-wrap: wrap-reverse;` | Items wrap to next line but in reverse order (bottom to top) |
+
+
+🎨 Example 1: flex-nowrap (Default)
+<div class="flex flex-nowrap gap-2 bg-gray-100 p-2">
+  <div class="bg-red-400 p-4 w-40">1</div>
+  <div class="bg-blue-400 p-4 w-40">2</div>
+  <div class="bg-green-400 p-4 w-40">3</div>
+  <div class="bg-yellow-400 p-4 w-40">4</div>
+</div>
+🧾 Output:
+👉 All boxes ek hi line ma aavse
+(bhale container chhoto hoy, boxes shrink thay jase)
+🟥 🟦 🟩 🟨
+
+🎨 Example 2: flex-wrap
+<div class="flex flex-wrap gap-2 bg-gray-100 p-2 w-64">
+  <div class="bg-red-400 p-4 w-28">1</div>
+  <div class="bg-blue-400 p-4 w-28">2</div>
+  <div class="bg-green-400 p-4 w-28">3</div>
+  <div class="bg-yellow-400 p-4 w-28">4</div>
+</div>
+🧾 Output:
+👉 Items wrap thayi jaay jase next line ma
+1  2
+3  4
+
+🎨 Example 3: flex-wrap-reverse
+<div class="flex flex-wrap-reverse gap-2 bg-gray-100 p-2 w-64 h-32">
+  <div class="bg-red-400 p-4 w-28">1</div>
+  <div class="bg-blue-400 p-4 w-28">2</div>
+  <div class="bg-green-400 p-4 w-28">3</div>
+  <div class="bg-yellow-400 p-4 w-28">4</div>
+</div>
+🧾 Output:
+👉 Items wrap thashe, but reverse direction (bottom to top) ma
+3  4
+1  2
+
+📚 Quick Summary
+| Class               | Behavior                  | Use Case                   |
+| ------------------- | ------------------------- | -------------------------- |
+| `flex-nowrap`       | All items stay in one row | Navbars, toolbars          |
+| `flex-wrap`         | Items move to next line   | Responsive grids           |
+| `flex-wrap-reverse` | Items wrap bottom → top   | Rare layouts, creative UIs |
+
+💡 Real-life Example:
+1. Product cards grid → flex-wrap
+2. Navbar with icons → flex-nowrap
+3. Reverse scroll chat design → flex-wrap-reverse
+
+---------------------------- 4. flex -----------------------
+
+4. what is flex ?
+=> flex property ek short form che for:
+flex: <flex-grow> <flex-shrink> <flex-basis>;
+
+→ It defines how a flex item will grow or shrink inside its flex container.
+
+Simple words ma:-
+"flex batave che ek item ketlu space le, shrink thay ke grow thay baki items ni tulna ma."
+
+| Class          | CSS                     | Description                                 |
+| -------------- | ----------------------- | ------------------------------------------- |
+| `flex-1`       | `flex: 1 1 0%;`         | Item grow ane shrink both kare equally      |
+| `flex-auto`    | `flex: 1 1 auto;`       | Item grows/shrinks based on content size    |
+| `flex-initial` | `flex: 0 1 auto;`       | Item shrinks but doesn’t grow               |
+| `flex-none`    | `flex: none;`           | Item neither grows nor shrinks — fixed size |
+| `flex-[value]` | `flex: <custom value>;` | Custom behavior (for advanced use)          |
+
+
+🎨 Example 1: flex-1
+<div class="flex gap-2 bg-gray-200 p-2">
+  <div class="bg-red-400 flex-1 p-4">1</div>
+  <div class="bg-blue-400 flex-1 p-4">2</div>
+  <div class="bg-green-400 flex-1 p-4">3</div>
+</div>
+🧾 Output:
+👉 Each box same width le che —
+Perfect equal distribution.
+🟥🟦🟩 (Equal width)
+
+🎨 Example 2: flex-auto
+<div class="flex gap-2 bg-gray-200 p-2">
+  <div class="bg-red-400 flex-auto p-4">Short</div>
+  <div class="bg-blue-400 flex-auto p-4">This is a long text</div>
+  <div class="bg-green-400 flex-auto p-4">Medium text</div>
+</div>
+🧾 Output:
+👉 Width adjusts automatically based on content.
+(blue box vadhu lambo hashe)
+
+🎨 Example 3: flex-initial
+<div class="flex gap-2 bg-gray-200 p-2">
+  <div class="bg-red-400 flex-initial p-4 w-32">1</div>
+  <div class="bg-blue-400 flex-initial p-4 w-64">2</div>
+  <div class="bg-green-400 flex-initial p-4 w-24">3</div>
+</div>
+🧾 Output:
+👉 Each box ni size fixed chhe (based on width class).
+They can shrink if needed but won’t grow.
+
+🎨 Example 4: flex-none
+<div class="flex gap-2 bg-gray-200 p-2">
+  <div class="bg-red-400 flex-none w-40 p-4">Fixed 1</div>
+  <div class="bg-blue-400 flex-none w-40 p-4">Fixed 2</div>
+  <div class="bg-green-400 flex-1 p-4">Flexible 3</div>
+</div>
+🧾 Output:
+👉 Red & Blue boxes fixed width ma chhe,
+Green box baki space fill kare che.
+
+📚 Quick Summary Table
+| Class          | Grows? | Shrinks? | Size Basis | Use Case                       |
+| -------------- | ------ | -------- | ---------- | ------------------------------ |
+| `flex-1`       | ✅ Yes  | ✅ Yes    | 0%         | Equal columns                  |
+| `flex-auto`    | ✅ Yes  | ✅ Yes    | auto       | Responsive content width       |
+| `flex-initial` | ❌ No   | ✅ Yes    | auto       | Fixed base size but can shrink |
+| `flex-none`    | ❌ No   | ❌ No     | fixed      | Always same size               |
+
+💡 Real-life examples:
+1. Responsive cards → flex-1
+2. Navbar items with logo fixed → flex-none for logo, flex-1 for links
+3. Content boxes that grow dynamically → flex-auto
+
+
+------------------------------- 5. flex-grow ----------------------------
+
+5. what is flex-grow
+=> flex-grow batave che ke —
+ek flex item container ni baki bachi gayeli space ma thi ketlu space le te.
+
+Short ma:
+👉 “Item ketlu grow thay container ma.”
+Default value = 0 (means grow nai thay)
+
+| Class                  | CSS                         | Meaning                     |
+| ---------------------- | --------------------------- | --------------------------- |
+| `grow`                 | `flex-grow: 1;`             | Element grow kari shake che |
+| `grow-0`               | `flex-grow: 0;`             | Element grow nai thay       |
+| `grow-[2]`, `grow-[3]` | `flex-grow: 2;`, etc.       | Custom growth factor        |
+| `grow-(--my-var)`      | `flex-grow: var(--my-var);` | Use custom CSS variable     |
+
+
+🎨 Example 1: Basic grow
+<div class="flex bg-gray-200 p-2">
+  <div class="bg-red-400 p-4 grow">1</div>
+  <div class="bg-blue-400 p-4">2</div>
+</div>
+
+🧾 Output:
+Red box (grow) bachi gayeli space fill kare che.
+Blue box content jitlu space le che.
+So red box → stretches to fill the container. 🔴⬜
+
+🎨 Example 2: grow-0
+<div class="flex bg-gray-200 p-2">
+  <div class="bg-red-400 p-4 grow">Grow</div>
+  <div class="bg-blue-400 p-4 grow-0">No Grow</div>
+</div>
+
+🧾 Output:
+Red box expand thay che.
+Blue box fixed chhe (content jitlu).
+
+🎨 Example 3: Multiple grow factors
+<div class="flex bg-gray-200 p-2">
+  <div class="bg-red-400 p-4 grow-[1]">1x</div>
+  <div class="bg-blue-400 p-4 grow-[2]">2x</div>
+  <div class="bg-green-400 p-4 grow-[3]">3x</div>
+</div>
+
+🧾 Output:
+👉 Container ma je space bache che,
+Red → 1 part
+Blue → 2 parts
+Green → 3 parts
+(total 6 parts ma divide thay)
+So green box sabse vadhare space le che ✅
+
+
+🧩 Real-life use cases
+| Use Case                 | Example                                          |
+| ------------------------ | ------------------------------------------------ |
+| Sidebar + Content Layout | Sidebar `grow-0`, Content `grow`                 |
+| Equal width boxes        | All boxes `grow`                                 |
+| Proportional layout      | `grow-[2]`, `grow-[1]` etc. for weighted columns |
+
+
+-------------------------- 6. flex-shrink ---------------------------
+
+6. What is flex-shrink?
+flex-shrink batave che ke —
+ek flex item container ma jagya ochhi hoy to ketlo shrink (chhoto) thay sakhe.
+
+Default value = 1 (means item shrink thashe if needed).
+0 value → item kabhi shrink nai thashe, even if space kam hoy.
+
+| Class                      | CSS                           | Meaning                   |
+| -------------------------- | ----------------------------- | ------------------------- |
+| `shrink`                   | `flex-shrink: 1;`             | Element shrink kari shake |
+| `shrink-0`                 | `flex-shrink: 0;`             | Element shrink nai thay   |
+| `shrink-[2]`, `shrink-[3]` | `flex-shrink: 2;`, etc.       | Custom shrink factor      |
+| `shrink-(--my-var)`        | `flex-shrink: var(--my-var);` | Custom variable           |
+
+
+🎨 Example 1: Normal shrink (default behavior)
+<div class="flex w-40 bg-gray-200 p-2">
+  <div class="bg-red-400 p-4">One</div>
+  <div class="bg-blue-400 p-4">Two</div>
+  <div class="bg-green-400 p-4">Three</div>
+</div>
+
+🧾 Output:
+All 3 boxes shrink equally because flex-shrink: 1 by default.
+They’ll compress to fit inside w-40 container.
+
+🎨 Example 2: shrink-0 (no shrinking)
+<div class="flex w-40 bg-gray-200 p-2">
+  <div class="bg-red-400 p-4 shrink-0">No Shrink</div>
+  <div class="bg-blue-400 p-4">Shrink</div>
+</div>
+
+🧾 Output:
+Red box fixed size rahe che.
+Blue box adjust thayi ne chhoti thai jase.
+So red box → stable
+Blue box → compressed
+
+🎨 Example 3: Different shrink factors
+<div class="flex w-40 bg-gray-200 p-2">
+  <div class="bg-red-400 p-4 shrink-[1]">Shrink 1</div>
+  <div class="bg-blue-400 p-4 shrink-[3]">Shrink 3</div>
+</div>
+
+🧾 Output:
+Blue box 3x vadhu shrink thashe compared to red box.
+So, red stays larger, blue becomes smaller when space is tight.
+
+🧩 Real-life use cases
+| Use Case                     | Example                                   |
+| ---------------------------- | ----------------------------------------- |
+| Prevent image from shrinking | `<img class="shrink-0" />`                |
+| Fix sidebar width            | Sidebar `shrink-0`, main content `shrink` |
+| Keep buttons readable        | Buttons `shrink-0` to avoid compression   |
+
+
+
+
+
+
+
+
+

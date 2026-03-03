@@ -1,0 +1,5228 @@
+===================================== Node Js Intro ========================
+1. What You'll Learn
+Is tutorial mein tum seekhoge:
+ Node.js install aur run kaise karein – setup se lekar first program tak
+ Core concepts – jaise modules, event loop, aur unka kaam
+ Web servers aur APIs banana – simple se lekar advanced tak
+ Databases aur files ke sath kaam – data read/write aur CRUD operations
+ Node.js apps ko deploy karna – taki tumhare projects live ho sakein
+
+2.What is Node.js?
+=> Node.js ek free aur open-source JavaScript runtime hai jo Windows, Mac, Linux aur dusre OS pe chal sakta hai.
+Normally JavaScript sirf browser ke andar chalti hai, lekin Node.js ke through tum JavaScript ko browser ke bahar bhi run kar sakte ho – matlab server-side development bhi JS se possible hai.
+Yeh Chrome ke V8 JavaScript engine pe based hai, jo super fast hai. Isi wajah se Node.js ko use karke tum scalable aur efficient network applications bana sakte ho. 🚀
+
+
+3. Why Node.js?
+=> Node.js ka sabse bada superpower yeh hai ki yeh ek saath bohot saare connections handle kar sakta hai without slowing down. Matlab agar ek request complete hone ka wait kar raha hai, toh dusra process rukta nahi hai.
+Is wajah se Node.js perfect hai:-
+ Real-time apps – jaise chats, gaming servers, collaboration tools (Google Docs type)
+ APIs aur microservices – fast aur lightweight backend banane ke liye
+ Data streaming apps – jaise video/audio streaming
+ Command-line tools – custom tools aur automation scripts
+ Server-side web apps – dynamic websites aur dashboards
+⚡ Node.js ki non-blocking, event-driven architecture usse I/O-heavy workloads (jaise database queries, file handling, APIs calls) ke liye super efficient banati hai.
+
+4. Asynchronous Programming
+=> Node.js asynchronous (non-blocking) programming use karta hai.
+Iska matlab yeh hai ki jab tak ek task complete ho raha hai (jaise file read karna ya database se baat karna), tab tak Node.js rukta nahi hai. Balki wo baaki kaam continue karta rehta hai.
+
+👉 Example socho:
+Tum ek restaurant mein waiter ho. Agar ek customer ka order ready hone mein time lag raha hai, toh waiter sirf wait nahi karega — wo dusre tables pe bhi orders lega. Jab pehla order ready hoga, toh waiter usko serve kar dega.
+
+Isi tarah Node.js bhi ek time pe multiple tasks handle karta hai, bina delay ke.
+Is wajah se yeh fast aur efficient hai, specially jab heavy I/O (input/output) work hota hai. 🚀
+
+Example: Read a File Asynchronously
+// Load the filesystem module
+const fs = require('fs');
+
+// Read file asynchronously
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading file: ' + err);
+    return;
+  }
+  console.log('File content: ' + data);
+});
+
+console.log('Reading file... (this runs first!)');
+
+5. What Can Node.js Do?
+=> Node.js se tum bohot saari powerful cheezein bana sakte ho, jaise:
+Web Servers → fast aur scalable network apps banane ke liye
+File Operations → server pe files read, write aur manage karne ke liye
+Database Interaction → databases (MongoDB, MySQL, PostgreSQL etc.) ke sath kaam karne ke liye
+APIs → RESTful services aur GraphQL APIs banane ke liye
+Real-time Apps → WebSockets use karke chats, notifications, live updates
+CLI Tools → apne custom command-line tools banane ke liye
+
+Example: Simple Web Server
+const http = require('http');
+
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello World!');
+}).listen(8080);
+
+console.log("Server http://localhost:8080 pe run ho raha hai 🚀");
+👉 Ab agar tum browser mein http://localhost:8080 open karoge, toh tumhe "Hello World!" dikhega.
+
+6. What is a Node.js File?
+=> Node.js file basically ek JavaScript file (.js extension) hoti hai jo server pe run hoti hai. Ye file tumhare server ke liye code contain karti hai.
+Kuch important points:
+Ye .js extension ke sath banti hai (jaise app.js, server.js)
+Isko tum node command ke sath run karte ho → node app.js
+Node.js file me likha code tab execute hota hai jab koi event trigger hota hai (for example: web request aana)
+Ye normal JavaScript syntax use karti hai, lekin browser ke bajaye server-side environment me run hoti hai
+
+Example: Running a Node.js File
+Agar tumhare paas ek file app.js hai, to usse run karne ka simple tareeka hai:
+node app.js
+Aur bas! 🚀 Tumhara Node.js server ya script ab chal raha hoga.
+
+================================= Node.js JavaScript Requirements ======================== 
+
+7. 📌 JavaScript Fundamentals (Before Node.js)
+=> Node.js start karne se pehle in concepts ko samajh lo:
+Variables → data store karne ke liye
+Functions → repeat hone wale kaam ko ek jagah likhne ke liye
+Objects → key-value pairs me data organize karne ke liye
+Arrays → list/collection handle karne ke liye
+Asynchronous programming → callbacks, promises, async/await
+ES6+ features → modern JS (arrow functions, let/const, template literals, destructuring, etc.)
+
+============================== Node.js vs Browser ==========================
+
+8. Node.js vs Browser
+=> Node.js aur browsers dono JavaScript run karte hain, lekin unke environment aur capabilities alag hain.
+🔹 Key Differences
+Feature	                                Node.js	                          Browser
+Purpose	                         Server-side development       Client-side (UI)
+APIs	                  File system,networking, OS, etc.     DOM, fetch, UI APIs
+Global Object	                       global	               window ya self
+Modules	           CommonJS (require) + ES Modules (import)    ES Modules (import) ya <script> tags
+Security	      Full access to file system & network     Sandbox, limited access
+Event Loop	        Event loop + timers, process, I/O      Event loop for UI & async tasks
+Environment Variables	      process.env available	       Not accessible
+Package Management	            npm / yarn	               CDNs, bundlers (Webpack, Vite)
+
+Examples:- 
+
+Global ObjectsGet your own Node.js Server
+// Node.js
+global.mylet = 42;
+console.log(global.mylet); // 42
+// Browser
+window.mylet = 42;
+console.log(window.mylet); // 42
+
+File Access
+// Node.js
+const fs = require('fs');
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+// Browser
+// Not allowed for security reasons
+
+HTTP Requests
+// Node.js
+const https = require('https');
+https.get('https://example.com', res => {
+  let data = '';
+  res.on('data', chunk => data += chunk);
+  res.on('end', () => console.log(data));
+});
+// Browser
+fetch('https://example.com')
+  .then(response => response.text())
+  .then(console.log);
+Modules
+// Node.js (CommonJS)
+const fs = require('fs');
+// Node.js & Browser (ES Modules)
+// import fs from 'fs'; // Node.js only, not browser
+// import _ from 'https://cdn.jsdelivr.net/npm/lodash-es/lodash.js'; // Browser
+
+9. Node.js Command Line Usage
+=> Node.js ek powerful command line interface (CLI) provide karta hai jo tumhe ye sab karne deta hai:
+JavaScript files run karna → node filename.js
+Packages manage karna → npm ya yarn ke through
+Applications debug karna → errors trace karne aur troubleshoot karne ke liye
+Aur bhi bohot saari advanced tasks
+
+🔹 Why CLI is Important?
+=> CLI se tum fast aur efficient workflow bana sakte ho. Node.js developers ke liye ye essential tool hai, specially jab tum server-side code likh rahe ho ya packages install kar rahe ho.
+
+=================================== Node.js Command Line Usage ======================
+
+🟢 Basic Node.js Commands
+1️. Run a JavaScript File
+# Normal run
+node app.js
+
+# Run with arguments
+node app.js arg1 arg2
+
+# Watch mode (auto-restart on file change)
+node --watch app.js
+
+2️. Using the REPL (Interactive Shell)
+=> Start REPL by running:
+node
+Then try:
+> const name = 'Node.js';
+> console.log(`Hello, ${name}!`);
+> .help   // List available commands
+> .exit   // Exit REPL
+
+3️. Command Line Arguments
+=> Access arguments via process.argv:
+// args.js
+console.log('All arguments:', process.argv);
+console.log('First argument:', process.argv[2]);
+console.log('Second argument:', process.argv[3]);
+// Run:
+// node args.js hello world
+
+4️. Environment Variables
+// env.js
+console.log('Environment:', process.env.NODE_ENV || 'development');
+console.log('Custom variable:', process.env.MY_VARIABLE);
+
+// Run with env variables
+NODE_ENV=production MY_VARIABLE=test node env.js
+
+5. Debugging Node.js Apps
+# Start inspector
+node --inspect app.js
+# Break on first line
+node --inspect-brk app.js
+# Custom port
+node --inspect=9222 app.js
+Then open Chrome → chrome://inspect → "Open dedicated DevTools for Node"
+
+
+6️. Common CLI Tools
+=> Node Version Manager (nvm)
+nvm install 18.16.0
+nvm use 18.16.0
+nvm ls
+
+npm (Node Package Manager)
+npm init     # Init project
+npm install  # Install dependencies
+npm update   # Update packages
+npm audit    # Check vulnerabilities
+
+7. Useful CLI Flags
+# Version info
+node --version  # or -v
+node --v8-options
+# Help
+node --help
+# Syntax check
+node --check app.js
+# Stack traces for warnings
+node --trace-warnings app.js
+# Max memory
+node --max-old-space-size=4096 app.js
+# Preload module
+node --require dotenv/config app.js
+
+8️. Performance & Experimental Features
+node --experimental-modules app.mjs
+node --experimental-repl-await
+node --experimental-worker
+✨ Tip: Ye commands tumhare daily Node.js workflow ka core hai. Agar ye samajh gaye, to Node.js me kaafi fast work kar paoge.
+
+===================================== Node.js V8 Engine =================================
+🔹 What is the V8 Engine?
+=> V8 Google ka open-source JavaScript engine hai, jo Chrome aur Node.js dono me use hota hai.
+Ye JavaScript ko native machine code me convert karta hai, isliye code super fast run hota hai.
+
+Quick facts:
+Origin: Google ne 2008 me Chrome ke liye banaya
+Node.js Integration: Node.js V8 ko use karke server-side JS run karta hai
+Features: Just-In-Time (JIT) compilation, efficient garbage collection, ES6+ support
+
+🔹 Why V8 Makes Node.js Fast
+=> Just-In-Time (JIT) Compilation → JS ko optimized machine code me convert karta hai
+Hidden Classes → JS objects ke properties ko fast access karne ke liye optimize karta hai
+Efficient Garbage Collection → Memory leaks rokta hai aur performance optimize karta hai
+Inline Caching → Property access ko fast karta hai by remembering location of object properties
+
+🔹 Examples
+Check V8 version in Node.js:
+console.log(`V8 version: ${process.versions.v8}`);
+
+V8 Memory Usage:
+const v8 = require('v8');
+const heapStats = v8.getHeapStatistics();
+console.log('Heap size limit:', (heapStats.heap_size_limit / 1024 / 1024).toFixed(2), 'MB');
+console.log('Total heap size:', (heapStats.total_heap_size / 1024 / 1024).toFixed(2), 'MB');
+console.log('Used heap size:', (heapStats.used_heap_size / 1024 / 1024).toFixed(2), 'MB');
+
+🔹 Understanding V8's Role in Node.js
+=> V8 provide karta hai core JS execution environment:
+JS code browser ke bahar run karna possible banata hai
+OS features (file system, networking) access karne deta hai
+Chrome ke saath same engine use hota hai, isliye JS behavior consistent rehta hai
+
+🔹 V8 Update Cycle
+=> V8 continuously naye JS features aur performance improvements add karta hai
+Node.js bhi apni releases me naye V8 versions include karta hai
+Matlab tumhe latest JS features aur better performance automatically milta hai
+👉 Simple analogy:
+V8 = Engine, Node.js = Car
+V8 engine jitna fast aur optimized hoga, Node.js utna hi smoothly aur quickly run karega. 🚀
+
+========================= Node.js Architecture ====================
+
+10.What is Node.js Architecture?
+=> Node.js ka architecture single-threaded, event-driven hai, jo bohot saari connections ek saath efficiently handle kar sakta hai without blocking.
+Isliye Node.js scalable network apps, real-time apps, aur APIs ke liye perfect hai.
+
+🔹 Key Characteristics:-
+Non-blocking I/O → main thread wait nahi karta
+Event-driven → actions events ke through trigger hote hain
+Single-threaded with Event Loop → ek thread saara kaam manage karta hai
+Asynchronous execution → heavy tasks background me handle hote hain
+
+🔹 Node.js Request Flow
+1. Client Request Phase
+=> Client server ko request bhejta hai
+=> Request Event Queue me add hota hai
+
+2. Event Loop Phase
+=> Event Loop continuously Event Queue check karta hai
+=> Requests ko ek-ek karke process karta hai
+
+3. Request Processing
+=> Simple (non-blocking) tasks main thread handle karta hai
+=> Complex/blocking tasks Thread Pool me offload hote hain
+
+4. Response Phase
+=> Blocking tasks complete hone ke baad unke callbacks Callback Queue me jaate hain
+=> Event Loop callbacks process karta hai aur response bhejta hai
+
+🔹 Non-blocking Example
+const fs = require('fs');
+console.log('Before file read');
+
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log('File contents:', data);
+});
+
+console.log('After file read');
+Output me "After file read" pehle print hota hai, file read hone se pehle → ye non-blocking I/O dikhata hai
+
+🔹 Blocking vs Non-blocking
+// Blocking
+console.log('Start blocking');
+const data = fs.readFileSync('myfile.txt'); // Process yahi block ho jata hai
+console.log('Blocking done');
+
+// Non-blocking
+console.log('Start non-blocking');
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log('Non-blocking done');
+});
+console.log('This runs before file read');
+
+Key difference:
+=> Blocking → poora process wait karta hai
+=> Non-blocking → dusre operations continue ho jate hain
+
+
+🔹 When to Use Node.js
+=> I/O-bound applications → File operations, DB queries, network requests
+=> Real-time apps → Chat apps, live notifications
+=> APIs → RESTful services, GraphQL
+=> Microservices → Small independent services
+
+Note: CPU-intensive tasks Node.js me best nahi hote, kyunki wo event loop block kar sakte hain. Solution:
+
+=> Worker threads
+=> Microservice in another language
+=> Native add-ons
+
+🔹 Summary & Benefits
+=> Fast & efficient → non-blocking event loop + heavy work system ko delegate karta hai
+=> Handles thousands of connections with minimal resources
+=> Great for I/O-bound apps
+=> JavaScript on both client & server
+=> Large ecosystem of packages (npm)
+
+=================================== Node.js Event Loop =====================================
+🔹 What is the Event Loop?
+=> Event Loop hi reason hai ki Node.js non-blocking aur efficient hai.
+=> Ye asynchronous operations handle karta hai
+Tasks ko system ke background me delegate karta hai aur results ko callbacks ke through process karta hai
+Isse Node.js thousands of concurrent connections ek hi thread se manage kar sakta hai
+
+🔹 How the Event Loop Works
+=> Node.js operations ko handle karne ke liye ye steps follow karta hai:
+1.Execute main script → synchronous code run hota hai
+2.Process microtasks → Promises, process.nextTick()
+3.Execute timers → setTimeout, setInterval
+4.Run I/O callbacks → file system, network operations
+5.Process setImmediate callbacks
+6.Handle close events → jaise socket.on('close')
+
+
+🔹 Example: Event Loop Order
+console.log('First');
+setTimeout(() => console.log('Third'), 0);
+Promise.resolve().then(() => console.log('Second'));
+console.log('Fourth');
+
+Output:
+First
+Fourth
+Second
+Third
+
+Sync code pehle run hota hai (First, Fourth)
+Microtasks (Promises) next (Second)
+Timers last (Third)
+
+🔹 Event Loop Phases
+=> Timers → setTimeout, setInterval
+1.I/O Callbacks → Completed I/O tasks
+2.Poll → New I/O events check
+3.Check → setImmediate callbacks
+4.Close → Cleanup callbacks (socket.on('close'))
+Note: Microtasks (Promises, process.nextTick) har phase ke beech me run hote hain, high priority ke sath
+
+🔹 Example: Event Loop Phases
+console.log('1. Start');
+process.nextTick(() => console.log('2. Next tick'));
+Promise.resolve().then(() => console.log('3. Promise'));
+setTimeout(() => console.log('4. Timeout'), 0);
+setImmediate(() => console.log('5. Immediate'));
+console.log('6. End');
+
+Output:
+1. Start
+6. End
+2. Next tick
+3. Promise
+4. Timeout
+5. Immediate
+Priority order:
+Sync code → nextTick → Promises → Timers → Check phase
+
+🔹 Why is the Event Loop Important?
+=> Event loop ki wajah se Node.js:
+=> Thousands of connections handle kar sakta hai single thread se
+Perfect hai for:
+=> Real-time apps
+=> APIs & microservices
+=> Data streaming
+=> Chat applications
+
+🔹 Summary
+=> Node.js event loop se async operations handle karta hai
+=> Callbacks ke types alag priorities ke sath run hote hain
+=> Microtasks (Promises) har next phase se pehle execute hote hain
+=> Ye non-blocking model high concurrency enable karta hai 🚀
+
+
+====================================== Asynchronous ==============================
+
+================================= Node.js Asynchronous Programming ===================
+
+🔹 What is Asynchronous Programming?
+=> Node.js me asynchronous operations allow karte hain ki program dusre kaam karte rahe jab tak tasks (file I/O, network requests) complete ho rahe hain.
+=> Ye non-blocking approach Node.js ko thousands of concurrent connections efficiently handle karne layak banata hai.
+
+🔹 Sync vs Async: Key Differences
+
+Feature	              Synchronous (Sync)	          Asynchronous (Async)
+Execution	     Blocks till complete	          Non-blocking
+Simplicity	     Simple to understand	          Thoda complex
+Performance	     Slower for I/O-heavy	          Better performance
+Example	               readFileSync	          Callbacks, Promises, async/await
+
+🔹 Example: Synchronous File Read
+const fs = require('fs');
+console.log('1. Starting sync read...');
+const data = fs.readFileSync('myfile.txt', 'utf8');
+console.log('2. File contents:', data);
+console.log('3. Done reading file');
+Output: 1 → 2 → 3 (Blocking behavior)
+
+🔹 Example: Asynchronous File Read
+console.log('1. Starting async read...');
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log('2. File contents:', data);
+});
+console.log('3. Done starting read operation');
+Output: 1 → 3 → 2 (Non-blocking behavior)
+
+🔹 Avoiding Callback Hell
+=> Problem: Nested callbacks
+getUser(userId, (err, user) => {
+  if (err) return handleError(err);
+  getOrders(user.id, (err, orders) => {
+    if (err) return handleError(err);
+    processOrders(orders, (err) => {
+      if (err) return handleError(err);
+      console.log('All done!');
+    });
+  });
+});
+
+Solution: Use Promises
+getUser(userId)
+  .then(user => getOrders(user.id))
+  .then(orders => processOrders(orders))
+  .then(() => console.log('All done!'))
+  .catch(handleError);
+
+Better: Async/Await
+async function processUser(userId) {
+  try {
+    const user = await getUser(userId);
+    const orders = await getOrders(user.id);
+    await processOrders(orders);
+    console.log('All done!');
+  } catch (err) {
+    handleError(err);
+  }
+}
+
+🔹 Modern Async Patterns
+1. Promises
+const fs = require('fs').promises;
+console.log('1. Reading file...');
+fs.readFile('myfile.txt', 'utf8')
+  .then(data => console.log('3. File content:', data))
+  .catch(err => console.error('Error:', err));
+console.log('2. This runs before file is read!');
+
+2.Async/Await (Recommended)
+async function readFiles() {
+  try {
+    console.log('1. Starting to read files...');
+    const data1 = await fs.readFile('file1.txt', 'utf8');
+    const data2 = await fs.readFile('file2.txt', 'utf8');
+    console.log('2. Files read successfully!');
+    return { data1, data2 };
+  } catch (error) {
+    console.error('Error reading files:', error);
+  }
+}
+
+🔹 Best Practices
+=> ✅ Do: Use async/await + try/catch for readability and error handling
+=> ❌ Don't: Use nested callbacks (callback hell)
+
+Parallel Execution Example:
+async function fetchAllData() {
+  try {
+    const [users, products, orders] = await Promise.all([
+      User.find(),
+      Product.find(),
+      Order.find()
+    ]);
+    return { users, products, orders };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+}
+
+🔹 Why Use Asynchronous Code?
+=> Node.js can handle many requests at once
+=> No waiting for slow operations (file, DB) → great for servers & real-time apps
+
+🔹 Summary
+=> Node.js uses event loop for non-blocking I/O
+=> Modern async code: async/await + Promises
+=> Always handle errors in async operations
+=> Use Promise.all for parallel tasks
+=> Avoid callback hell
+
+================================= Node.js Promises ==============================
+
+🔹 Introduction to Promises
+=> Promises Node.js me cleaner way hain async operations handle karne ka, traditional callbacks ke comparison me.
+=> Promise represent karta hai completion (success) ya failure of an async operation aur uska result.
+
+🔹 Promise States
+=> Pending → Operation abhi complete nahi hui
+=> Fulfilled → Operation successfully complete ho gayi
+=> Rejected → Operation fail ho gayi
+=> Ek promise settle hone ke baad (fulfilled ya rejected) state change nahi hoti
+
+🔹 Why Use Promises?
+=> With Callbacks (Callback Hell):
+getUser(id, (err, user) => {
+  if (err) return handleError(err);
+  getOrders(user.id, (err, orders) => {
+    if (err) return handleError(err);
+    // Process orders...
+  });
+});
+
+With Promises:
+getUser(id)
+  .then(user => getOrders(user.id))
+  .then(orders => processOrders(orders))
+  .catch(handleError);
+
+
+Advantages:
+=> Flatter code structure → avoids callback hell
+=> Single .catch() for error handling
+=> Easier chaining & composition
+=> Built-in support for parallel operations (Promise.all)
+
+🔹 Creating and Using Promises
+const myPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    const success = Math.random() > 0.5;
+    if (success) resolve('Operation completed successfully');
+    else reject(new Error('Operation failed'));
+  }, 1000);
+});
+
+myPromise
+  .then(result => console.log('Success:', result))
+  .catch(error => console.error('Error:', error.message));
+
+🔹 Example: Reading a File with Promises
+const fs = require('fs').promises;
+const promise1 = Promise.resolve('First result');
+const promise2 = new Promise(resolve => setTimeout(() => resolve('Second result'), 1000));
+const promise3 = fs.readFile('myfile.txt', 'utf8');
+
+Promise.all([promise1, promise2, promise3])
+  .then(results => console.log('Results:', results))
+  .catch(error => console.error('Error in one of the promises:', error));
+
+🔹 Promise Chaining
+function getUser(userId) {
+  return new Promise(resolve => setTimeout(() => resolve({ id: userId, name: 'John' }), 1000));
+}
+function getUserPosts(user) {
+  return new Promise(resolve => setTimeout(() => resolve(['Post 1', 'Post 2']), 1000));
+}
+getUser(123)
+  .then(user => {
+    console.log('User:', user);
+    return getUserPosts(user);
+  })
+  .then(posts => console.log('Posts:', posts))
+  .catch(error => console.error('Error:', error));
+
+🔹 Promise Methods
+Instance Methods:
+=> .then(onFulfilled, onRejected) → success & failure
+=> .catch(onRejected) → handle rejection
+=> .finally(onFinally) → runs regardless of fulfillment/rejection
+
+Static Methods:
+=> Promise.all(iterable) → wait for all promises
+=> Promise.race(iterable) → first settled promise
+=> Promise.allSettled(iterable) → wait for all to settle
+
+Utility Methods:
+=> Promise.resolve(value) → create resolved promise
+=> Promise.reject(reason) → create rejected promise
+
+🔹 Parallel Execution with Promise.all
+Promise.all([promise1, promise2, promise3])
+  .then(results => console.log('Results:', results))
+  .catch(error => console.error('Error in one of the promises:', error));
+
+🔹 First Result with Promise.race
+Promise.race([promise1, promise2])
+  .then(result => console.log('Fastest result:', result));
+=> Useful for timeouts or first response
+
+🔹 Error Handling
+function fetchData() {
+  return new Promise((resolve, reject) => reject(new Error('Network error')));
+}
+
+fetchData()
+  .then(data => console.log('Data:', data))
+  .catch(error => console.log('Error handled:', error.message));
+=> Best Practice: Hamesha .catch() ka use karo to prevent unhandled promise rejections
+
+🔹 Summary
+=> Promises = cleaner async code
+=> .then(), .catch(), .finally() → handle success, error, cleanup
+=> Promise.all() → parallel execution
+=> Promise.race() → first settled result
+=> Avoid callback hell, use chaining or async/await for readability
+
+================================== Node.js Async/Await  ======================
+
+🔹 What is Async/Await?
+=> Async/await Node.js ka modern way hai async operations handle karne ka.
+=> Ye Promises ke upar build hota hai, aur code ko clean aur readable banata hai.
+=> Introduced in Node.js 7.6 and standardized in ES2017.
+=> Looks like synchronous code but non-blocking hota hai.
+
+🔹 Syntax
+1. async → declare an asynchronous function (returns a Promise)
+2. await → pause execution until a Promise is resolved (can only be used inside async functions)
+
+🔹 Example: Basic Async/Await
+async function getData() {
+  console.log('Starting...');
+  const result = await someAsyncOperation();
+  console.log(`Result: ${result}`);
+  return result;
+}
+
+function someAsyncOperation() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve('Operation completed'), 1000);
+  });
+}
+
+getData().then(data => console.log('Final data:', data));
+
+🔹 Example: Reading a File
+const fs = require('fs').promises;
+async function readFile() {
+  try {
+    const data = await fs.readFile('myfile.txt', 'utf8');
+    console.log(data);
+  } catch (error) {
+    console.error('Error reading file:', error);
+  }
+}
+readFile();
+
+🔹 Error Handling
+async function fetchUserData() {
+  try {
+    const response = await fetch('https://api.example.com/users/1');
+    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    const user = await response.json();
+    console.log('User data:', user);
+    return user;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+}
+=> Async/await allows try/catch for clean error handling.
+
+🔹 Sequential vs Parallel Execution
+function fetchData(id) {
+  return new Promise(resolve => setTimeout(() => resolve(`Data ${id}`), 1000));
+}
+// Sequential - ~3 sec
+async function fetchSequential() {
+  const data1 = await fetchData(1);
+  const data2 = await fetchData(2);
+  const data3 = await fetchData(3);
+  return [data1, data2, data3];
+}
+
+// Parallel - ~1 sec
+async function fetchParallel() {
+  const results = await Promise.all([fetchData(1), fetchData(2), fetchData(3)]);
+  return results;
+}
+=> Use Promise.all for concurrent operations to save time.
+
+🔹 Async/Await vs Promises vs Callbacks
+Pattern	                              Pros	                  Cons
+Callbacks	          Simple, widely supported	  Callback hell, complex errors
+Promises	    Chaining with .then(), better errors	Still nesting for complex flows
+Async/Await	   Clean, synchronous-like, easy errors	   Needs understanding of Promises, can accidentally                                                  block execution
+
+🔹 Best Practices
+=> ✅ Async functions always return Promises
+async function myFunction() { return 'Hello'; }
+myFunction().then(msg => console.log(msg)); // Hello
+
+=> ✅ Use Promise.all for parallel operations
+=> ✅ Always handle errors with try/catch
+=> ✅ Avoid mixing async/await with callbacks
+
+Convert callback-based functions using util.promisify
+const util = require('util');
+const fs = require('fs');
+const readFile = util.promisify(fs.readFile);
+
+async function readFileContents() {
+  const data = await readFile('file.txt', 'utf8');
+  return data;
+}
+=> ✅ Keep async functions focused and clean
+
+=============================== Node.js Error Handling ===========================
+
+🔹 Why Handle Errors?
+=> Errors inevitable hain, lekin unko sahi handle karna bohot important hai.
+Benefits:-
+=> App crash se bachata hai
+=> User ko meaningful feedback deta hai
+=> Debugging easy hoti hai
+=> Production me stability maintain hoti hai
+=> Resources (files, DB connections) properly clean hote hain
+
+🔹 Common Error Types
+1. Standard JavaScript Errors
+// SyntaxError
+JSON.parse('{invalid json}');
+// TypeError
+null.someProperty;
+// ReferenceError
+unknownVariable;
+
+2. System Errors
+// ENOENT: File not found
+const fs = require('fs');
+fs.readFile('nonexistent.txt', (err) => console.error(err.code));
+// ECONNREFUSED: Connection refused
+const http = require('http');
+const req = http.get('http://nonexistent.com', () => {});
+req.on('error', (err) => console.error(err.code));
+
+🔹 Basic Error Handling
+=> Error-first callback pattern (common in Node.js):
+const fs = require('fs');
+fs.readFile('config.json', 'utf8', (err, data) => {
+  if (err) {
+    if (err.code === 'ENOENT') return console.error('File not found');
+    if (err.code === 'EACCES') return console.error('No permission');
+    return console.error(err);
+  }
+  try {
+    const config = JSON.parse(data);
+    console.log('Config loaded:', config);
+  } catch (parseError) {
+    console.error('Invalid JSON');
+  }
+});
+
+🔹 Modern Error Handling: Async/Await
+const fs = require('fs').promises;
+async function loadUser(userId) {
+  try {
+    const data = await fs.readFile(`users/${userId}.json`, 'utf8');
+    const user = JSON.parse(data);
+    if (!user.email) throw new Error('Missing email');
+    return user;
+  } catch (error) {
+    if (error.code === 'ENOENT') throw new Error(`User ${userId} not found`);
+    if (error instanceof SyntaxError) throw new Error('Invalid user data format');
+    throw error;
+  } finally {
+    console.log(`Finished processing user ${userId}`);
+  }
+}
+
+Usage:
+
+(async () => {
+  try {
+    const user = await loadUser(123);
+    console.log('User loaded:', user);
+  } catch (error) {
+    console.error('Failed to load user:', error.message);
+  }
+})();
+
+🔹 Global Error Handling
+=> Uncaught exceptions & unhandled promise rejections:
+
+process.on('uncaughtException', (error) => {
+  console.error('UNCAUGHT EXCEPTION:', error.message);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION:', reason);
+  process.exit(1);
+});
+
+// Examples
+Promise.reject(new Error('Something went wrong'));
+setTimeout(() => { throw new Error('Uncaught exception'); }, 1000);
+
+🔹 Error Handling Best Practices
+Do:
+=> Errors appropriate level pe handle karo
+=> Log errors with context
+=> Custom error types banao
+=> Cleanup in finally block
+=> Input validate karo
+
+Don't:
+=> Errors ignore mat karo
+=> Sensitive info user ko expose mat karo
+=> try/catch for flow control mat use karo
+=> Unrecoverable errors ke baad execution continue mat karo
+
+🔹 Custom Error Types
+class ValidationError extends Error {
+  constructor(message, field) {
+    super(message);
+    this.name = 'ValidationError';
+    this.field = field;
+    this.statusCode = 400;
+  }
+}
+class NotFoundError extends Error {
+  constructor(resource) {
+    super(`${resource} not found`);
+    this.name = 'NotFoundError';
+    this.statusCode = 404;
+  }
+}
+// Usage
+function getUser(id) {
+  if (!id) throw new ValidationError('User ID is required', 'id');
+}
+
+🔹 Summary
+=> Proper error handling se app stable, maintainable, user-friendly banta hai.
+=> Focus: prevent crashes, meaningful feedback, data integrity, resources cleanup.
+=> Patterns: error-first callbacks, try/catch with async/await, global handlers, custom error types.
+
+====================================== Module Basics ================================
+
+================================ Node.js Modules ========================
+
+🔹 What is a Module?
+=> Modules Node.js ke building blocks hote hain. Ye tumhare code ko logical aur reusable components mein divide karte hain.
+
+Benefits:
+=> Code ko manageable files mein organize karna
+=> Functionality encapsulate karna
+=> Global namespace ko pollute hone se bachana
+=> Maintainable aur reusable code
+
+Node.js do module systems support karta hai:
+1. CommonJS (traditional, default)
+2. ES Modules (ESM)
+
+🔹 Core Built-in Modules
+=> Node.js ke saath kuch built-in modules aate hain, jise require() se use kar sakte ho:
+
+                         Module	                                  Use
+                           fs	                         File system operations
+                          http	                         HTTP server & client
+                          path	                         File paths
+                           os	                         Operating system info
+                         events	                         Event handling
+                          util	                         Utility functions
+                         stream	                         Stream handling
+                         crypto	                         Cryptography
+                           url	                         URL parsing
+                        querystring	                 URL query parsing
+
+Example: Simple HTTP Server
+const http = require('http');
+http.createServer((req, res) => {
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.end('Hello World!');
+}).listen(8080);
+console.log('Server running at http://localhost:8080');
+
+🔹 Creating and Exporting Modules
+1️.Export Multiple Items
+// utils.js
+const getCurrentDate = () => new Date().toISOString();
+const formatCurrency = (amount, currency = 'USD') => {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+};
+exports.getCurrentDate = getCurrentDate;
+exports.formatCurrency = formatCurrency;
+// OR
+// module.exports = { getCurrentDate, formatCurrency };
+
+2️.Export Single Item
+// logger.js
+class Logger {
+  constructor(name) { this.name = name; }
+  log(msg) { console.log(`[${this.name}] ${msg}`); }
+  error(err) { console.error(`[${this.name}] ERROR:`, err.message); }
+}
+module.exports = Logger;
+
+3️.Import and Use Modules
+const { getCurrentDate, formatCurrency } = require('./utils');
+const Logger = require('./logger');
+const logger = new Logger('App');
+console.log(getCurrentDate());
+console.log(formatCurrency(99.99));
+logger.log('Hello from Logger!');
+
+🔹 Module Loading and Caching
+=> Node.js caches modules after first load.
+=> Matlab agar same module ko fir require() karo, cached version milega.
+
+Module Resolution Order:
+1. Core Node.js modules (fs, http)
+2. node_modules folder modules
+3. Local files (./ or ../)
+
+🔹 Best Practices
+Module Organization:-
+=> Single responsibility per module
+=> Meaningful file & folder names
+=> Group related functionality
+=> Use index.js as entry point
+
+Export Patterns:-
+=> Named exports for utilities
+=> Default exports for single-class modules
+=> Document module API
+=> Handle initialization if needed
+
+🔹 Summary:-
+=> Modules = reusable & maintainable code units
+=> Default: CommonJS modules (require(), module.exports)
+=> Modules cached after first load
+=> Proper organization = scalable Node.js apps
+
+====================================== Node.js ES Modules ===========================
+
+🔹 What are ES Modules?
+=> ES Modules (ESM) JavaScript ka official module system hai, introduced in ES6 (2015).
+=> Node.js pe ab CommonJS (require/module.exports) ke saath ESM bhi use kar sakte ho.
+=> ESM ka fayda: tree-shaking, static analysis, aur structured code.
+
+🔹 CommonJS vs ES Modules
+
+  Feature	               CommonJS	                    ES Modules
+File Extension	             .js (default)	     .mjs (or .js with "type":"module")
+Import	                        require()	             import
+Export	                  module.exports / exports	export / export default
+Import Timing	            Dynamic (runtime)	       Static (before execution)
+Top-level Await	              ❌ Not supported	              ✅ Supported
+File URL	                 Not required	          Required for local files
+
+🔹 Examples
+CommonJS
+// math.js
+function add(a,b){ return a+b; }
+function subtract(a,b){ return a-b; }
+module.exports = { add, subtract };
+
+// app.js
+const math = require('./math');
+console.log(math.add(5,3)); // 8
+
+ES Modules
+// math.mjs
+export function add(a,b){ return a+b; }
+export function subtract(a,b){ return a-b; }
+
+// app.mjs
+import { add, subtract } from './math.mjs';
+console.log(add(5,3)); // 8
+
+🔹 Enabling ES Modules
+1. Use .mjs extension → Node automatically treats files as ESM.
+2. Set "type": "module" in package.json → All .js files are treated as ESM.
+{
+  "type": "module"
+}
+3. Command line flag → node --input-type=module script.js
+
+🔹 Import/Export Syntax
+Named Exports
+export function sayHello(){ console.log('Hello'); }
+export function sayGoodbye(){ console.log('Goodbye'); }
+// OR at end
+export { add, subtract };
+Default Export
+export default function main(){ console.log('I am default'); }
+// Or with named function/class
+function mainFunction(){ return 'Main'; }
+export default mainFunction;
+
+Import Named Exports
+import { sayHello, sayGoodbye } from './greetings.mjs';
+sayHello();
+
+Import Default Export
+import mainFunction from './main.mjs';
+mainFunction();
+
+Import Both
+import main, { VERSION } from './main.mjs';
+console.log(VERSION);
+main();
+
+🔹 Dynamic Imports
+const moduleName = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
+const module = await import(`./${moduleName}.mjs`);
+module.default();
+=> ✅ Useful for lazy loading, conditional modules, or code-splitting.
+
+🔹 Top-level Await
+=> ES Modules allow await at the top-level, no need for async function:
+
+const response = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+const data = await response.json();
+console.log(data);
+✅ Useful for:
+=> Loading config files
+=> Database connection
+=> Conditional initialization
+
+🔹 Best Practices
+1. Always include file extensions
+import { func } from './utils.mjs'; // ✅
+
+2. Use index.mjs for directory imports
+import { formatString } from './utils/index.mjs';
+
+3. Choose proper export style
+=> Named exports for multiple utilities
+=> Default exports for main class/function
+
+4. Mixing CommonJS & ESM
+=> ESM can import CommonJS using default import
+=> CommonJS can load ESM using dynamic import
+// CommonJS loading ESM
+(async ()=>{
+  const { default: myEsm } = await import('./esm-file.mjs');
+})();
+
+5. Dual package hazard → Use "exports" in package.json for separate CJS/ESM entry points.
+
+🔹 Node.js Support
+=> Full ESM support since Node 12+, better in 14+
+=> Older versions need Babel
+
+======================================= Node.js NPM ===============================
+
+🔹 What is NPM?
+=> NPM is the package manager for Node.js.
+=> It helps you install, manage, and share Node.js packages (modules).
+=> Comes pre-installed with Node.js.
+=> Website: www.npmjs.com — hosts thousands of free packages.
+
+🔹 What is a Package?
+=> A package is a reusable module containing JavaScript code and metadata (package.json).
+=> You can include packages in your project to use their functionality.
+
+🔹 Installing a Package
+=> To download and install a package:
+npm install upper-case
+
+=> This installs the upper-case package in your project.
+=> Packages go inside the node_modules folder:
+
+C:\Users\YourName\node_modules\upper-case
+
+🔹 Using a Package
+=> Include it in your code with require():
+let uc = require('upper-case');
+console.log(uc.upperCase("Hello World!")); // HELLO WORLD!
+
+Example: Node.js HTTP server using upper-case:
+let http = require('http');
+let uc = require('upper-case');
+http.createServer((req, res) => {
+  res.writeHead(200, {'Content-Type':'text/html'});
+  res.write(uc.upperCase("Hello World!"));
+  res.end();
+}).listen(8080);
+=> Visit http://localhost:8080 to see the output.
+
+🔹 Global Packages
+=> Installed globally with -g.
+=> Useful for CLI tools:
+npm install -g http-server
+
+=> After installation, you can run it from any directory:
+http-server
+=> ⚠️ On Unix/Linux, you may need sudo for global installs.
+
+🔹 Updating Packages
+=> Update a specific package:
+npm update package-name
+
+=> Update all packages in your project:
+npm update
+
+=> Check outdated packages:
+npm outdated
+
+=> Update npm itself:
+npm install -g npm@latest
+
+🔹 Uninstalling Packages
+=> Remove a local package:-
+npm uninstall package-name
+
+=> Remove a global package:-
+npm uninstall -g package-name
+
+Remove a package and update package.json:
+=> npm uninstall --save package-name
+⚠️ Older npm versions may require --save-dev for development dependencies.
+
+✅ Key Takeaways
+=> NPM makes it easy to reuse code via packages.
+=> Packages can be local (project-specific) or global (CLI tools).
+=> Always keep your packages updated and remove unused ones.
+=> package.json keeps track of your project dependencies.
+
+======================================== Node.js package.json ===========================
+
+🔹 What is package.json?
+=> package.json is a special JSON file that describes your Node.js project.
+It contains metadata such as:-
+=> Project name and version
+=> Dependencies and devDependencies
+=> Scripts to automate tasks
+=> Author, license, repository, and more
+=> Essential for npm and sharing your project with others.
+
+
+🔹 Creating package.json
+1. Interactive setup:-
+npm init
+
+2.Quick setup with default values:
+npm init -y
+🔹 Example package.json
+{
+  "name": "my-node-app",
+  "version": "1.0.0",
+  "description": "A simple Node.js app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "lodash": "4.17.21"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "jest": "^29.5.0"
+  },
+  "engines": {
+    "node": ">=14.0.0 <17.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/repo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/repo/issues"
+  }
+}
+
+
+🔹 Key Sections
+1️. Metadata
+{
+  "name": "my-package",
+  "version": "1.0.0",
+  "description": "Brief description",
+  "main": "index.js",
+  "type": "module", // or "commonjs"
+  "keywords": ["node", "example"],
+  "author": "Your Name",
+  "license": "MIT"
+}
+
+2️⃣ Scripts
+
+Define commands you can run with npm run <script-name>:
+
+"scripts": {
+  "start": "node index.js",
+  "dev": "nodemon index.js",
+  "test": "jest",
+  "build": "webpack --mode production"
+}
+
+3️. Dependencies
+Packages needed in production:
+"dependencies": {
+  "express": "^4.18.2",
+  "mongoose": "~7.0.0",
+  "lodash": "4.17.21"
+}
+Version ranges:
+^4.17.21 → compatible with 4.x.x
+~4.17.21 → patch updates only
+4.17.21 → exact version
+
+4️. Dev Dependencies
+Packages only needed for development:
+"devDependencies": {
+  "nodemon": "^2.0.22",
+  "jest": "^29.5.0",
+  "eslint": "^8.38.0"
+}
+
+5️. Engines
+Specify Node.js/npm version requirements:
+"engines": {
+  "node": ">=14.0.0 <17.0.0",
+  "npm": ">=6.0.0"
+}
+🔹 Working with package.json
+Add Dependencies
+npm install package-name           # production dependency
+npm install --save-dev package-name  # development dependency
+npm install package-name@1.2.3     # exact version
+
+Update Dependencies
+npm update package-name   # single package
+npm update                # all packages
+npm outdated              # check outdated packages
+
+Run Scripts
+npm run dev             # run custom script
+npm start               # runs "start" script
+npm test                # runs "test" script
+
+🔹 Best Practices
+=> Specify exact versions in production.
+=> Use npm ci for CI/CD reproducible builds.
+=> Keep package-lock.json in version control.
+=> Use .npmignore to exclude unnecessary files.
+=> Regularly update dependencies for security patches.
+
+✅ Summary
+=> package.json is the heart of any Node.js project.
+=> It manages metadata, dependencies, scripts, and engine requirements.
+=> Proper use of package.json ensures reproducible builds, maintainability, and ease of sharing.
+
+======================================== Node.js NPM Scripts ============================
+
+🔹 What are NPM Scripts?
+=> NPM scripts are custom commands defined in your package.json file.
+=> They automate common tasks such as:-
+Running the application
+=> Testing
+=> Building/bundling code
+=> Linting or formatting
+=> Cleaning temporary files
+=> They provide a consistent and easy-to-use workflow across your project.
+
+🔹 Defining Scripts in package.json
+=> Inside the package.json file, the scripts section looks like this:
+{
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Running tests...\" && exit 0",
+    "build": "webpack --mode production",
+    "lint": "eslint ."
+  }
+}
+
+🔹 Running Scripts
+Regular scripts:
+=> npm run dev
+=> npm run build
+=> npm run lint
+
+Special scripts:
+start can be run without run:
+npm start
+
+test can also be run without run:
+npm test
+🔹 Common Uses
+1. Start your app
+=> "start": "node index.js"
+
+2. Development with live reload
+=> "dev": "nodemon index.js"
+
+3. Run tests
+=> "test": "jest"
+
+4. Build or bundle code
+=> "build": "webpack --mode production"
+
+5. Lint or format code
+=> "lint": "eslint ."
+
+🔹 Advantages of NPM Scripts
+=> No need to install global CLI tools for project tasks.
+=> Keeps commands consistent across environments.
+=> Integrates easily with CI/CD pipelines.
+=> Can chain commands using && or ||:-
+"scripts": {
+  "lint-and-test": "eslint . && npm test"
+}
+
+✅ Summary
+=> NPM scripts allow you to automate project tasks directly from package.json.
+=> Use npm run <script> to execute tasks, or npm start/npm test for special scripts.
+=> They simplify development workflows and help maintain consistency across teams.
+
+================================ Node.js Managing Dependencies =============================
+
+🔹 What is Dependency Management?
+=> Dependency management is the process of tracking, installing, updating, and removing external packages your application relies on.
+
+It ensures your application is:-
+=> Stable
+=> Secure
+=> Maintainable
+
+Tools for dependency management:-
+=> npm (default)
+=> Yarn
+=> pnpm
+
+Key components:-
+1. package.json – declares dependencies
+2. Lock files (package-lock.json / yarn.lock) – ensure consistent versions
+3. Package manager commands – install, update, remove packages
+4. Security tools – detect and fix vulnerabilities
+
+🔹 Understanding Semantic Versioning (SemVer)
+=> Node.js packages follow MAJOR.MINOR.PATCH:
+=> MAJOR – breaking changes
+=> MINOR – backward-compatible features
+=> PATCH – backward-compatible bug fixes
+
+Version symbols in package.json:
+
+Symbol	Example	Meaning
+^	^2.8.1	Any 2.x.x version (>=2.8.1, <3.0.0)
+~	~2.8.1	Any 2.8.x version (>=2.8.1, <2.9.0)
+*	*	Any version (not recommended)
+>=	>=2.8.1	Version 2.8.1 or higher
+none	2.8.1	Exact version only
+
+Example:-
+"dependencies": {
+  "express": "^2.8.1",
+  "lodash": "~2.8.1",
+  "moment": "2.8.1",
+  "axios": ">=2.8.1",
+  "debug": "2.x"
+}
+
+🔹 Installing Dependencies
+Install all dependencies:-
+=> npm install
+
+Install a specific package:-
+=> npm install express
+
+Install a specific version:-
+=> npm install express@4.17.1
+
+Install without saving to package.json:-
+=> Copy code
+=> npm install express --no-save
+
+Install globally:-
+=> npm install -g nodemon
+
+🔹 Types of Dependencies
+
+1. Regular dependencies – required for production:-
+=> npm install express
+
+2. Development dependencies – for testing/build tools:-
+=> npm install jest --save-dev
+
+3. Peer dependencies – indicate compatibility but not installed:
+=> "peerDependencies": {
+  "react": "^17.0.0"
+}
+
+4. Optional dependencies – enhance functionality but not required:-
+=> npm install fancy-feature --save-optional
+=> Tip: Use dependencies for production and devDependencies for development.
+
+🔹 Lock Files
+package-lock.json (npm)
+=> Ensures consistent installs across environments
+=> Automatically generated by npm
+
+Example snippet:-
+"node_modules/express": {
+  "version": "4.18.2",
+  "resolved": "https://registry.npmjs.org/express/-/express-4.18.2.tgz",
+  "dependencies": {
+    "accepts": "~1.3.8"
+  }
+}
+=> Yarn uses yarn.lock with a similar purpose.
+=> Always commit lock files to version control.
+
+🔹 Updating Dependencies
+Check outdated packages:-
+=> npm outdated
+
+Update a specific package:-
+=> npm update express
+
+Update all packages:-
+=> npm update
+
+Update npm itself:-
+=> npm install -g npm@latest
+
+Using npm-check-updates:-
+npm install -g npm-check-updates
+ncu         # check for updates
+ncu -u      # update package.json
+npm install # install updated versions
+
+🔹 Security and Auditing
+Check vulnerabilities:-
+=> npm audit
+
+Fix automatically:-
+=> npm audit fix
+
+Force fix (use cautiously):-
+=> npm audit fix --force
+
+🔹 Best Practices
+=> Pin exact versions in production
+=> Regularly update dependencies
+=> Audit dependencies frequently
+=> Commit lock files
+=> Minimize unnecessary dependencies
+=> Use scoped packages for internal modules
+=> Document why dependencies are used
+
+🔹 Troubleshooting Common Issues
+Clear npm cache:-
+=> npm cache clean --force
+
+Delete node_modules and reinstall:-
+rm -rf node_modules
+rm package-lock.json
+npm install
+
+
+Check for peer dependency issues:-
+=> npm ls
+
+
+Rebuild broken dependencies:-
+=> npm rebuild
+
+✅ Summary
+=> Managing dependencies effectively ensures that your Node.js application is stable, secure, and maintainable.
+
+Key points:
+=> Understand SemVer for safe updates
+=> Use dependencies vs devDependencies correctly
+=> Commit lock files for consistent builds
+=> Regularly audit and update packages
+
+============================================= Node.js Publish a Package ==========================================
+
+🔹 What Does Publishing a Package Mean?
+=> Publishing a package makes your Node.js module available to the world via the npm registry, so others can install it using:
+=> npm install your-package-name
+
+Key points:
+=> Ensure your package provides value.
+=> Avoid duplicating existing npm packages.
+
+🔹 Preparing Your Package
+1. Initialize Package
+mkdir my-package
+cd my-package
+npm init -y
+=> This creates a package.json with default values.
+
+2. Essential Files
+=> package.json – metadata
+=> README.md – documentation
+=> index.js – main entry point
+=> LICENSE – MIT, ISC, etc.
+=> .gitignore – exclude node_modules, logs
+=> .npmignore – optional, exclude files from the published package
+
+3. package.json Essentials
+Example:-
+{
+  "name": "your-package-name",
+  "version": "1.0.0",
+  "description": "A brief description of your package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["keyword1", "keyword2"],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT"
+}
+
+🔹 Creating an npm Account
+1. Sign Up: npmjs.com/signup
+2. Verify Email
+3. Login via CLI:
+npm login
+
+You’ll enter:-
+=> Username
+=> Password
+=> Email (must match npm account)
+=> One-time password (if 2FA is enabled)
+
+4. Check login:
+npm whoami
+
+🔹 Publishing Your Package
+1. Check Name Availability
+npm view <package-name>
+=> If the name is taken, choose a new one.
+
+2. Test Package Locally
+# In package directory
+npm link
+
+# In another project
+npm link <package-name>
+
+3. Publish to npm Registry
+cd path/to/your/package
+npm publish
+
+
+Optional:-
+=> Publish with a tag: npm publish --tag beta
+=> Publish public package (for paid npm accounts): npm publish --access public
+
+🔹 Updating Your Package
+1. Update Version Number (SemVer)
+# Patch release (bug fixes)
+npm version patch
+
+# Minor release (backward-compatible features)
+npm version minor
+
+# Major release (breaking changes)
+npm version major
+
+2. Update Changelog
+
+Document changes in CHANGELOG.md.
+
+3. Publish Updated Version
+npm publish
+
+4. Tag the Release (Optional)
+git tag -a v1.0.0 -m "Initial release"
+git push origin v1.0.0
+
+🔹 Managing Published Packages
+Unpublishing
+Specific version:- 
+npm unpublish <package-name>@<version>
+
+Entire package (within 72 hours):-
+npm unpublish <package-name> --force
+⚠️ Unpublishing is discouraged—it can break dependent projects.
+
+Deprecating
+Mark a version as deprecated:-
+npm deprecate <package-name>@<version> "message"
+
+Example:-
+npx deprecate my-package@1.0.0 "Please upgrade to v2.0.0"
+
+Transferring Ownership
+npm owner add <username> <package-name>
+
+🔹 Best Practices
+1. Follow Semantic Versioning – MAJOR.MINOR.PATCH
+2. Write Good Documentation – README with examples
+3. Add Tests – include unit tests and usage instructions
+4. Use .npmignore – publish only necessary files
+5. Add Keywords – improve discoverability
+6. Choose the Right License – clarify usage terms
+7. Maintain a Changelog – document version changes
+8. Use Continuous Integration – automate testing and publishing
+
+✅ Summary
+=> Publishing packages allows you to share your code with the Node.js community. By following best practices, you can create reliable, maintainable, and discoverable packages.
+Remember: Publishing is a commitment. Maintain your package responsibly or clearly communicate its status.
+
+
+========================================= Core Modules ====================================
+
+======================================== Node.js HTTP Module ================================
+
+🔹 Built-in HTTP Module
+Node.js has a built-in http module that allows you to:-
+=> Create HTTP servers
+=> Make HTTP requests to other servers
+=> Handle HTTP methods (GET, POST, PUT, DELETE, etc.)
+=> Work with headers
+=> Stream large data efficiently
+
+🔹 Including the HTTP Module
+CommonJS:-
+const http = require('http');
+
+ES Modules:-
+import http from 'http';
+
+🔹 Creating an HTTP Server
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello, World!\n');
+});
+
+const PORT = 3000;
+server.listen(PORT, 'localhost', () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
+});
+
+Key Methods:-
+=> http.createServer(callback) – Creates server
+=> req – Request object (http.IncomingMessage)
+=> res – Response object (http.ServerResponse)
+=> res.writeHead(statusCode, headers) – Set status & headers
+=> res.end() – Send response and end connection
+=> server.listen(port) – Start listening on a port
+
+🔹 Working with HTTP Headers
+Set multiple headers:-
+res.writeHead(200, {
+  'Content-Type': 'text/html',
+  'X-Powered-By': 'Node.js',
+  'Cache-Control': 'no-cache',
+  'Set-Cookie': 'sessionid=abc123; HttpOnly'
+});
+
+
+Access request headers:-
+console.log(req.headers);
+const userAgent = req.headers['user-agent'];
+
+🔹 Handling URLs and Query Strings
+Access URL and method:-
+const { url, method } = req;
+
+
+Parse URL with url module:-
+const url = require('url');
+const parsedUrl = url.parse(req.url, true);
+const pathname = parsedUrl.pathname;
+const query = parsedUrl.query;
+
+Using WHATWG URL API:-
+const { URL } = require('url');
+const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+const params = Object.fromEntries(parsedUrl.searchParams);
+
+Query string module:-
+const querystring = require('querystring');
+const qs = querystring.stringify({ name: 'John', age: 30 });
+
+🔹 Handling Different HTTP Methods
+if (method === 'GET' && pathname === '/todos') { ... }
+else if (method === 'POST' && pathname === '/todos') { ... }
+else if (method === 'PUT' && pathname.startsWith('/todos/')) { ... }
+else if (method === 'DELETE' && pathname.startsWith('/todos/')) { ... }
+
+RESTful method guidelines:-
+=> GET – Retrieve resource
+=> POST – Create new resource
+=> PUT – Update or create resource
+=> PATCH – Partial update
+=> DELETE – Remove resource
+=> OPTIONS – Describe available methods
+
+🔹 Status Codes & Error Handling
+Common codes:-
+Code	Description
+200	OK
+201	Created
+204	No Content
+400	Bad Request
+401	Unauthorized
+403	Forbidden
+404	Not Found
+500	Internal Server Error
+=> Always return meaningful HTTP status codes for success and errors.
+
+🔹 Streaming Data
+Node.js streams allow handling large data efficiently:-
+const fs = require('fs');
+const stream = fs.createReadStream('largefile.txt');
+stream.pipe(res);
+
+stream.on('error', (err) => {
+  res.statusCode = 500;
+  res.end('Error reading file');
+});
+
+Benefits:-
+=> Memory-efficient (chunks instead of full file)
+=> Fast start (Time to First Byte)
+=> Handles backpressure automatically
+
+Use cases:
+=> File uploads/downloads
+=> Real-time processing
+=> Video/audio streaming
+=> Proxying requests
+
+🔹 Summary
+The HTTP module in Node.js is the foundation for building:-
+=> Web servers
+=> RESTful APIs
+=> Streaming applications
+By combining request handling, URL parsing, headers, HTTP methods, and streams, you can build powerful, efficient web applications without additional libraries.
+
+
+======================================= Node.js HTTPS Module ====================================
+
+🌐 Node.js HTTPS Module
+=> Node.js ka HTTPS module ek built-in module hai jo HTTP ke upar TLS/SSL use karke secure communication deta hai.
+Matlab jo HTTP normal hota hai, wahi encryption ke saath = HTTPS.
+
+🤔 Why HTTPS?
+Aaj ke time pe HTTPS zaroori hai, kyunki yeh:-
+=> 🔒 Encrypts Data – passwords, card details, etc. safe rehte hain
+=> ✅ Authenticates Server – client ko surety milti hai ki sahi server se baat ho rahi hai
+=> 🛡 Data Integrity – data beech me modify nahi hota
+=> 🙌 Trust Build karta hai – browser me padlock icon dikh jata hai
+=> 📈 SEO Improve karta hai – Google HTTPS sites ko preference deta hai
+=> 🚀 Modern Features Enable – jaise Service Worker, Geolocation APIs etc. sirf HTTPS pe chalte hain
+⚙️ HTTPS kaise kaam karta hai?
+=> Client server ko connect karta hai (securely)
+=> Server apna SSL/TLS certificate client ko deta hai
+=> Client verify karta hai certificate trusted CA se
+=> Ek secure session banta hai (asymmetric encryption se handshake hota hai)
+=> Data transfer symmetric encryption se hota hai (fast + secure)
+👉 Note: Ab SSL purana ho chuka hai, ab mostly TLS use hota hai.
+
+🛠 Getting Started
+Module Import
+// CommonJS
+const https = require('https');
+
+// ES Module (Node.js 14+)
+import https from 'https';
+👉 HTTPS ka interface almost HTTP jaisa hi hai, bas farq yeh hai ki isme certificate (SSL/TLS) dena padta hai.
+
+🔐 SSL/TLS Certificates
+Types of Certificates:-
+=> 🧪 Self-Signed – sirf dev/testing ke liye
+=> 🌐 DV (Domain Validated) – domain ownership proof
+=> 🏢 OV (Organization Validated) – company verify hoti hai
+=> 🏆 EV (Extended Validation) – highest trust level, browser me company name show hota hai
+=> ⭐ Wildcard – ek domain ke sab subdomains secure
+=> 📑 SAN (Multi-Domain) – ek hi certificate me multiple domains
+👉 Dev/test ke liye openssl se self-signed certificate bana sakte ho.
+Production ke liye Let's Encrypt (free) ya paid CAs use karo.
+
+🚀 HTTPS Server Banana
+Basic Example
+const https = require('https');
+const fs = require('fs');
+
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
+const server = https.createServer(options, (req, res) => {
+  res.writeHead(200);
+  res.end('Hello Secure World 🌍');
+});
+
+server.listen(3000, () => {
+  console.log('Server running at https://localhost:3000');
+});
+👉 Production me usually high port (3000/8080) use karte hain aur front me Nginx/Apache rakhte hain jo SSL handle kare.
+
+🔄 HTTPS Requests (Client Side)
+GET Request
+const https = require('https');
+
+https.get('https://jsonplaceholder.typicode.com/posts/1', (res) => {
+  let data = '';
+  res.on('data', (chunk) => data += chunk);
+  res.on('end', () => console.log(JSON.parse(data)));
+}).on('error', (err) => console.error(err));
+
+POST Request
+const data = JSON.stringify({ title: 'foo', body: 'bar' });
+
+const options = {
+  hostname: 'jsonplaceholder.typicode.com',
+  path: '/posts',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(data)
+  }
+};
+
+const req = https.request(options, (res) => {
+  let body = '';
+  res.on('data', (chunk) => body += chunk);
+  res.on('end', () => console.log(JSON.parse(body)));
+});
+
+req.write(data);
+req.end();
+👉 Promises / async-await ke saath aur clean code likhne ke liye wrapper bana sakte ho.
+
+⚡ Express.js with HTTPS
+Express use karte ho to setup aur easy ho jata hai:
+
+const express = require('express');
+const https = require('https');
+const fs = require('fs');
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Welcome to Secure Express 🚀');
+});
+
+const sslOptions = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
+https.createServer(sslOptions, app).listen(3000, () => {
+  console.log('Express HTTPS server running at https://localhost:3000');
+});
+
+⚡ HTTP/2 Support
+Node.js http2 module deta hai jisme multiplexing, header compression, aur server push jaisi features milti hain.
+
+✅ Best Practices (Summary)
+=> Always use TLS 1.2+ (preferably TLS 1.3)
+=> Self-signed certs only dev ke liye
+=> Helmet middleware Express apps me use karo
+=> Sensitive data .env me rakho
+=> Reverse proxy (Nginx/Apache) lagao production me
+=> Regularly certs rotate karo + npm audit run karo
+=> Use HSTS, CSP, X-Frame-Options, Referrer-Policy jaise headers
+=> Enable rate limiting + request validation
+
+==================================== Node.js File System (fs) Module =====================================
+
+📂 Node.js File System (fs) Module
+=> Node.js ka File System module (fs) computer ke files aur directories ke sath kaam karne ke liye use hota hai.
+=> Iske through tum file read, write, update, delete, move, rename, directories create/remove, aur streams handle kar sakte ho.
+=> Yeh core module hai → Matlab install karne ki zaroorat nahi hai.
+
+📥 Importing File System Module
+// CommonJS (default)
+const fs = require('fs');
+
+// Promise-based API
+const fs = require('fs').promises;
+
+// ES Module (Node.js 14+)
+import fs from 'fs';
+// or
+import { readFile, writeFile } from 'fs/promises';
+👉 Modern apps ke liye fs/promises wala approach best hai (async/await clean code deta hai).
+
+🔥 Common Use Cases
+File Operations:-
+=> Read aur Write karna
+=> Create aur Delete karna
+=> Append (add new data) karna
+=> Rename / Move karna
+=> File permissions change karna
+
+Directory Operations:-
+=> Folder create/remove karna
+=> Files list karna
+=> File changes ko watch karna
+=> File/folder stats check karna
+=> Check karna ki file exist karti hai ya nahi
+
+Advanced
+=> File streams (large file read/write without loading into memory)
+=> File descriptors, symbolic links
+=> Performance tuning
+
+📖 Reading Files
+1. Callback Style
+const fs = require('fs');
+
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error:', err);
+    return;
+  }
+  console.log('File content:', data);
+});
+👉 Agar binary file (image, pdf, etc.) hai to encoding mat do → tumhe Buffer milega.
+
+2. Promises / Async-Await (Recommended)
+const fs = require('fs').promises;
+
+async function readFileExample() {
+  try {
+    const data = await fs.readFile('myfile.txt', 'utf8');
+    console.log('File content:', data);
+  } catch (err) {
+    console.error('Error:', err);
+  }
+}
+
+readFileExample();
+
+3. Synchronous (Not recommended in production)
+const fs = require('fs');
+
+try {
+  const data = fs.readFileSync('myfile.txt', 'utf8');
+  console.log(data);
+} catch (err) {
+  console.error(err);
+}
+👉 Problem: Yeh event loop block kar deta hai → bade apps me mat use karo.
+
+✍ Writing / Creating Files
+1. writeFile()
+const fs = require('fs').promises;
+
+async function writeFileExample() {
+  await fs.writeFile('myfile.txt', 'Hello, World!', 'utf8');
+  console.log('File created!');
+}
+writeFileExample();
+
+2. appendFile()
+await fs.appendFile('app.log', `${new Date().toISOString()} - Started\n`, 'utf8');
+console.log('Log added');
+
+3. File Handles
+const handle = await fs.open('output.txt', 'w');
+await handle.write('Line 1\n');
+await handle.close();
+
+4. Streams (for large files)
+const fs = require('fs');
+
+const stream = fs.createWriteStream('big.txt');
+for (let i = 0; i < 1000; i++) {
+  stream.write(`Line ${i}\n`);
+}
+stream.end();
+👉 Streams = kam memory use, fast performance.
+
+🗑 Deleting Files and Directories
+Delete File
+await fs.unlink('delete-me.txt');
+console.log('File deleted');
+
+Delete Directory
+await fs.rm('myfolder', { recursive: true, force: true });
+console.log('Directory deleted');
+
+
+👉 recursive: true → pura folder + uske andar ka sab delete. (Handle with care!)
+
+✏ Renaming and Moving Files
+Rename File
+await fs.rename('old.txt', 'new.txt');
+console.log('File renamed');
+
+Move File
+const path = require('path');
+
+await fs.mkdir('backup', { recursive: true });
+await fs.rename('data.txt', path.join('backup', 'data.txt'));
+console.log('File moved');
+
+⚡ Batch Rename Example
+const files = await fs.readdir('images');
+for (const file of files) {
+  if (file.endsWith('.jpg')) {
+    const newName = file.replace('image', 'photo');
+    await fs.rename(`images/${file}`, `images/${newName}`);
+  }
+}
+
+🚀 Best Practices
+=> Use fs/promises + async/await for clean code
+=> Avoid synchronous methods in production
+=> Always handle errors (try/catch or error callbacks)
+=> Use streams for large files
+=> Be careful with delete + recursive options
+👉 Short me:
+fs module tumhe file system ke sath kuch bhi karne ki power deta hai → read, write, delete, move, rename, aur streams.
+
+============================================== Node.js Path Module ================================
+
+📂 Node.js Path Module
+=> path ek built-in Node.js module hai jo file paths handle aur transform karne ke kaam aata hai.
+
+Problem:-
+=> Windows me paths \ (backslash) se hote hain → C:\Users\Docs
+=> POSIX (Linux/macOS) me / (forward slash) hota hai → /users/docs
+Solution: path module dono ko handle karke tumhe cross-platform code likhne deta hai.
+
+✨ Benefits of Path Module
+✔ Cross-platform path handling
+✔ File extensions nikalna easy
+✔ Paths ko join/resolve karna simple
+✔ Relative aur absolute paths ke sath kaam karna
+✔ Normalize (clean up) karna
+
+📥 Using the Path Module
+// CommonJS (default Node.js)
+const path = require('path');
+const { join, resolve, basename } = require('path');
+
+// ES Modules
+import path from 'path';
+import { join, resolve, basename } from 'path';
+👉 Best practice: Agar ES modules use karte ho to sirf required functions import karo (bundle size chhota hoga).
+
+🛠 Important Path Methods
+1. path.basename()
+👉 File ka naam (last part) nikalta hai.
+
+const path = require('path');
+
+console.log(path.basename('/users/docs/file.txt')); // file.txt
+console.log(path.basename('/users/docs/file.txt', '.txt')); // file
+
+2. __dirname aur __filename
+👉 CommonJS me:
+
+__dirname = current file ka folder
+
+__filename = current file ka path
+
+console.log(__dirname);  // Current directory
+console.log(__filename); // Current file
+
+👉 ES Modules me: (kyunki __dirname available nahi hota)
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+3. path.extname()
+👉 File ka extension return karta hai.
+
+console.log(path.extname('file.txt'));   // .txt
+console.log(path.extname('index.html')); // .html
+console.log(path.extname('index'));      // '' (empty)
+
+4. path.join()
+👉 Path ke parts ko safely join karta hai.
+
+console.log(path.join('/users', 'docs', 'file.txt'));
+// /users/docs/file.txt
+
+console.log(path.join('/users', '../system', 'logs'));
+// /system/logs
+⚡ String concatenation (+) avoid karo → join cross-platform safe hai.
+
+5. path.resolve()
+👉 Relative paths ko absolute bana deta hai.
+
+console.log(path.resolve('file.txt'));
+// /current/working/dir/file.txt
+
+console.log(path.resolve('/first', '/second', 'third'));
+// /second/third
+👉 Mostly __dirname ke sath use hota hai config/files ke liye.
+
+6. path.parse() & path.format()
+👉 parse() → ek path ko object me tod deta hai.
+👉 format() → object ko wapas path bana deta hai.
+
+const info = path.parse('/users/docs/file.txt');
+console.log(info);
+// { root: '/', dir: '/users/docs', base: 'file.txt', ext: '.txt', name: 'file' }
+
+console.log(path.format(info));
+// /users/docs/file.txt
+
+7. path.normalize()
+👉 Extra . aur .. hata ke clean path banata hai.
+
+console.log(path.normalize('/users/./docs/../data/file.txt'));
+// /users/data/file.txt
+
+8. path.relative()
+👉 Ek path se dusre path tak ka relative route batata hai.
+
+console.log(path.relative('/users/docs', '/users/images/photo.jpg'));
+// ../images/photo.jpg
+
+9. path.isAbsolute()
+👉 Check karta hai ki path absolute hai ya nahi.
+
+console.log(path.isAbsolute('/users/docs')); // true
+console.log(path.isAbsolute('docs/file.txt')); // false
+
+🏗 Path Properties
+path.sep
+Path separator:
+=> Windows → \
+=> Linux/macOS → /
+
+path.delimiter
+=> Environment variable delimiter:
+
+=> Windows → ;
+=> Linux/macOS → :
+
+🌍 Cross-Platform Handling
+=> Hamesha path.join() aur path.resolve() use karo
+=> Hard-coded / ya \ avoid karo
+=> path.posix → Force POSIX-style (Linux/macOS)
+=> path.win32 → Force Windows-style
+
+⚠ Security Best Practices
+=> Hamesha path.normalize() use karo directory traversal (../../etc/passwd) avoid karne ke liye
+=> File extensions validate karo
+=> User ke input ko sanitize karo
+
+🎯 Summary
+Path module tumhe help karta hai:
+✔ File aur directory paths ke sath safely kaam karne me
+✔ Cross-platform compatible code likhne me
+✔ Paths ko join/resolve/normalize karne me
+✔ File extension, basename, dirname nikalne me
+
+=================================== Node.js OS Module =====================================
+
+🖥️ Node.js OS Module
+=> os ek core Node.js module hai (install karne ki zaroorat nahi).
+=> Yeh module tumhe Operating System ke saath interact karne ke liye utilities deta hai.
+=> Cross-platform hai → Windows, Linux, macOS sab me same kaam karega.
+
+✨ Features of OS Module
+✔ System info lena (CPU, memory, platform, release, kernel version)
+✔ User aur environment info lena (username, homedir, tmpdir)
+✔ Network info lena (IP addresses, interfaces)
+✔ System performance monitor karna (load avg, uptime, free memory)
+✔ OS specific constants aur signals handle karna
+
+📥 Import OS Module
+// CommonJS
+const os = require('os');
+
+// ES Module
+import os from 'os';
+// or
+import { arch, platform, cpus } from 'os';
+
+⚡ Basic Example
+const os = require('os');
+
+console.log(`OS Platform: ${os.platform()}`);
+console.log(`OS Type: ${os.type()}`);
+console.log(`OS Release: ${os.release()}`);
+console.log(`CPU Architecture: ${os.arch()}`);
+console.log(`Hostname: ${os.hostname()}`);
+
+const totalMemGB = (os.totalmem() / 1024 ** 3).toFixed(2);
+const freeMemGB = (os.freemem() / 1024 ** 3).toFixed(2);
+console.log(`Memory: ${freeMemGB}GB free of ${totalMemGB}GB`);
+
+const userInfo = os.userInfo();
+console.log(`Current User: ${userInfo.username}`);
+console.log(`Home Directory: ${os.homedir()}`);
+
+🛠️ Important Methods
+🔹 System Information
+=> os.arch() → CPU architecture (x64, arm64, ia32)
+=> os.platform() → OS platform (win32, linux, darwin)
+=> os.type() → OS type (Windows_NT, Linux, Darwin)
+=> os.release() → OS release version (e.g. Windows 10 = 10.0.19044)
+=> os.version() → Kernel version (build info included)
+
+🔹 User & Environment
+=> os.userInfo() → Current user ka info (username, uid, homedir, shell)
+=> os.homedir() → User ka home directory
+=> os.hostname() → Machine ka hostname
+=> os.tmpdir() → System ka default temp directory
+
+🔹 System Resources
+=> os.cpus() → Array of CPU cores (model, speed, usage times)
+=> os.totalmem() → Total system memory (bytes me)
+=> os.freemem() → Free system memory (bytes me)
+=> os.loadavg() → System load average (sirf Linux/macOS, Windows me 0)
+=> os.uptime() → System uptime (seconds me)
+
+🔹 Network Information
+os.networkInterfaces() → Sab network interfaces ka detail (IP, MAC, internal/external)
+👉 Useful for local IP find karne ke liye
+
+🔹 OS Constants & Utilities
+=> os.constants → OS specific constants (error codes, signals)
+=> os.EOL → End-of-line character
+=> Windows → \r\n
+=> Linux/macOS → \n
+
+🧪 Practical Use Cases
+✅ System Info Dashboard
+console.log({
+  type: os.type(),
+  platform: os.platform(),
+  arch: os.arch(),
+  release: os.release(),
+  hostname: os.hostname(),
+  uptime: os.uptime(),
+  user: os.userInfo().username,
+  homedir: os.homedir(),
+  totalMem: os.totalmem(),
+  freeMem: os.freemem(),
+});
+
+✅ Resource Monitor
+setInterval(() => {
+  console.clear();
+  console.log("CPU Cores:", os.cpus().length);
+  console.log("Free Memory:", (os.freemem() / 1024 ** 3).toFixed(2), "GB");
+  console.log("System Uptime:", os.uptime(), "sec");
+}, 2000);
+
+✅ Platform-Specific Behavior
+if (os.platform() === 'win32') {
+  console.log("Windows-specific settings...");
+} else if (os.platform() === 'darwin') {
+  console.log("macOS-specific settings...");
+} else {
+  console.log("Linux/Unix-specific settings...");
+}
+
+🎯 Summary
+OS Module tumhe allow karta hai:
+✔ System info nikalna (CPU, memory, platform, release, uptime)
+✔ User info lena (username, homedir, temp dir)
+✔ Network details dekhna (IP, MAC)
+✔ Resource monitoring karna (CPU load, memory usage)
+✔ OS specific handling (signals, EOL, paths)
+👉 Matlab short me: OS module = Node.js ka bridge hai jo tumhe underlying Operating System ke andar jhankne aur interact karne deta hai. 🚀
+
+
+================================= Node.js URL Module ======================================
+
+🌐 Node.js URL Module
+=> url ek built-in Node.js module hai (install karne ki zaroorat nahi).
+
+Iska use hota hai:
+✔ URLs ko parse (parts me todna)
+✔ URLs construct (banana)
+✔ Query parameters ke sath kaam karna
+✔ Different parts of URL (protocol, host, pathname, query, hash) access karna
+
+📥 Module Import Karna
+// Legacy API
+const url = require('url');
+
+// Modern (WHATWG URL API - Recommended)
+const { URL, URLSearchParams } = require('url');
+👉 New code me WHATWG URL API use karo, kyunki zyada powerful aur clean hai.
+
+🛠 URL Parse Example (Legacy API)
+const url = require('url');
+
+let adr = 'http://localhost:8080/default.htm?year=2017&month=february';
+let q = url.parse(adr, true);
+
+console.log(q.host);      // localhost:8080
+console.log(q.pathname);  // /default.htm
+console.log(q.search);    // ?year=2017&month=february
+console.log(q.query);     // { year: '2017', month: 'february' }
+console.log(q.query.month); // february
+
+📦 URL Object Properties (parse karne ke baad)
+=> href → pura URL
+=> protocol → http:, https:, ftp:
+=> host → host + port (example.com:8080)
+=> hostname → sirf domain (example.com)
+=> port → agar diya ho to port number
+=> pathname → /path/part
+=> search → ?query string
+=> query → query string (object ban sakta hai)
+=> hash → #fragment
+
+🔥 Modern WHATWG URL API Example
+const { URL } = require('url');
+
+const myURL = new URL('https://example.org:8080/p/a/t/h?query=string#hash');
+
+console.log(myURL.hostname);           // example.org
+console.log(myURL.pathname);           // /p/a/t/h
+console.log(myURL.searchParams.get('query')); // string
+
+🔍 URLSearchParams API (Query Strings ke liye)
+const { URL, URLSearchParams } = require('url');
+
+const myURL = new URL('https://example.com/?name=Kai&age=30');
+const params = new URLSearchParams(myURL.search);
+
+console.log(params.get('name')); // Kai
+
+params.append('city', 'Stavanger'); 
+params.delete('age');
+
+console.log(params.toString());  
+// name=Kai&city=Stavanger
+👉 Tum query string ko add, delete, get, check easily kar sakte ho.
+
+🌐 URL + File Server Example
+let http = require('http');
+let url = require('url');
+let fs = require('fs');
+
+http.createServer(function (req, res) {
+  let q = url.parse(req.url, true);
+  let filename = "." + q.pathname;
+  
+  fs.readFile(filename, function(err, data) {
+    if (err) {
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      return res.end("404 Not Found");
+    }
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    return res.end();
+  });
+}).listen(8080);
+👉 Agar tum http://localhost:8080/summer.html kholte ho to summer.html serve hoga, aur winter.html kholte ho to winter.html serve hoga.
+
+✅ Best Practices
+1. Always Validate URLs
+function isValidHttpUrl(string) {
+  try {
+    const url = new URL(string);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+console.log(isValidHttpUrl('https://example.com')); // true
+console.log(isValidHttpUrl('ftp://example.com'));   // false
+
+2. Construct URLs Safely
+const { URL } = require('url');
+
+function createProfileUrl(domain, username) {
+  return new URL(`/users/${encodeURIComponent(username)}`, domain).href;
+}
+
+console.log(createProfileUrl('https://example.com', 'john doe'));
+// https://example.com/users/john%20doe
+
+3. Handle Query Parameters
+const { URL } = require('url');
+
+const url = new URL('https://example.com/search?q=node.js&lang=en');
+
+console.log(url.searchParams.toString()); // q=node.js&lang=en
+console.log(url.searchParams.get('q'));   // node.js
+console.log(url.searchParams.has('lang'));// true
+
+url.searchParams.append('page', '2');
+console.log(url.href);
+// https://example.com/search?q=node.js&lang=en&page=2
+
+🎯 Summary
+
+👉 URL module tumhe help karta hai:
+✔ URLs ko parse aur format karne me
+✔ Query parameters manage karne me
+✔ File server banate time requested file serve karne me
+✔ Safe aur secure URLs construct karne me
+👉 Short me: URL Module = tumhara Node.js me URLs handle karne ka Swiss Army Knife 🔧 hai.
+
+====================================== Node.js Events ===================================
+
+⚡ Node.js Events
+🔑 Core Concept
+=> Computer me har action ek event hota hai (file open, connection establish, error aana).
+=> Node.js event-driven architecture use karta hai.
+=> Yaha objects ko emitters bola jata hai jo events emit karte hain, aur functions (listeners) un events ko handle karte hain.
+
+📂 Real Example: File Open Event
+let fs = require('fs');
+let rs = fs.createReadStream('./demofile.txt');
+rs.on('open', function () {
+  console.log('The file is open');
+});
+👉 Jab file open hoti hai, open event trigger hota hai aur listener run ho jata hai.
+
+🎯 Basic Event Emitter Example
+// Import events module
+const EventEmitter = require('events');
+
+// Create emitter
+const myEmitter = new EventEmitter();
+
+// Register listener
+myEmitter.on('greet', () => {
+  console.log('Hello there!');
+});
+
+// Emit event
+myEmitter.emit('greet'); 
+// Output: Hello there!
+👉 emit = event fire karna
+👉 on = event listener register karna
+
+🏗 EventEmitter Class
+=> Node.js ka core class jo tumhe custom events banane aur handle karne deta hai.
+Instance banane ka tariqa:-
+let events = require('events');
+let eventEmitter = new events.EventEmitter();
+
+📢 Example: Custom Event
+let events = require('events');
+let eventEmitter = new events.EventEmitter();
+
+// Event handler
+let myEventHandler = function () {
+  console.log('I hear a scream!');
+}
+
+// Assign handler
+eventEmitter.on('scream', myEventHandler);
+
+// Fire event
+eventEmitter.emit('scream');
+👉 Jab scream event emit hota hai → listener run ho jata hai.
+
+🔥 Common Patterns in EventEmitter
+1. Passing Arguments
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
+
+emitter.on('userJoined', (username, userId) => {
+  console.log(`${username} (${userId}) has joined the chat`);
+});
+
+emitter.emit('userJoined', 'JohnDoe', 42);
+// Output: JohnDoe (42) has joined the chat
+
+2. Handle Event Only Once
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
+
+emitter.once('connection', () => {
+  console.log('First connection established');
+});
+
+emitter.emit('connection'); // Runs
+emitter.emit('connection'); // Ignore (only once)
+
+3. Error Handling
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
+
+// Handle error event
+emitter.on('error', (err) => {
+  console.error('An error occurred:', err.message);
+});
+
+emitter.emit('error', new Error('Something went wrong'));
+👉 Important: Agar tum error event emit karte ho aur listener nahi hai → app crash ho jayega.
+
+✅ Best Practices
+
+1. Always handle errors
+
+myEmitter.on('error', (err) => {
+  console.error('Error in event emitter:', err);
+});
+
+
+2. Named functions use karo (better debugging)
+
+function handleData(data) {
+  console.log('Received data:', data);
+}
+myEmitter.on('data', handleData);
+
+
+3. Clean up listeners (memory leak avoid karne ke liye)
+
+const listener = () => console.log('Event occurred');
+myEmitter.on('event', listener);
+
+// Later remove when not needed
+myEmitter.off('event', listener);
+
+🎯 Summary
+👉 Node.js me sab kuch events par based hai.
+👉 EventEmitter class se tum:
+✔ Custom events create kar sakte ho
+✔ Data/arguments pass kar sakte ho
+✔ Listeners ko ek hi baar ya multiple baar run karwa sakte ho
+✔ Error events safely handle kar sakte ho
+👉 Short me: Events = Node.js ka heartbeat 💓 hai.
+
+======================================== Node.js Streams ==================================
+
+🚰 Node.js Streams
+=> Streams ek data pipeline jaisi hoti hai.
+=> Matlab data ek hi baar memory me load nahi hota, balki chunks (tukdo) me aata hai.
+=> Ye conveyor belt ki tarah hai → data aata rahega aur tum usko process karte jaoge.
+👉 Isse tum large files / live data ko efficiently handle kar sakte ho without memory crash.
+
+📂 Where Streams are Used?
+=> File read/write
+=> HTTP request/response (server-client)
+=> Video / Audio streaming
+=> Compression (zip/unzip)
+=> Realtime data processing
+
+🎯 Basic Example – File Copy with Streams
+const fs = require('fs');
+
+// Readable stream (input.txt se read)
+const readableStream = fs.createReadStream('input.txt', 'utf8');
+
+// Writable stream (output.txt me write)
+const writableStream = fs.createWriteStream('output.txt');
+
+// Pipe (auto connect + backpressure handle)
+readableStream.pipe(writableStream);
+
+// Completion event
+writableStream.on('finish', () => {
+  console.log('File copy completed!');
+});
+👉 Yaha data ek-ek chunk me input file se read hoke output file me likha ja raha hai.
+
+⚡ Why Use Streams?
+1. Memory Efficient – Bina poora file memory me load kiye handle kar sakte ho
+2. Faster – Data chunk-by-chunk process hota hai
+3. Pipeline Building – Streams ko chain karke complex workflows bana sakte ho
+4. Better UX – User ko data turant milna shuru ho jata hai (e.g. YouTube video buffering)
+
+Example:
+512MB RAM wale server me 1GB file ko bina streams ke load karoge → CRASH 🚨
+Streams ke saath → 64KB ke chunks me process → Smooth ✅
+
+🛠 Stream Types in Node.js
+Type	                                    Kya karta hai	                    Example
+Readable	                      Data source se read karta hai	      fs.createReadStream()
+Writable	               Data ko destination me write karta hai	      fs.createWriteStream()
+Duplex	                                Dono (read + write)	                   TCP socket
+Transform	                Data ko modify karke aage pass karta hai	zlib, crypto
+👉 Sabhi streams EventEmitter ke instance hote hain → yani events emit karte hain (data, end, error, etc.).
+
+📖 Readable Stream Example
+const fs = require('fs');
+
+const readableStream = fs.createReadStream('myfile.txt', {
+  encoding: 'utf8',
+  highWaterMark: 64 * 1024 // 64KB chunks
+});
+
+readableStream.on('data', (chunk) => {
+  console.log(`Received ${chunk.length} bytes`);
+});
+
+readableStream.on('end', () => {
+  console.log('No more data');
+});
+
+✍ Writable Stream Example
+const fs = require('fs');
+const writableStream = fs.createWriteStream('output.txt');
+writableStream.write('Hello, ');
+writableStream.write('World!');
+writableStream.end();
+
+writableStream.on('finish', () => {
+  console.log('All data written successfully!');
+});
+
+🚦 Backpressure (Important)
+=> Agar tum zyada fast write kar rahe ho aur stream utna fast process nahi kar pa raha → backpressure hota hai.
+👉 write() return value check karna chahiye:
+=> true → aur data likho
+=> false → ruk jao aur drain event ka wait karo
+
+🔗 Pipe Example (Best Practice)
+const fs = require('fs');
+fs.createReadStream('source.txt')
+  .pipe(fs.createWriteStream('destination.txt'))
+  .on('finish', () => {
+    console.log('File copied!');
+  });
+
+🔗 Pipe Chaining (Compression Example)
+const fs = require('fs');
+const zlib = require('zlib');
+
+fs.createReadStream('source.txt')
+  .pipe(zlib.createGzip()) // Compress
+  .pipe(fs.createWriteStream('source.txt.gz'))
+  .on('finish', () => {
+    console.log('File compressed!');
+  });
+
+🔄 Duplex Stream Example (TCP Socket)
+const net = require('net');
+
+const server = net.createServer((socket) => {
+  socket.on('data', (data) => {
+    console.log('Received:', data.toString());
+    socket.write(`Echo: ${data}`); // Duplex: read + write
+  });
+});
+
+server.listen(8080, () => console.log('Server running on 8080'));
+
+🔥 Transform Stream Example (Uppercase)
+const { Transform } = require('stream');
+const fs = require('fs');
+
+class UppercaseTransform extends Transform {
+  _transform(chunk, encoding, callback) {
+    this.push(chunk.toString().toUpperCase());
+    callback();
+  }
+}
+
+fs.createReadStream('input.txt')
+  .pipe(new UppercaseTransform())
+  .pipe(fs.createWriteStream('output-uppercase.txt'))
+  .on('finish', () => {
+    console.log('Transformation done!');
+  });
+
+📌 Best Practices
+✅ Always handle errors (error event mandatory)
+✅ Use pipeline() instead of plain .pipe() for robust error handling
+✅ Respect backpressure → check write() return
+✅ Always call .end() on writable streams
+✅ Avoid sync code inside stream handlers
+✅ Be mindful of highWaterMark (buffer size)
+
+📝 Summary
+=> Streams = data ka conveyor belt in Node.js
+=> Types: Readable, Writable, Duplex, Transform
+=> Benefits: Memory efficient, fast, real-time
+=> Tools: pipe(), pipeline(), chaining
+=> Used in: files, HTTP, video streaming, compression, realtime data
+👉 Short me: Streams Node.js ka superpower hai for handling BIG data efficiently. 🚀
+
+====================================== Node.js Buffer Module =========================================
+
+🧩 Node.js Buffer Module
+=> Buffer ek temporary memory storage hota hai jo binary data handle karta hai.
+=> Ye raw memory (RAM ke ek hissa) me allocate hota hai, JavaScript heap ke bahar.
+=> Buffer fixed-size hota hai (array ki tarah, par ek baar bana to size change nahi hota).
+=> Mostly binary data (files, images, videos, streams) ke liye use hota hai.
+👉 Note: new Buffer() use mat karo (deprecated hai). Use karo:
+=> Buffer.alloc()
+=> Buffer.allocUnsafe()
+=> Buffer.from()
+
+🎯 Basic Example
+// String se buffer banao
+const buf = Buffer.from('Hello, Node.js!');
+
+console.log(buf.toString());  // 'Hello, Node.js!'
+console.log(buf[0]);          // 72 (ASCII of 'H')
+console.log(buf.length);      // 15
+
+🛠 Buffer Create Karne ke Tareeke
+1. Buffer.alloc(size)
+=> Naya buffer banata hai, zero-filled (safe).
+
+const buffer1 = Buffer.alloc(10);
+console.log(buffer1); // <Buffer 00 00 00 00 00 00 00 00 00 00>
+
+2. Buffer.allocUnsafe(size)
+=> Naya buffer banata hai, par memory initialize nahi karta.
+=> Fast hai, par purani memory ke data aa sakte hain (⚠️ risk).
+
+const buffer2 = Buffer.allocUnsafe(10);
+console.log(buffer2); // Random junk data
+buffer2.fill(0);      // Safe karne ke liye fill karo
+
+3. Buffer.from(source)
+=> String, array ya dusre buffer se naya buffer banata hai.
+
+const buf1 = Buffer.from('Hello, World!');
+console.log(buf1.toString());
+
+const buf2 = Buffer.from([65, 66, 67, 68, 69]);
+console.log(buf2.toString()); // ABCDE
+
+✍ Buffer me Likhna (Write)
+const buffer = Buffer.alloc(15);
+
+buffer.write('Hello');
+console.log(buffer.toString()); // Hello
+
+buffer[5] = 44; // ',' ASCII
+buffer[6] = 32; // space
+buffer.write('Node', 7);
+console.log(buffer.toString()); // Hello, Node
+
+📖 Buffer se Read karna
+const buffer = Buffer.from('Hello, Node.js!');
+console.log(buffer.toString());          // Hello, Node.js!
+console.log(buffer.toString('utf8', 7, 11)); // Node
+console.log(buffer[0]);                  // 72
+console.log(String.fromCharCode(buffer[0])); // H
+
+🔄 Iterating Buffers
+const buffer = Buffer.from('Hi');
+
+for (const byte of buffer) {
+  console.log(byte); // ASCII codes
+}
+
+buffer.forEach((b, i) => {
+  console.log(`Byte ${i}: ${b}`);
+});
+
+⚡ Useful Buffer Methods
+Buffer.compare()
+const b1 = Buffer.from('ABC');
+const b2 = Buffer.from('BCD');
+console.log(Buffer.compare(b1, b2)); // -1
+
+buffer.copy()
+const src = Buffer.from('Hello, World!');
+const target = Buffer.alloc(src.length);
+src.copy(target);
+console.log(target.toString()); // Hello, World!
+
+buffer.slice() (⚠️ same memory share karta hai)
+const buf = Buffer.from('Hello, World!');
+const slice = buf.slice(7);
+console.log(slice.toString()); // World!
+slice[0] = 119; // 'w'
+console.log(buf.toString());   // Hello, world!
+
+buffer.toString()
+const buf = Buffer.from('Hello');
+console.log(buf.toString('utf8')); // Hello
+
+buffer.equals()
+const a = Buffer.from('Hi');
+const b = Buffer.from('Hi');
+console.log(a.equals(b)); // true
+
+🔐 Encodings with Buffers
+const str = 'Hello, World!';
+const utf8Buf = Buffer.from(str, 'utf8');
+console.log(utf8Buf);
+
+console.log(utf8Buf.toString('base64')); // SGVsbG8sIFdvcmxkIQ==
+console.log(utf8Buf.toString('hex'));    // 48656c6c6f2c20576f726c6421
+
+
+👉 Supported encodings:
+=> utf8 (default)
+=> ascii
+=> base64
+=> hex
+=> latin1
+=> ucs2/utf16le
+
+🔗 Buffer Concatenation
+const b1 = Buffer.from('Hello, ');
+const b2 = Buffer.from('Node.js!');
+const combined = Buffer.concat([b1, b2]);
+console.log(combined.toString()); // Hello, Node.js!
+
+🔍 Searching in Buffers
+const buf = Buffer.from('Hello, Node.js is awesome!');
+console.log(buf.indexOf('Node'));     // 7
+console.log(buf.includes('awesome')); // true
+
+📂 Buffer + File System
+const fs = require('fs');
+
+const writeBuf = Buffer.from('Hello, Node.js!');
+fs.writeFileSync('buffer.txt', writeBuf);
+
+const data = fs.readFileSync('buffer.txt');
+console.log(data);           // <Buffer ...>
+console.log(data.toString()); // Hello, Node.js!
+
+⚠️ Security & Performance Considerations
+=> Buffer.allocUnsafe() sirf tab use karo jab immediately overwrite karoge.
+=> Sensitive data (password, keys) ko buffer me store karne ke baad fill(0) se clear karo.
+=> Buffer conversions (string <-> buffer) me performance hit hota hai agar bahut bada data ho.
+
+📝 Summary
+=> Buffer = binary data ke liye temporary storage
+=> Create karne ke safe tareeke → Buffer.alloc, Buffer.from
+=> Useful methods: write, toString, slice, copy, compare, equals
+=> Common use cases: File system, network sockets, streams
+=> Security tip → avoid allocUnsafe unless necessary
+👉 Short me: Buffers Node.js ka backbone hai binary data handle karne ke liye. 🚀
+
+======================================= Node.js Crypto Module ======================================
+
+🔐 Node.js Crypto Module
+=> Crypto module ek built-in Node.js module hai jo cryptography (data ko secure karna) ke liye use hota hai.
+Ye module mainly kaam aata hai:
+=> Hash functions (SHA-256, SHA-512, etc.)
+=> HMAC (Message Authentication)
+=> Symmetric encryption (AES, DES)
+=> Asymmetric encryption (RSA, ECDSA)
+=> Digital signatures
+=> Secure random numbers generate karna
+👉 Iska use tab hota hai jab tumhe passwords, messages, files ya data ko secure karna ho.
+
+🟢 Getting Started Example (Hashing)
+const crypto = require('crypto');
+
+// Simple SHA-256 Hash
+const hash = crypto.createHash('sha256')
+  .update('Hello, Node.js!')
+  .digest('hex');
+
+console.log('SHA-256 Hash:', hash);
+⚡ Isme update() me tumhara data jata hai aur digest('hex') usko hash string bana deta hai.
+
+🛠 Hash Functions
+=> Hash ek one-way function hoti hai – matlab data ko hash banaya jaa sakta hai, lekin wapas original data nahi milta.
+
+Properties:
+=> Deterministic: Same input → same output
+=> Fixed length: Output hamesha same size ka hota hai
+=> One-way: Reverse karna mushkil hai
+=> Avalanche effect: Chhoti change → badi change in output
+
+Example:
+const crypto = require('crypto');
+const data = 'Hello, World!';
+console.log("MD5:", crypto.createHash('md5').update(data).digest('hex'));  // Weak ❌
+console.log("SHA-1:", crypto.createHash('sha1').update(data).digest('hex')); // Weak ❌
+console.log("SHA-256:", crypto.createHash('sha256').update(data).digest('hex')); // Secure ✅
+console.log("SHA-512:", crypto.createHash('sha512').update(data).digest('hex')); // Secure ✅
+⚠️ Note: MD5 aur SHA-1 weak algorithms hai → security ke liye use mat karo.
+
+🔑 Password Security
+=> Passwords ko direct hash karke store karna unsafe hai.
+Iske liye use hota hai:
+=> Salt (random string jo har user ke liye unique ho)
+=> Key stretching (hashing ko intentionally slow banana)
+
+Example (Scrypt ke sath)
+const crypto = require('crypto');
+
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex'); 
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return { salt, hash };
+}
+
+function verifyPassword(password, salt, hash) {
+  const hashedPassword = crypto.scryptSync(password, salt, 64).toString('hex');
+  return hashedPassword === hash;
+}
+
+const { salt, hash } = hashPassword("mySecurePassword");
+console.log("Salt:", salt);
+console.log("Hash:", hash);
+
+console.log("Valid:", verifyPassword("mySecurePassword", salt, hash)); // true
+console.log("Invalid:", verifyPassword("wrongPassword", salt, hash)); // false
+👉 Production me bcrypt ya argon2 use karna recommended hai.
+
+🛡 HMAC (Hash-based Message Authentication Code)
+=> Ye ek hash + secret key ka combination hai jo message integrity aur authenticity ensure karta hai.
+
+Example:
+const crypto = require('crypto');
+const secretKey = 'mySecretKey';
+
+const hmac = crypto.createHmac('sha256', secretKey);
+hmac.update('Hello, World!');
+console.log("HMAC:", hmac.digest('hex'));
+👉 Use cases: API authentication, secure cookies, webhook verification.
+
+🔒 Symmetric Encryption (AES Example)
+=> Same key se encrypt aur decrypt hota hai.
+const crypto = require('crypto');
+
+function encrypt(text, key) {
+  const iv = crypto.randomBytes(16); 
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+
+  return { iv: iv.toString('hex'), encryptedData: encrypted };
+}
+
+function decrypt(encryptedData, iv, key) {
+  const decipher = crypto.createDecipheriv('aes-256-cbc', key, Buffer.from(iv, 'hex'));
+
+  let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+
+  return decrypted;
+}
+
+const key = crypto.scryptSync('password', 'salt', 32);
+const message = "Secret Message";
+
+const { iv, encryptedData } = encrypt(message, key);
+console.log("Encrypted:", encryptedData);
+
+const decrypted = decrypt(encryptedData, iv, key);
+console.log("Decrypted:", decrypted);
+👉 Hamesha random IV (initialization vector) use karo.
+
+🔑 Asymmetric Encryption (RSA Example)
+=> Yahan ek public key hoti hai (encrypt ke liye) aur ek private key (decrypt ke liye).
+const crypto = require('crypto');
+
+// Generate RSA keys
+const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+  modulusLength: 2048,
+  publicKeyEncoding: { type: 'spki', format: 'pem' },
+  privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+});
+
+// Encrypt with public key
+const encrypted = crypto.publicEncrypt(publicKey, Buffer.from("Hello RSA")).toString('base64');
+console.log("Encrypted:", encrypted);
+
+// Decrypt with private key
+const decrypted = crypto.privateDecrypt(privateKey, Buffer.from(encrypted, 'base64')).toString('utf8');
+console.log("Decrypted:", decrypted);
+
+✍️ Digital Signatures
+=> Signature se tum verify kar sakte ho ki message sender genuine hai ya nahi.
+
+🎲 Random Data Generation
+const crypto = require('crypto');
+console.log("Random bytes:", crypto.randomBytes(16).toString('hex'));
+
+✅ Best Practices
+=> Old algorithms (MD5, SHA-1) avoid karo
+=> Keys secure jagah store karo (env variables)
+=> Har encryption ke liye new IV generate karo
+=> Authentication ke liye AES-GCM mode prefer karo
+=> crypto.timingSafeEqual() use karo comparisons ke liye (to prevent timing attacks)
+=> Password hashing ke liye bcrypt / argon2 best hai
+👉 Short me:
+Crypto module tumhe secure apps banane ke liye tools deta hai – hashing, encryption, signatures, aur random numbers ke liye.
+
+============================================= Node.js Timers Module =============================================
+
+🕒 Node.js Timers Module
+=> Timers module tumhe time-based execution control karne ka option deta hai.
+Matlab tum decide kar sakte ho ki koi code:
+=> Delay ke baad chale (⏱ setTimeout)
+=> Repeat hote rahe (🔁 setInterval)
+=> Next event loop cycle me chale (⚡ setImmediate)
+=> Aur agar async/await chahiye to Promise-based API bhi milega
+👉 Ye sab functions global hote hain Node.js me, import karne ki zarurat nahi hai.
+
+🟢 setTimeout() aur clearTimeout()
+=> Kisi code ko ek baar, delay ke baad chalana ho.
+
+setTimeout(() => {
+  console.log("Hello after 2 seconds");
+}, 2000);
+
+// Timeout cancel karna
+const timeoutId = setTimeout(() => {
+  console.log("Ye kabhi nahi chalega");
+}, 5000);
+
+clearTimeout(timeoutId);
+✅ Use cases: Delay tasks, retry logic, timeouts implement karna.
+
+🔁 setInterval() aur clearInterval()
+=> Kisi function ko bar-bar ek fixed interval par chalana ho.
+
+let count = 0;
+const intervalId = setInterval(() => {
+  count++;
+  console.log(`Interval run hua ${count} times`);
+  
+  if (count >= 5) {
+    clearInterval(intervalId);
+    console.log("Interval stop ho gaya");
+  }
+}, 1000);
+✅ Use cases: Polling, heartbeat, periodic jobs.
+
+⚡ setImmediate() aur clearImmediate()
+=> Code ko current execution ke baad, turant next event loop me chalana.
+
+console.log("Start");
+
+setImmediate(() => {
+  console.log("setImmediate callback");
+});
+
+setTimeout(() => {
+  console.log("setTimeout callback");
+}, 0);
+
+process.nextTick(() => {
+  console.log("nextTick callback");
+});
+
+console.log("End");
+
+
+🔎 Output order:
+ => Start
+=> End
+=> nextTick
+=> setTimeout / setImmediate (order thoda vary kar sakta hai)
+👉 setImmediate() efficient hai setTimeout(fn, 0) se.
+
+🌀 process.nextTick()
+Ye Timers module ka part nahi hai par related hai.
+=> Highest priority hoti hai timers se bhi
+=> Current operation ke baad turant chalti hai
+⚠️ Agar zyada use karo to I/O starvation ho sakta hai (baaki kaam ruk jata hai).
+
+⏳ Promise-based Timers (Node.js 15+)
+=> Agar tumhe async/await pattern chahiye:
+
+const { setTimeout } = require("timers/promises");
+
+async function run() {
+  console.log("Start");
+  await setTimeout(2000); 
+  console.log("2 second ke baad");
+  
+  const msg = await setTimeout(1000, "Hello Async!");
+  console.log(msg);
+}
+run();
+
+🔧 Advanced Patterns
+1. Debouncing
+=> Function ko delay ke sath chalana, taaki bar-bar trigger na ho.
+
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  }
+}
+
+const resizeHandler = debounce(() => {
+  console.log("Resize hua");
+}, 300);
+
+2. Throttling
+=> Function ko limited frequency par chalana.
+
+function throttle(fn, limit) {
+  let running = false;
+  return function(...args) {
+    if (!running) {
+      fn.apply(this, args);
+      running = true;
+      setTimeout(() => running = false, limit);
+    }
+  }
+}
+
+const scrollHandler = throttle(() => {
+  console.log("Scroll handled");
+}, 200);
+
+3. Sequential Timeouts
+=> Ek ke baad ek kaam delay ke sath chalana.
+
+function sequentialTimeouts(tasks, delay=1000) {
+  let i = 0;
+  function next() {
+    if (i < tasks.length) {
+      tasks[i]();
+      i++;
+      setTimeout(next, delay);
+    }
+  }
+  next();
+}
+
+sequentialTimeouts([
+  () => console.log("Step 1"),
+  () => console.log("Step 2"),
+  () => console.log("Step 3")
+]);
+
+⚠️ Best Practices
+=> Har interval/timeout ko clear karna na bhule → memory leak ho sakti hai
+=> Closures me bade objects mat pass karo timeout ke sath
+=> setTimeout(fn, 0) CPU-intensive kaam todne ke liye use kar sakte ho
+=> Timers perfectly accurate nahi hote → load aur event loop par depend karta hai
+
+👉 Short me:
+=> setTimeout → ek baar delay ke baad
+=> setInterval → bar-bar repeat hote hue
+=> setImmediate → turant next loop me
+=> process.nextTick → sabse high priority (I/O se pehle)
+=> Promise-based API → async/await friendly
+
+============================= Node.js DNS Module =============================
+
+🌐 Node.js DNS Module
+DNS module tumhe Domain Name System ke sath interact karne deta hai. Matlab:
+=> Domain name ko IP address me convert karna
+=> IP address se hostname nikalna (reverse lookup)
+=> Alag-alag DNS record types (MX, TXT, SRV, etc.) query karna
+=> Custom resolvers banana (apne DNS servers use karne ke liye)
+👉 Node.js DNS module me 2 APIs hote hain:
+=> Callback-based API (purana style)
+=> Promise-based API (modern async/await ke sath use karne ke liye)
+
+🚀 Start Karna (Basic Example)
+const dns = require("dns");
+
+// Callback style
+dns.lookup("example.com", (err, address, family) => {
+  if (err) {
+    console.error("Error:", err);
+    return;
+  }
+  console.log(`IP: ${address}, Version: IPv${family}`);
+});
+
+
+Promise style (recommended):
+
+const { promises: dns } = require("dns");
+
+async function run() {
+  try {
+    const result = await dns.lookup("example.com");
+    console.log(`IP: ${result.address}, Version: IPv${result.family}`);
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
+run();
+
+🔑 Important Methods
+1. dns.lookup()
+=> System-level resolver (OS ka use karta hai).
+👉 Fast hai, par hosts file / local config follow karta hai.
+
+2. dns.resolve*()
+=> Direct DNS server se query karta hai.
+👉 Zyada control deta hai, aur different record types nikalne ke liye use hota hai.
+
+Examples:
+
+// IPv4 addresses
+dns.resolve4("google.com", (err, addresses) => {
+  console.log("IPv4:", addresses);
+});
+
+// MX records
+dns.resolveMx("gmail.com", (err, records) => {
+  console.log("MX Records:", records);
+});
+
+// TXT records
+dns.resolveTxt("example.com", (err, records) => {
+  console.log("TXT Records:", records);
+});
+
+3. dns.reverse()
+=> IP se hostname nikalne ke liye.
+
+dns.reverse("8.8.8.8", (err, hostnames) => {
+  console.log("Hostnames:", hostnames);
+});
+
+📋 Record Types (Quick Table)
+Method	      Record	   Use Case
+resolve4()	A	IPv4 addresses
+resolve6()	AAAA	IPv6 addresses
+resolveMx()	MX	Mail servers
+resolveTxt()	TXT	Text records (SPF, DKIM, etc.)
+resolveSrv()	SRV	Services
+resolveNs()	NS	Name servers
+resolveCname()	CNAME	Canonical name
+resolveSoa()	SOA	Start of authority
+resolvePtr()	PTR	Pointer (reverse DNS)
+resolveAny()	ANY	Sab records
+
+🛠️ Advanced Features
+1. Custom Resolver
+=> Apne DNS servers use karne ke liye:
+const dns = require("dns");
+const resolver = new dns.Resolver();
+
+resolver.setServers(["8.8.8.8", "1.1.1.1"]); // Google & Cloudflare DNS
+
+resolver.resolve4("example.com", (err, addresses) => {
+  console.log("Custom resolver result:", addresses);
+});
+
+2. Error Handling
+=> DNS kabhi fail bhi ho sakta hai → error codes handle karne padte hain:
+
+dns.lookup("fake-domain-123.com", (err, address) => {
+  if (err) {
+    switch (err.code) {
+      case "ENOTFOUND": console.log("Domain nahi mila"); break;
+      case "ETIMEDOUT": console.log("Request timeout ho gaya"); break;
+      default: console.log("Error:", err.code);
+    }
+  }
+});
+
+3. Performance Optimization
+=> Caching: Bar-bar lookup karne se bachne ke liye
+=> Parallel Lookups: Promise.all() se ek sath multiple lookups
+Example caching:
+
+const dns = require("dns").promises;
+const cache = new Map();
+
+async function cachedLookup(domain) {
+  if (cache.has(domain)) {
+    console.log("Cache hit:", domain);
+    return cache.get(domain);
+  }
+  console.log("Cache miss:", domain);
+  const result = await dns.lookup(domain);
+  cache.set(domain, result);
+  return result;
+}
+
+⚡ DNS Module vs Third-Party Libraries
+Feature	      Node.js DNS	Third-party libs (dns2, native-dns, etc.)
+Built-in	✅ Yes	               ❌ Extra install
+Caching	        ❌ No	                ✅ Often included
+Features	Basic	         Advanced (DoH, DoT, DNSSEC)
+Performance	Good	            Optimized for heavy use
+
+🎯 Summary
+=> dns.lookup() → OS level resolution (fast, local config use karta hai)
+=> dns.resolve* → Direct DNS query (zyaada powerful, direct servers use karta hai)
+=> dns.reverse() → IP → Domain name
+=> Custom Resolver → Apne DNS servers set karne ke liye
+=> Promise-based API → Async/await ke sath clean code
+=> Best Practices → Errors handle karo, cache use karo, parallel lookups karo
+
+=============================================== Node.js Assert Module ==============================================
+
+🚀 Node.js Assert Module
+=> Ye ek core Node.js module hai (matlab install karne ki zarurat nahi hoti).
+=> Ye tumhare code ke liye assertions (conditions check karna) provide karta hai.
+=> Agar condition fail hoti hai → AssertionError throw hota hai.
+👉 Use case: Testing ya code me invariants validate karna.
+
+🔑 Features
+✔️ Truthy/falsy check
+✔️ Equal / Not equal check (strict + loose)
+✔️ Deep object/array compare
+✔️ Error throw check
+✔️ Async (Promise/await) test support
+
+⚡ Import karna
+// Basic
+const assert = require('assert');
+
+// Recommended strict mode
+const assert = require('assert').strict;
+
+// Destructuring
+const { strictEqual, deepStrictEqual, throws } = require('assert');
+
+// ES Modules (Node.js 12+)
+import { strict as assert } from 'assert';
+👉 Best Practice → strict use karo (zyada accurate aur future safe hai).
+
+🎯 Basic Example
+const assert = require('assert').strict;
+
+function add(a, b) {
+  if (typeof a !== 'number' || typeof b !== 'number') {
+    throw new TypeError("Inputs must be numbers");
+  }
+  return a + b;
+}
+
+assert.strictEqual(add(2, 3), 5);   // Pass
+assert.throws(() => add("2", 3), TypeError); // Pass
+
+console.log("All tests passed!");
+
+🛠️ Core Assertion Methods
+✅ 1. Truthy / Falsy Check
+assert(true);  // Pass
+assert(1);     // Pass
+assert("hi");  // Pass
+assert(false); // Fail ❌
+Alias → assert.ok()
+
+✅ 2. Equality Check
+// Loose check (==)
+assert.equal("1", 1);  // Pass (coercion)
+
+// Strict check (===)
+assert.strictEqual("1", 1); // Fail ❌
+assert.strictEqual(1, 1);   // Pass
+👉 Always prefer strictEqual()
+
+✅ 3. Deep Comparison (Objects/Arrays)
+const obj1 = { a: 1, b: { c: 2 } };
+const obj2 = { a: 1, b: { c: 2 } };
+
+assert.deepStrictEqual(obj1, obj2); // Pass
+
+assert.deepEqual({ a: "1" }, { a: 1 }); // Pass (loose)
+assert.deepStrictEqual({ a: "1" }, { a: 1 }); // Fail ❌
+
+✅ 4. Inequality
+assert.notEqual(1, 2);          // Pass
+assert.notStrictEqual("1", 1);  // Pass
+Deep inequality → notDeepEqual(), notDeepStrictEqual()
+
+✅ 5. Error Handling
+function throwError() {
+  throw new Error("Boom!");
+}
+
+// Expect error
+assert.throws(throwError, /Boom/);
+
+// Expect no error
+assert.doesNotThrow(() => 2 + 2);
+
+✅ 6. Async Testing
+// Reject expected
+await assert.rejects(
+  async () => { throw new Error("Async fail"); },
+  /Async fail/
+);
+
+// Fulfill expected
+await assert.doesNotReject(
+  async () => "Success"
+);
+
+✅ 7. Other Methods
+// Match regex
+assert.match("I love Node.js", /Node/);
+
+// Always fail
+assert.fail("Manual fail");
+
+📋 Quick Summary (Shortcut Table)
+Method	                                                                Use Case
+assert(value) / assert.ok()	                                     Truthy check
+assert.equal()	                                                   Loose equality (==)
+assert.strictEqual()	                                          Strict equality (===)
+assert.deepEqual()	                                           Deep loose compare
+assert.deepStrictEqual()	                                  Deep strict compare
+assert.notEqual(), notStrictEqual()	                              Inequality
+assert.notDeepEqual(), notDeepStrictEqual()	                  Deep inequality
+assert.throws()	                                              Function should throw
+assert.doesNotThrow()	                                     Function shouldn’t throw
+assert.rejects()	                                      Async reject expected
+assert.doesNotReject()	                                      Async resolve expected
+assert.match()	                                                    Regex match
+assert.fail()	                                                    Force fail
+
+🆚 Assert vs Testing Frameworks
+=> Assert use karo jab → Simple scripts, quick testing, bina dependency ke chahiye.
+=> Framework (Jest/Mocha) use karo jab → Large project, reports, mocking, test runner chahiye.
+
+=========================================== Node.js Util Module =================================
+
+🚀 Node.js Util Module
+=> Ye ek core Node.js module hai (install karne ki zarurat nahi).
+=> Isme ekdum useful helper functions hote hain jo common tasks easy banate hain.
+=> Socho ek Swiss Army Knife for Node.js devs 🛠
+
+✨ Common Use Cases
+✔ String format karna (placeholders ke sath)
+✔ Objects ko inspect karna (debugging ke liye)
+✔ Callbacks → Promises convert karna (promisify)
+✔ Promises → Callbacks convert karna (callbackify)
+✔ Type checking (util.types)
+✔ Deprecation warnings handle karna
+✔ Debug logging
+
+⚡ Import karna
+// CommonJS
+const util = require('util');
+const { promisify, inspect, format } = require('util');
+
+// ES Module
+import util from 'util';
+import { promisify, inspect } from 'util';
+
+🎯 1. String Formatting
+const util = require('util');
+
+const msg = util.format("Hello %s, today is %s", "Dev", new Date().toDateString());
+console.log(msg); 
+// 👉 Hello Dev, today is Tue Sep 03 2025
+
+
+📌 Placeholders:
+=> %s → String
+=> %d → Number
+=> %j → JSON
+=> %o → Object (shallow)
+=> %O → Object (deep)
+=> %% → % sign
+
+🎯 2. Object Inspection
+const obj = { name: "John", hobbies: ["code", "music"], nested: { x: 1 } };
+console.log(util.inspect(obj, { colors: true, depth: 2 }));
+👉 Debugging ke time bohot kaam aata hai.
+Custom inspection bhi bana sakte ho:
+
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  [util.inspect.custom]() {
+    return `Person<${this.name}, ${this.age}>`;
+  }
+}
+console.log(new Person("Alex", 25));
+
+🎯 3. Promisify
+👉 Callback-based function ko Promise/async-await compatible banata hai.
+
+const fs = require('fs');
+const { promisify } = require('util');
+
+const readFile = promisify(fs.readFile);
+
+(async () => {
+  const data = await readFile('package.json', 'utf8');
+  console.log("File:", data.substring(0, 50));
+})();
+
+🎯 4. Callbackify
+👉 Promise-based function ko callback style me convert karta hai.
+
+const { callbackify } = require('util');
+
+async function getUser(id) {
+  if (!id) throw new Error("ID required");
+  return { id, name: "User " + id };
+}
+
+const cbFn = callbackify(getUser);
+
+cbFn(1, (err, res) => {
+  if (err) console.error("Error:", err);
+  else console.log("User:", res);
+});
+
+🎯 5. Type Checking (util.types)
+const { types } = require('util');
+
+console.log(types.isDate(new Date()));      // true
+console.log(types.isRegExp(/abc/));         // true
+console.log(types.isPromise(Promise.resolve())); // true
+console.log(types.isArrayBuffer(new ArrayBuffer(8))); // true
+👉 Ye typeof se zyada accurate hota hai, especially Node.js specific objects ke liye.
+
+🎯 6. Deprecation
+const { deprecate } = require('util');
+
+function oldFn() {
+  return "old";
+}
+
+const newFn = () => "new";
+
+const deprecated = deprecate(oldFn, "oldFn() is deprecated, use newFn() instead!");
+
+console.log(deprecated());  // Warning show karega
+console.log(newFn());
+
+🎯 7. Debug Logging
+👉 NODE_DEBUG env variable ke basis pe logs show hote hain.
+
+const debug = util.debuglog('app');
+
+debug("App started with %j", { port: 3000 });
+console.log("Normal log (always visible)");
+
+Run like this:
+NODE_DEBUG=app node index.js
+
+📋 Quick Cheat Sheet
+Function	                          Kaam
+util.format()	                  String formatting
+util.inspect()	                  Object inspect/debug
+util.promisify()	          Callback → Promise
+util.callbackify()	          Promise → Callback
+util.types	                 Accurate type checking
+util.deprecate()	      Function deprecated mark karna
+util.debuglog()	               Debug logging with env var
+
+✅ Short me bole to: util module = debugging + string/object handling + async conversion + type checking + logging.
+
+==================================================== Node.js Readline Module ==================================================
+
+📌 Node.js Readline Module
+=> Node.js ka Readline module ek core module hai jo Readable stream (jaise process.stdin) se line-by-line input lene ki facility deta hai.
+=> Ye module zyada tar command-line applications me use hota hai.
+
+⭐ Common Use Cases
+=> Interactive CLI apps (user se question-answer)
+=> Setup/configuration wizards
+=> Command-line games
+=> REPL (Read-Eval-Print Loop) environment
+=> Large text files ko line-by-line process karna
+=> Custom shells ya CLI banana
+
+🔑 Key Features
+=> Line-by-line input
+=> Custom prompts
+=> Tab completion
+=> History management
+=> Event-driven interface
+=> Async/Promise support
+
+🚀 Getting Started
+=> Ye module already Node.js ke sath aata hai, alag se install karne ki zarurat nahi hai.
+
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question("What is your name? ", (name) => {
+  console.log(`Hello, ${name}!`);
+  rl.close();
+});
+
+🛠 Interface Creation
+=> Interface banane ke liye createInterface use karte hain:
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  prompt: "> "
+});
+
+
+Options:
+=> input → readable stream (default: stdin)
+=> output → writable stream (default: stdout)
+=> prompt → custom string (default: "> ")
+=> historySize, completer, terminal etc. bhi customize kar sakte ho.
+
+📘 Important Methods
+1. rl.question(query, callback)
+=> User se ek sawal puchhne ke liye.
+
+rl.question("Name? ", (name) => {
+  console.log("Hello " + name);
+  rl.close();
+});
+👉 Pro tip: Async/await ke liye isko promise me wrap karo.
+
+2. rl.prompt()
+=> Prompt show karne ke liye.
+
+rl.prompt();
+rl.on("line", (line) => {
+  console.log(`You typed: ${line}`);
+  rl.prompt();
+});
+
+3. rl.write(data)
+=> Console par directly likhne ke liye, ya default value dene ke liye.
+
+4. rl.close()
+=> Interface properly band karne ke liye. Ye cleanup ke liye zaroori hai.
+
+5. rl.pause() / rl.resume()
+=> Input temporarily stop/start karne ke liye (long process ke time helpful).
+
+⚡ Advanced Features
+✅ File ko line-by-line read karna
+const fs = require('fs');
+const rl = readline.createInterface({
+  input: fs.createReadStream('file.txt'),
+  crlfDelay: Infinity
+});
+
+rl.on("line", (line) => {
+  console.log("Line:", line);
+});
+
+✅ CLI Menu Banana
+console.log("1: Show Time\n2: Exit");
+rl.question("Choose option: ", (opt) => {
+  if (opt === "1") console.log(new Date().toLocaleTimeString());
+  rl.close();
+});
+
+✅ Tab Completion
+=> Auto-suggest features ke liye completer option use hota hai.
+
+✅ Multi-line Input
+=> .end likhne par input khatam:
+
+const lines = [];
+rl.on("line", (line) => {
+  if (line === ".end") {
+    console.log("Your text:\n", lines.join("\n"));
+    rl.close();
+  } else {
+    lines.push(line);
+  }
+});
+
+✅ REPL Banana
+=> Custom JS REPL banane ke liye vm + readline use kar sakte ho.
+
+💡 Best Practices
+=> Hamesha rl.close() use karo
+=> Errors handle karo
+=> Promises/async await ka use karo
+=> User-friendly prompts rakho
+=> Large files ke liye line-by-line processing hi karo (memory efficient)
+
+🔄 Readline vs Alternatives
+Method	                       Pros	                        Cons	                   Best For
+Readline	       Built-in, interactive,history	     Complex for UI	          CLIs, REPL
+process.stdin	         Low-level control	          Manual handling needed	  Raw input
+Inquirer.js	       Rich UI, validation	            Extra dependency	         Surveys, forms
+Commander.js	     Easy CLI args/options parsing	     Not interactive	         Command tools
+
+🎯 Summary
+=> Readline ek simple aur powerful tool hai jo tumhe Node.js me interactive command-line apps, file readers, aur custom shells/REPLs banane deta hai.
+=> Quick Q&A → rl.question()
+=> Continuous input → rl.prompt()
+=> File reading → rl.on('line')
+=> Advanced UX → Tab completion, multi-line input, REPL
+
+
+======================================================= JS & TS Features  ===============================================
+
+=================================================== Node.js ES6+ Features ========================================
+
+Node.js ES6+ Features
+=> ES6 (ECMAScript 2015) aur uske baad ke versions mein JavaScript ke andar bahut saare naye features aaye jo code ko:
+=> Cleaner (saaf aur readable)
+=> Concise (chhota)
+=> Maintainable (easily handle hone wala)
+=> Bug-free banate hain.
+Node.js ke modern versions (10+) already in features ko support karte hain.
+
+1. let aur const
+=> let → re-assign kar sakte ho (mutable).
+=> const → re-assign nahi kar sakte (immutable), lekin object ke properties change ho sakte hain.
+=> Dono block-scoped hain (var se alag, jo function-scoped tha).
+
+let score = 10;
+score = 20; // allowed
+
+const MAX_USERS = 100; 
+// MAX_USERS = 200 ❌ (not allowed)
+
+2. Arrow Functions
+=> Short syntax + this ka lexical binding (apna this nahi banata).
+
+const add = (a, b) => a + b;
+const double = num => num * 2;
+const sayHello = () => "Hello!";
+
+
+🚫 Kab na use karein?
+=> Object methods
+=> Constructor functions
+=> Event handlers (agar this chahiye ho)
+
+3. Template Literals
+=> Backticks (`) ke saath string likhne ka naya tareeka.
+
+const name = "Alice";
+console.log(`Hello, ${name}!`);
+
+const multiLine = `
+Ye ek
+multi-line
+string hai
+`;
+
+4. Destructuring
+=> Object/array se values nikalne ka short way.
+
+const user = { name: "Alice", age: 30 };
+const { name, age } = user;
+
+const colors = ["red", "green", "blue"];
+const [first, , third] = colors;
+
+5. Spread (...) & Rest (...)
+=> Spread → expand karna.
+=> Rest → group karna.
+
+const nums = [1, 2, 3];
+const moreNums = [4, 5];
+const combined = [...nums, ...moreNums]; 
+
+function sum(...numbers) {
+  return numbers.reduce((a, b) => a + b, 0);
+}
+
+6. Default Parameters
+=> Function ke parameters ke liye default value set kar sakte ho.
+
+function greet(name = "Guest") {
+  return `Hello, ${name}`;
+}
+
+7. Classes
+=> Object-oriented likhne ka naya syntax.
+
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+  greet() {
+    return `Hello, I'm ${this.name}`;
+  }
+}
+=> extends se inheritance hoti hai.
+=> Private fields # ke saath aati hain (ES2022+).
+
+8. Promises & Async/Await
+=> Asynchronous code handle karne ke liye.
+Promise Example:
+fetchData()
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+Async/Await Example:
+async function getUser() {
+  try {
+    const user = await fetchUser(1);
+    console.log(user);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+9. ES Modules
+=> Code ko organize karne ka standard tareeka.
+
+// math.js
+export const PI = 3.14;
+export function add(a, b) { return a + b; }
+export default class Calculator {}
+
+// app.js
+import Calculator, { PI, add } from "./math.js";
+
+10. Enhanced Object Literals
+=> Object banane ka short syntax.
+
+const name = "Alice";
+const person = { name, age: 30 };
+
+const calc = {
+  add(a, b) { return a + b; }
+};
+
+11. Optional Chaining (?.) & Nullish Coalescing (??)
+=> ?. → nested properties safely access karna.
+=> ?? → null/undefined pe default value dena.
+
+const city = user?.address?.city;
+const price = total ?? 100;
+
+12. Modern Async Patterns
+=> Sequential → ek ke baad ek (slow).
+=> Parallel → ek saath (fast).
+
+// Parallel (faster)
+const results = await Promise.all([task1(), task2()]);
+
+🎯 Summary
+=> ES6+ ke features aapke Node.js code ko banate hain:
+=> Cleaner
+=> Maintainable
+=> Less buggy
+=> Modern & readable
+Features yaad rakhne ke liye bas keywords yaad rakho:
+👉 let/const, arrow fn, template literals, destructuring, spread/rest, default params, classes, promises/async-await, modules, optional chaining.
+
+================================== Node.js Process Management =======================================
+
+🌟 Node.js Process Management
+Process management ka matlab hai apne Node.js app ke lifecycle ko control karna:
+=> Start/Stop karna
+=> Crash hone ke baad restart karna
+=> Performance monitor karna
+=> System signals handle karna
+=> Env variables manage karna
+
+🔹 process Object
+=> Node.js ka process object hamesha available hota hai. Ye app ke bare mein info deta hai.
+console.log("PID:", process.pid);          // Process ID
+console.log("Platform:", process.platform); // win32, linux, etc
+console.log("Node.js Version:", process.version);
+console.log("Memory:", process.memoryUsage());
+console.log("Args:", process.argv);        // CLI arguments
+
+🔹 Process Exit
+=> App ko manually stop karne ke tareeke:
+process.exit();   // Normal exit
+process.exit(0);  // Explicit success
+process.exit(1);  // Error exit
+
+
+Cleanup karne ke liye:
+process.on('beforeExit', (code) => {
+  console.log("Exiting with code:", code);
+});
+
+🔹 Process Events
+=> Node.js process signals handle kar sakta hai:
+👉 Ctrl+C (SIGINT)
+process.on('SIGINT', () => {
+  console.log("Got SIGINT. Cleaning...");
+  process.exit(0);
+});
+
+👉 SIGTERM (Process kill signal)
+process.on('SIGTERM', () => {
+  console.log("SIGTERM received");
+  process.exit(0);
+});
+
+👉 Uncaught Exception
+process.on('uncaughtException', (err) => {
+  console.error("Error:", err);
+  process.exit(1);
+});
+
+🔹 Process Managers (PM2)
+=> Production mein app ko continuously chalane ke liye PM2 use karte hain.
+Install
+npm install -g pm2
+
+Common Commands
+pm2 start app.js      # Start app
+pm2 list              # Running apps
+pm2 monit             # Monitor resources
+pm2 logs              # Logs
+pm2 stop app_name     # Stop
+pm2 restart app_name  # Restart
+pm2 delete app_name   # Remove from PM2
+
+Config (ecosystem.config.js)
+module.exports = {
+  apps: [{
+    name: "my-app",
+    script: "app.js",
+    instances: "max",
+    autorestart: true,
+    watch: false,
+    max_memory_restart: "1G",
+    env: { NODE_ENV: "development" },
+    env_production: { NODE_ENV: "production" }
+  }]
+};
+
+🔹 Environment Variables
+=> App ke liye config values rakhta hai.
+
+const apiKey = process.env.API_KEY;
+const port = process.env.PORT || 3000;
+const isProd = process.env.NODE_ENV === "production";
+console.log(process.env); // all env vars
+👉 Local dev ke liye .env file + dotenv package use karo:
+
+require("dotenv").config();
+console.log(process.env.DATABASE_URL);
+
+
+⚠️ Best practices:
+=> Sensitive data commit mat karo
+=> .env sirf local ke liye
+=> Prod me hosting platform pe set karo
+
+🔹 Child Processes
+System commands run karne ke liye:
+👉 exec (small output ke liye):
+
+const { exec } = require("child_process");
+
+exec("ls -la", (err, stdout, stderr) => {
+  if (err) return console.error(err);
+  console.log(stdout);
+});
+
+
+👉 spawn (large output ke liye):
+const { spawn } = require("child_process");
+
+const child = spawn("find", ["/", "-type", "f"]);
+child.stdout.on("data", d => console.log(`Found: ${d}`));
+
+🔹 Monitoring Performance
+👉 Memory Usage
+
+function getMemoryUsage() {
+  const used = process.memoryUsage();
+  return {
+    rss: (used.rss / 1024 / 1024).toFixed(2) + " MB",
+    heapUsed: (used.heapUsed / 1024 / 1024).toFixed(2) + " MB"
+  };
+}
+
+setInterval(() => {
+  console.log("Memory:", getMemoryUsage());
+}, 5000);
+
+
+👉 CPU Usage
+const start = process.cpuUsage();
+// CPU intensive work
+for (let i = 0; i < 1e7; i++) {}
+const end = process.cpuUsage(start);
+console.log("CPU:", end.user / 1000, "ms");
+
+📝 Key Takeaways
+=> process → system aur app info deta hai
+=> process.exit & signals → lifecycle control
+=> PM2 → production me must-have manager
+=> env vars → configs ko manage karne ke liye
+=> child_process → external commands run karna
+=> uncaughtException → crashes ko handle karna
+=> Monitoring → CPU & memory usage track karna
+
+=========================================== Node.js with TypeScript ==========================================================
+
+🌟 Node.js with TypeScript
+=> TypeScript = JavaScript + Types
+=> Yeh ek superset hai JS ka, jo optional static typing deta hai.
+
+Fayda?
+✅ Compile-time pe errors pakad lo
+✅ Safer aur maintainable code
+✅ Large projects mein best
+
+🔹 Setup TypeScript in Node.js
+Step 1: Project Init
+npm init -y
+
+Step 2: Install TypeScript + Node.js types
+npm install --save-dev typescript @types/node
+
+Step 3: Initialize TS Config
+npx tsc --init
+
+Step 4: Compile Code
+tsc yourfile.ts
+node yourfile.js
+
+🔹 TypeScript Basics
+✅ Basic Types
+let isDone: boolean = false;
+let count: number = 10;
+let name: string = "TS";
+
+// Arrays
+let numbers: number[] = [1, 2, 3];
+let names: Array<string> = ["Alice", "Bob"];
+
+// Tuples
+let user: [string, number] = ["Alice", 25];
+
+// Enums
+enum Color { Red, Green, Blue }
+let c: Color = Color.Green;
+
+✅ Interfaces & Types
+// Interface
+interface User {
+  id: number;
+  name: string;
+  email?: string; // optional property
+}
+
+// Type alias
+type Point = { x: number; y: number };
+
+function printUser(user: User) {
+  console.log(`User: ${user.name}`);
+}
+
+🔹 Node.js + TypeScript Examples
+1️. Simple HTTP Server
+// server.ts
+import http from "http";
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("Hello, TypeScript!");
+});
+
+server.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+
+2️. Express with TypeScript
+Install packages:
+
+npm install express
+npm install --save-dev @types/express
+Code:
+
+// app.ts
+import express, { Request, Response } from "express";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+const app = express();
+app.use(express.json());
+
+let users: User[] = [];
+
+// GET
+app.get("/users", (req: Request, res: Response) => {
+  res.json(users);
+});
+
+// POST
+app.post("/users", (req: Request, res: Response) => {
+  const user: User = req.body;
+  users.push(user);
+  res.status(201).json(user);
+});
+
+app.listen(3000, () => console.log("Server running..."));
+
+🔹 tsconfig.json Example
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
+
+🔹 Why Use TypeScript with Node.js?
+✔ Type Safety → errors compile-time pe mil jaate hain
+✔ IDE Support → IntelliSense, autocomplete, navigation
+✔ Self-Documenting Code → types hi documentation ban jaate hain
+✔ Refactoring Safe → bade codebases mein rename/change safe hota hai
+✔ Gradual Adoption → purane JS project me slowly add kar sakte ho
+
+🔹 When to Use TypeScript?
+=> Large projects (team work)
+=> APIs (type safety zaroori hai)
+=> Long-term maintainable apps
+=> Complex data structures handle karne wale projects
+
+============================================== Advanced TypeScript with Node.js ==============================================
+
+🔥 Advanced TypeScript with Node.js 
+1. Union & Intersection Types
+=> Union (OR logic) → ek se zyada type allow
+=> Intersection (AND logic) → multiple types combine
+
+// Union
+function formatId(id: string | number) {
+  return `ID: ${id}`;
+}
+
+// Intersection
+type User = { name: string } & { id: number };
+
+2. Type Guards
+=> Type guards se hum runtime pe check karte hain ki kaunsa type hai.
+
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+
+function isFish(pet: Fish | Bird): pet is Fish {
+  return 'swim' in pet;
+}
+
+3. Advanced Generics
+=> Generics = reusable, flexible, type-safe code.
+
+// Constraint ke saath
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// Paginated response
+interface PaginatedResponse<T = any> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+4. Mapped & Conditional Types
+=> Mapped → har property ko modify karna
+=> Conditional → type conditions lagana
+
+// Readonly user
+type ReadonlyUser = { readonly [K in keyof User]: User[K] };
+
+// Conditional
+type NonNullableUser = NonNullable<User | null | undefined>;
+
+5. Type Inference
+=> TypeScript khud se guess karta hai types (without explicit annotation).
+
+const name = 'Alice'; // string
+const numbers = [1, 2, 3]; // number[]
+
+🔹 Advanced Patterns for Node.js
+1. Advanced Decorators
+=> Cross-cutting concerns (logging, validation, performance monitoring).
+
+function logExecutionTime(msThreshold = 0) {
+  return function (target: any, key: string, descriptor: PropertyDescriptor) {
+    const original = descriptor.value;
+    descriptor.value = async function (...args: any[]) {
+      const start = Date.now();
+      const result = await original.apply(this, args);
+      const duration = Date.now() - start;
+      if (duration > msThreshold) {
+        console.warn(`[Performance] ${key} took ${duration}ms`);
+      }
+      return result;
+    };
+  };
+}
+
+2. Utility Types (Custom + Built-in)
+interface User {
+  id: number;
+  name: string;
+  email?: string;
+  createdAt: Date;
+}
+
+// At least specific props required
+type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+type UserCreateInput = AtLeast<User, 'name' | 'email'>;
+
+3. Type-Safe Event Emitters
+=> EventEmitter ko fully type-safe bana sakte ho 👇
+
+import { EventEmitter } from 'events';
+
+type EventMap = {
+  login: (userId: string) => void;
+  logout: (userId: string, reason: string) => void;
+  error: (error: Error) => void;
+};
+
+class TypedEventEmitter<T extends Record<string, (...args: any[]) => void>> {
+  private emitter = new EventEmitter();
+
+  on<K extends keyof T>(event: K, listener: T[K]): void {
+    this.emitter.on(event as string, listener as any);
+  }
+
+  emit<K extends keyof T>(event: K, ...args: Parameters<T[K]>): boolean {
+    return this.emitter.emit(event as string, ...args);
+  }
+}
+
+// Usage
+const userEvents = new TypedEventEmitter<EventMap>();
+userEvents.on('login', (userId) => console.log(`User ${userId} logged in`));
+
+🔹 Best Practices
+✔ Use generics for reusable, type-safe components
+✔ Use decorators for logging, validation, monitoring
+✔ Use utility types (built-in + custom)
+✔ Type-safe abstractions for events, streams, APIs
+✔ Prefer unknown over any for safer dynamic typing
+✔ Use as const for literal values
+
+🔹 Performance Tips
+⚡ Complex types → compilation slow ho sakti hai
+⚡ Interfaces → prefer type when doing heavy type ops
+⚡ Stick to gradual typing → sab jagah strict types na lagao ek hi baar
+
+================================== Node.js Linting & Formatting ===================================
+
+🔥 Node.js Linting & Formatting
+Code quality maintain karna matlab:
+=> Code readable & maintainable ho
+=> Jaldi bugs detect ho jayein
+=> Team ke sab log ek consistent style follow karein
+=> Code review aur CI/CD mein problem na aaye
+
+🔹 ESLint (Linting Tool)
+=> ESLint ek linting tool hai jo code errors aur bad practices pakadta hai.
+🔧 Installation
+npm install --save-dev eslint
+
+⚙ Example .eslintrc.json
+{
+  "env": {
+    "node": true,
+    "es2021": true,
+    "browser": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"],
+    "indent": ["error", 2],
+    "no-console": "warn",
+    "no-unused-vars": "warn"
+  }
+}
+
+🔥 Common ESLint Commands
+# Pure project lint karo
+npx eslint .
+
+# Auto-fix karo
+npx eslint --fix .
+
+# Sirf ek file lint karo
+npx eslint src/index.ts
+
+🔹 Prettier (Code Formatter)
+=> Prettier ek opinionated code formatter hai jo automatically code ko ek style mein daal deta hai.
+👉 Use Prettier for formatting, ESLint for rules & errors.
+
+🔧 Installation
+npm install --save-dev --save-exact prettier
+
+⚙ Example .prettierrc
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "arrowParens": "avoid"
+}
+
+🔥 Common Prettier Commands
+# Sab file format karo
+npx prettier --write .
+
+# Sirf check karo
+npx prettier --check .
+
+# Sirf ek file format karo
+npx prettier --write src/index.ts
+
+🔹 ESLint + Prettier Integration
+=> Kabhi kabhi ESLint aur Prettier rules clash karte hain. Uske liye:
+
+npm install --save-dev eslint-config-prettier eslint-plugin-prettier
+
+
+Aur apni ESLint config mein add karo:
+
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ]
+}
+
+🔹 Editor Integration (VS Code Best Setup)
+Install Extensions:
+=> ESLint
+=> Prettier - Code Formatter
+=> EditorConfig
+=> Error Lens
+
+⚙ VS Code settings.json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "prettier.requireConfig": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
+
+🔹 Git Hooks (Husky + lint-staged)
+=> Code commit karne se pehle hi auto-fix ho jaye 👇
+
+🔧 Install
+npm install --save-dev husky lint-staged
+
+⚙ package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml}": ["prettier --write"]
+  }
+}
+
+🔹 Extra Best Practices
+1. Monorepo setup → ek hi config sab packages ke liye
+2. Performance → ESLint cache enable karo
+3. EditorConfig → cross-editor consistency ke liye
+4. CI/CD integration → GitHub Actions ya Jenkins mein lint/format check add karo
+
+🔑 Takeaways
+=> ESLint = rules + error catching
+=> Prettier = formatting consistency
+=> Husky + lint-staged = commit ke time quality check
+=> EditorConfig + VS Code setup = sab developers ke liye ek jaisa style
+=> CI/CD integration = production pe bhi same rules enforce
+
+================================================= Building Applications ================================
+
+================================================== Node.js Frameworks ===================================
+
+🌐 Node.js Frameworks
+=> Framework basically ek ready-made structure deta hai taaki tu har chhoti cheez bar-bar implement na kare.
+
+💡 Framework use karne ke fayde
+=> Productivity: Common kaam (routing, middleware, templating) already built-in.
+=> Standardization: Code ek structure me rehta hai, maintain karna easy hota hai.
+=> Community: Bade frameworks ke huge docs aur plugins milte hai.
+=> Security: Best practices aur security features included hote hain.
+=> Performance: Optimized for speed + tools like caching & load balancing.
+
+🏗️ Node.js Framework Types
+
+1. Full-Stack Frameworks
+=> Backend + Frontend dono handle karte hai
+=> Example: Meteor, Sails.js, AdonisJS
+=> Use jab: Complete web app banana ho
+
+2. Minimalist/Micro Frameworks
+=> Sirf basic cheezein dete hai, tu khud customize kar sakta hai
+=> Example: Express.js, Koa, Fastify
+=> Use jab: APIs ya lightweight services banani ho
+
+3. REST API Frameworks
+=> Specially APIs ke liye optimized
+=> Example: LoopBack, NestJS, Restify
+=> Use jab: Production-ready APIs chahiye
+
+4. Real-Time Frameworks
+=> WebSockets / live updates ke liye best
+=> Example: Socket.io, FeathersJS, Sails.js
+=> Use jab: Chat app, live notifications banani ho
+
+🔥 Popular Frameworks
+1. Express.js (Most Popular)
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Hello from Express.js!');
+});
+
+app.listen(8080, () => console.log("Server running on 8080"));
+✅ Simple, flexible, huge ecosystem
+📌 Best for: General-purpose web apps & APIs
+
+2. NestJS (Enterprise Grade, TypeScript First)
+import { Controller, Get } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  @Get()
+  getHello(): string {
+    return 'Hello from NestJS!';
+  }
+}
+✅ Angular-style, modular, DI system, GraphQL/WebSocket support
+📌 Best for: Enterprise apps, microservices
+
+3. Fastify (Super Fast)
+const fastify = require('fastify')({ logger: true });
+
+fastify.get('/', async () => ({ hello: 'Fastify!' }));
+
+fastify.listen({ port: 8080 });
+✅ 2x faster than Express, JSON schema validation
+📌 Best for: High-performance APIs
+
+4. Koa.js (Modern Alternative to Express)
+const Koa = require('koa');
+const app = new Koa();
+
+app.use(ctx => { ctx.body = 'Hello from Koa.js!'; });
+
+app.listen(8080);
+✅ Async/await middleware system, clean error handling
+📌 Best for: Modern apps, more control
+
+5. Hapi.js (Config Driven)
+✅ Joi validation, caching, authentication
+📌 Best for: Enterprise, configuration-heavy apps
+
+6. Adonis.js (Laravel Style MVC)
+✅ ORM, Auth, WebSocket, Full-stack tools
+📌 Best for: Laravel developers & full-stack apps
+
+7. Socket.io (Real-Time)
+✅ Live chat, notifications, real-time dashboards
+📌 Best for: Real-time features
+
+8. Meteor (Full-Stack, Client + Server same JS code)
+📌 Best for: Full-stack + mobile + web apps with reactive features
+
+9. LoopBack (API Generator)
+✅ Auto REST APIs, DB connectors
+📌 Best for: Data-heavy apps with multiple DBs
+
+10. Restify (REST APIs Only)
+📌 Best for: Scalable REST APIs, observability
+
+11. Strapi (Headless CMS)
+✅ UI-based API builder
+📌 Best for: Content-heavy apps, CMS
+
+📊 Quick Comparison
+Framework	    Type	     Speed 🚀	        Learning Curve 📚	      Best Use
+Express.js	 Minimalist	      Good	             Easy	          General APIs & Apps
+NestJS	         Full-Stack	      Good	           Medium/Hard	           Enterprise apps
+Fastify	         Minimalist	    Excellent	            Medium	        High-performance APIs
+Koa.js	         Minimalist	    Very Good	            Medium	        Modern async apps
+Hapi.js	           Full	Good	      Medium	          Config-heavy            enterprise apps
+Adonis.js	 Full-stack	      Good	          Medium/Hard	           Full-stack apps
+Restify	          API only	      Good	             Easy	               REST APIs
+Strapi	          CMS/API	      Good	           Easy (UI)	           CMS, API generator
+
+🧭 Framework Selection Guide
+=> Beginner friendly → Express.js
+=> Enterprise / TypeScript → NestJS
+=> Performance required → Fastify
+=> Modern async apps → Koa.js
+=> Laravel-style MVC → Adonis.js
+=> Real-time apps → Socket.io
+=> API-focused → Restify / LoopBack
+=> CMS needs → Strapi
+
+⚡Next Steps:
+=> Start with Express.js if tu beginner hai
+=> Agar TypeScript pasand hai toh NestJS
+=> Agar speed priority hai toh Fastify
+
+
+============================================= Node.js Express.js =========================================
+
+🔹 Express.js Kya Hai?
+=> Express.js ek Node.js framework hai jo web applications aur APIs banane ke liye use hota hai.
+Isko hum Node.js ka most popular web framework bolte hain.
+
+👉 Features:
+=> Minimal & flexible
+=> Fast & lightweight
+=> Middleware support (extra functionality add karne ke liye)
+=> Routing system powerful hai
+=> Large ecosystem
+
+🔹 Express.js Kyun Use Kare?
+=> Routing easy hai (GET, POST, PUT, DELETE easily handle kar sakte ho)
+=> Middleware support (logging, authentication, body parsing, etc.)
+=> Error handling simple hai
+=> Templating engines use karke dynamic HTML bana sakte ho
+=> Static files serve kar sakte ho (images, CSS, JS)
+
+🔹 Start Karne Ke Steps
+1. Pehle Node.js install hona chahiye
+2. Project banao:
+npm init -y
+npm install express
+
+3. Ek app.js file banao aur code likho:
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello Express!');
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+Run karo:
+node app.js
+
+
+Aur browser me jaake http://localhost:3000 open karo.
+
+🔹 Routing Basics
+// GET route
+app.get('/', (req, res) => {
+  res.send('GET request on Home');
+});
+
+// POST route
+app.post('/', (req, res) => {
+  res.send('POST request on Home');
+});
+
+// URL parameters
+app.get('/user/:id', (req, res) => {
+  res.send(`User ID: ${req.params.id}`);
+});
+
+// Query params
+app.get('/search', (req, res) => {
+  res.send(`Search for: ${req.query.q}`);
+});
+
+🔹 Middleware
+=> Middleware = ek function jo request-response cycle ke beech execute hota hai.
+
+Examples:
+app.use(express.json()); // JSON parse karega
+app.use(express.urlencoded({ extended: true })); // form-data parse karega
+
+// Custom middleware
+app.use((req, res, next) => {
+  console.log('Time:', Date.now());
+  next();
+});
+
+🔹 Static Files Serve Karna
+const path = require('path');
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
+
+Ab http://localhost:3000/static/logo.png se file access kar sakte ho.
+
+🔹 Error Handling
+app.get('/error', (req, res) => {
+  throw new Error('Something broke!');
+});
+
+// Error middleware (4 params zaroori)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Internal Server Error');
+});
+
+🔹 Security & Best Practices
+=> Helmet use karo → headers secure karne ke liye
+=> CORS configure karo → cross-origin requests ke liye
+=> Compression use karo → fast response ke liye
+=> dotenv use karo → secrets/env variables store karne ke liye
+=> Validation karo → user input safe rakhne ke liye
+
+const helmet = require('helmet');
+const cors = require('cors');
+app.use(helmet());
+app.use(cors());
+
+🔹 Kab Use Kare Express.js?
+=> Jab tumhe API banani ho (REST APIs / GraphQL backend)
+=> Jab tumhe web app build karna ho
+=> Jab tumhe static + dynamic content serve karna ho
+👉 Simple language me:
+Express.js ek fast aur flexible Node.js framework hai jo tumhe APIs aur web apps banana easy banata hai.
+Middleware + Routing system ke wajah se yeh developers ka favourite framework hai.
+
+
+============================================== Node.js Middleware =======================================
+
+🔹 Middleware Kya Hai?
+=> Middleware basically ek function hai jo request-response cycle ke beech me chalta hai.
+
+Matlab:
+👉 Client → Request → [Middleware 1 → Middleware 2 → Middleware 3 → Route Handler] → Response → Client
+
+🔹 Middleware ki Features
+=> Request aur Response object access kar sakta hai (req, res)
+=> Request/Response ko modify kar sakta hai
+=> Request ko end kar sakta hai (jaise res.send() se)
+=> Ya fir next middleware ko control de sakta hai (next() use karke)
+
+🔹 Ek Simple Example
+const express = require('express');
+const app = express();
+
+// Middleware 1
+app.use((req, res, next) => {
+  console.log('Middleware 1 chal raha hai');
+  next(); // control next middleware ko
+});
+
+// Middleware 2
+app.use((req, res, next) => {
+  console.log('Middleware 2 chal raha hai');
+  next();
+});
+
+// Route handler
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+Jab tu / pe request karega:
+👉 Console me output:
+
+Middleware 1 chal raha hai
+Middleware 2 chal raha hai
+Aur browser me:
+Hello World!
+
+🔹 Types of Middleware
+1. Application-level
+=> Har request ke liye chalta hai.
+app.use((req, res, next) => {
+  console.log('App-level middleware');
+  next();
+});
+
+2. Router-level
+=> Sirf ek router ke liye.
+const router = express.Router();
+router.use((req, res, next) => {
+  console.log('Router specific middleware');
+  next();
+});
+app.use('/api', router);
+
+3. Error-handling
+=> Agar error aaya to ye chalega. (4 parameters hote hain)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+4. Built-in
+=> Express ke andar already aate hain:
+app.use(express.json()); // JSON body parse karega
+app.use(express.urlencoded({ extended: true })); // form data parse karega
+app.use(express.static('public')); // static files serve karega
+
+5. Third-party
+=> Extra npm packages jo functionality add karte hain.
+=> morgan → logging
+=> helmet → security
+=> cors → cross-origin support
+=> compression → response compress
+Example:
+const morgan = require('morgan');
+const helmet = require('helmet');
+
+app.use(morgan('dev'));
+app.use(helmet());
+
+🔹 Custom Middleware Example
+Logger Middleware
+function requestLogger(req, res, next) {
+  console.log(`${req.method} ${req.url}`);
+  next();
+}
+app.use(requestLogger);
+
+Auth Middleware
+function authenticate(req, res, next) {
+  if (req.headers.authorization === 'secret') {
+    next(); // access allow
+  } else {
+    res.status(401).send('Unauthorized');
+  }
+}
+app.get('/protected', authenticate, (req, res) => {
+  res.send('This is protected route');
+});
+
+🔹 Middleware Execution Order
+Order bahut important hai:
+1. Pehle global middlewares (security, logging, parsers)
+2. Phir route-specific middlewares
+3. Routes
+4. 404 handler
+5. Error handler (always last)
+
+🔹 Best Practices
+✅ Har middleware ek hi responsibility ka ho
+✅ next() sahi jagah use karo (galti se res.send ke baad mat lagana)
+✅ Async middleware me try-catch use karo ya next(error) karo
+✅ Performance ke liye unnecessary middleware mat use karo
+✅ Middleware ko alag files me organize karo (auth.js, logger.js, etc.)
+
+👉 Simple shabdon me:
+Middleware ek filter/processor hai jo request ko route tak pahunchne se pehle aur response client ko bhejne se pehle process karta hai.
+
+
+============================================= Node.js RESTful API ========================================
+
+🔹 RESTful API Kya Hai?
+=> REST (Representational State Transfer) ek architectural style hai jo web services banane ke liye use hota hai.
+Isme resources (jaise users, products, orders) hote hain, aur unpe hum CRUD (Create, Read, Update, Delete) operations karte hain.
+=> Resource: User, Product, Order (sab kuch resource hota hai)
+=> Stateless: Har request independent hoti hai, server client ka state store nahi karta
+=> Representations: JSON, XML, etc.
+=> Uniform Interface: Har resource ek consistent tariqe se accessible hota hai
+
+Example:
+=> GET /api/users → sab users laana
+=> POST /api/users → naya user banana
+=> PUT /api/users/1 → user 1 ko update karna
+=> DELETE /api/users/1 → user 1 ko delete karna
+
+🔹 HTTP Methods ka Use
+Har operation ke liye ek standard HTTP method hota hai:
+
+Method	    Use	                                         Example
+GET	Data read karna	                               GET /api/users
+POST	Naya resource create karna	               POST /api/users
+PUT	Resource ko completely update karna	       PUT /api/users/123
+PATCH	Resource ko partially update karna	       PATCH /api/users/123
+DELETE	Resource ko delete karna	               DELETE /api/users/123
+👉 GET safe hota hai (sirf read karta hai), POST non-idempotent hai (multiple baar bhejo to alag-alag resource banenge).
+
+🔹 Example: Simple User API (Express.js)
+const express = require('express');
+const app = express();
+
+// Middleware JSON parse karne ke liye
+app.use(express.json());
+
+// Dummy data
+let users = [
+  { id: 1, name: 'John Doe', email: 'john@example.com' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+];
+
+// GET - sab users
+app.get('/api/users', (req, res) => {
+  res.json(users);
+});
+
+// GET - ek specific user
+app.get('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ message: 'User not found' });
+  res.json(user);
+});
+
+// POST - naya user add
+app.post('/api/users', (req, res) => {
+  const newUser = {
+    id: users.length + 1,
+    name: req.body.name,
+    email: req.body.email
+  };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+// PUT - ek user ko completely update
+app.put('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  user.name = req.body.name;
+  user.email = req.body.email;
+  res.json(user);
+});
+
+// DELETE - user delete
+app.delete('/api/users/:id', (req, res) => {
+  const index = users.findIndex(u => u.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ message: 'User not found' });
+
+  const deleted = users.splice(index, 1);
+  res.json(deleted[0]);
+});
+
+// Server run
+app.listen(8080, () => {
+  console.log('REST API running on port 8080');
+});
+
+🔹 API Design Best Practices
+1. Resource naming:
+=> ✅ /users (plural nouns use karo)
+=> ❌ /getUsers (verbs mat likho URL me)
+
+2. Hierarchy dikhana:
+=> /users/123/orders → ek user ke orders
+
+3. Filtering/Sorting:
+=> /products?category=mobile&sort=price&limit=10&page=2
+
+4. Versioning:
+=> /api/v1/users (future me breaking changes aayenge to v2 bana lo)
+
+🔹 Middleware ka Role
+=> express.json() → JSON body parse
+=> Validation (Joi / express-validator use karke)
+=> Authentication (JWT / custom middleware)
+=> Error Handling (centralized error response)
+
+🔹 Error Handling Example
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    status: 'error',
+    message: 'Something went wrong'
+  });
+});
+
+🔹 Testing
+=> Supertest + Jest use karo API testing ke liye
+const request = require('supertest');
+const app = require('../app');
+
+test("GET /api/users should return users", async () => {
+  const res = await request(app).get('/api/users');
+  expect(res.statusCode).toBe(200);
+  expect(Array.isArray(res.body)).toBe(true);
+});
+
+🔹 REST API Best Practices Summary
+=> ✅ REST principles follow karo
+=> ✅ Proper HTTP methods use karo
+=> ✅ Consistent naming & versioning rakho
+=> ✅ Error handling centralized rakho
+=> ✅ Input validation zaroori hai
+=> ✅ API documentation (Swagger) likho
+=> ✅ HTTPS use karo
+=> ✅ Rate limiting (DDoS se bachne ke liye) implement karo
+
+
+============================================= Node.js API Authentication Guide ======================================
+
+🔑 API Authentication Kya Hai?
+API Authentication ka matlab hai:
+=> 👉 verify karna ki jo client request bhej raha hai, wo authorized aur genuine hai ya nahi.
+=> Ye har ek API ke liye zaroori hai, warna koi bhi unauthorized banda data access kar lega.
+
+🔥 API Authentication Kyon Important Hai?
+=> Security ke liye – Sirf authorized users ko access milega.
+=> Data Protection – Sensitive info safe rahegi.
+=> Identity Verification – Users wahi hain jo wo claim kar rahe hain.
+=> Business – Usage analytics, billing, compliance (GDPR, HIPAA).
+
+🛠️ Authentication Methods Overview
+Method	              Best For	             Complexity	               Security
+Session-Based	    Normal web apps	         Low	                Medium
+JWT (Token-Based)   SPA, Mobile apps	        Medium	                High
+API Keys	    Server-to-server	         Low	              Low-Medium
+OAuth 2.0   3rd party login (Google, GitHub)	High	               Very High
+
+⚡ Authentication Methods Explained
+1. Session-Based (Cookies + Server-Side Session)
+=> User login karega → server pe session create hoga → cookie user ko di jayegi.
+=> Har request me cookie send hogi → server session validate karega.
+👉 Example: /login ke baad server req.session.user store karta hai.
+👉 Good for traditional web apps.
+
+2. JWT (Token-Based Authentication)
+=> Login hone ke baad server ek JWT (JSON Web Token) banata hai.
+=> Ye token client ke paas store hota hai (localStorage/cookie).
+=> Har request ke Authorization: Bearer <token> header me bhejna padta hai.
+=> Server token verify karke access deta hai.
+👉 Good for stateless APIs, SPAs, microservices.
+👉 Role-based access control easily implement hota hai.
+
+3. OAuth 2.0 (Social Logins)
+=> Industry-standard hai.
+Example: Login with Google/Facebook.
+
+Flow:
+1. User → Provider (Google) login karega
+2. Provider → app ko ek authorization code dega
+3. App → code se access token lega
+4. Ab app user data access kar sakta hai
+👉 Best for third-party integrations.
+
+4. API Key Authentication
+=> Simple string (key) hoti hai jo request ke saath bhejni hoti hai (x-api-key header).
+=> Server API key validate karega → access allow karega.
+👉 Use for server-to-server communication (jaise internal services).
+👉 Kam secure hai (leak ho jaye to risk).
+
+5. Basic Authentication
+=> Username:Password ko base64 encode karke Authorization header me bhejna.
+=> Bohot simple hai → par secure nahi (always use HTTPS).
+
+6. MFA (Multi-Factor Authentication)
+=> Extra security layer.
+=> Example: Password + OTP (Google Authenticator/TOTP).
+=> Pehle login → fir OTP verify.
+👉 Strong security ke liye production apps me use hota hai.
+
+🛡️ Security Best Practices
+Password Security
+=> Plain text password kabhi mat store karo.
+=> Always hash karo (bcrypt/argon2).
+=> Strong password policies rakho.
+
+Token Security
+=> Short-lived access tokens (15-60 min).
+=> Refresh tokens implement karo.
+=> Tokens ko HTTP-only secure cookies me rakho.
+
+General Security
+=> Hamesha HTTPS use karo.
+=> Rate limiting enable karo (brute force se bachne ke liye).
+=> Security headers add karo (CSP, X-Frame-Options).
+=> Logging/Audit trail rakho.
+
+🌀 Combining Methods
+Real-world me aksar multiple authentication methods use hote hain:-
+=> JWT + Refresh Tokens
+=> JWT + Rate Limiting
+=> OAuth 2.0 + JWT
+=> MFA + JWT
+
+📑 HTTP Headers for Authentication
+Authorization Header (most common)
+=> JWT/OAuth → Authorization: Bearer <token>
+=> Basic Auth → Authorization: Basic <base64(username:password)>
+x-api-key Header → API Key authentication ke liye
+
+🚀 Quick Recap
+=> Session-based → Traditional apps
+=> JWT → SPAs, mobile apps, APIs
+=> OAuth 2.0 → Social logins / 3rd party access
+=> API Keys → Server-to-server communication
+=> MFA → Extra security
+👉 Har method ka apna use-case hai. Choose wisely!
+
+
+=================================== Node.js with Frontend Frameworks ===================================
+
+🚀 Node.js with Frontend Frameworks
+🌐 Node.js + Frontend Kyon?
+=> Single Language (JS/TS) → Backend + Frontend dono JS me likh sakte ho.
+=> Code Sharing → Validation, types, utils reuse ho jate hain.
+=> Developer Friendly → Ek hi ecosystem (npm/yarn).
+=> Performance → JSON data transfer fast hota hai.
+=> Ecosystem → Packages ka bhandar (frontend + backend).
+
+⚡ Common Integration Patterns
+1️. API-First Architecture
+=> Backend → REST/GraphQL APIs deta hai
+=> Frontend → APIs consume karta hai
+
+// Node.js Express API
+app.get('/api/products', (req, res) => {
+  res.json([{ id: 1, name: 'Product' }]);
+});
+
+2️. Server-Side Rendering (SSR)
+=> Server → Pehle se HTML render karke bhejta hai (SEO + Performance ke liye).
+
+// Next.js example
+export async function getServerSideProps() {
+  const res = await fetch('https://api.example.com/data');
+  return { props: { data: await res.json() } };
+}
+
+3️. Micro-Frontends
+=> Alag-alag frontend apps ek hi UI me combine.
+// Webpack Module Federation
+new ModuleFederationPlugin({
+  name: 'app1',
+  filename: 'remoteEntry.js',
+  exposes: { './Component': './src/Component' }
+})
+
+⚛️ Node.js + React
+=> Component-based, fast updates (Virtual DOM), bada ecosystem.
+👉 Setup:
+npx create-react-app my-app
+npm start
+
+👉 Backend Example:
+const express = require('express');
+const cors = require('cors');
+const app = express();
+app.use(cors());
+
+app.get('/api/data', (req, res) => res.json({ message: 'Hello from Node!' }));
+app.listen(8080);
+
+
+👉 React Frontend:
+useEffect(() => {
+  fetch('http://localhost:8080/api/data')
+    .then(res => res.json())
+    .then(data => setData(data));
+}, []);
+
+🅰️ Node.js + Angular
+=> TypeScript based, enterprise level, built-in routing + RxJS.
+👉 Setup:
+npm install -g @angular/cli
+ng new angular-nodejs-app
+
+👉 Angular Service Example:
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private apiUrl = 'http://localhost:8080/api/users';
+  constructor(private http: HttpClient) {}
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl);
+  }
+}
+
+🟩 Node.js + Vue.js
+=> Easy to learn, progressive, reactive binding, Vuex state management.
+👉 Setup:
+npm install -g @vue/cli
+vue create vue-nodejs-app
+
+👉 Vue Example:
+<template>
+  <ul>
+    <li v-for="p in products" :key="p.id">{{ p.name }} - ${{ p.price }}</li>
+  </ul>
+</template>
+
+🔥 Node.js + Svelte
+=> No virtual DOM, compiles to vanilla JS, super fast, less boilerplate.
+👉 Setup:
+npx degit sveltejs/template svelte-nodejs-app
+npm install
+npm run dev
+
+👉 Example:
+<script>
+  import { onMount } from 'svelte';
+  let todos = [];
+  onMount(async () => {
+    todos = await (await fetch('http://localhost:8080/api/todos')).json();
+  });
+</script>
+
+📑 Best Practices
+1️. Project Structure
+
+project/
+ ├── backend/   # Node.js
+ └── frontend/  # React/Angular/Vue/Svelte
+
+2️. API Design
+=> RESTful best practices (GET, POST, PUT, DELETE)
+=> Consistent responses + proper status codes
+
+3️. Security
+app.use(helmet());
+app.use(cors({ origin: process.env.FRONTEND_URL }));
+app.use(express.json({ limit: '10kb' }));
+
+4️. Performance
+=> Frontend → Code splitting, lazy loading, image optimization
+=> Backend → Redis caching, DB indexing, compression
+
+5️. Deployment
+=> .env config
+=> Dockerize apps
+=> CI/CD (GitHub Actions, Jenkins)
+=> Monitoring (Winston logs, PM2, Datadog)
+
+👉 TL;DR (Summary Bhai Style):
+=> React → Flexible UI, best for SPAs
+=> Angular → Heavy but powerful (enterprise apps)
+=> Vue → Easy + scalable
+=> Svelte → New-gen, super fast
+
+=============================================== Database Integration ==============================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

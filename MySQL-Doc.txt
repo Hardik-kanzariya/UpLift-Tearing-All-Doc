@@ -1,0 +1,844 @@
+1. What is SQL
+2. What is MySQL
+3. Database
+4. Tables & Columns & Rows 
+5. Primary Key & Foreign Key
+6. SQL Data type
+7. Create / Insert Query
+8. Retrieve / Select Query
+9. Update Query
+10. Delete Query
+11. Drop Statement
+12. Where Clause 
+13. ORDER BY Keyword
+14. In operator & Not In operator
+15. Between operator
+16. Like operator
+17. Group by
+18. Distinct statement
+19. Limit
+20. Constraints
+21. Join
+22. SubQuery
+
+MySQL ma comment karava mate # use thy che
+YouTube:- Link https://www.youtube.com/playlist?list=PLjVLYmrlmjGeyCPgdHL2vWmEGKxcpsC0E
+
+1. SQL kya hai?
+=> SQL ka full form hai Structured Query Language.
+=> SQL ki madad se aap databases ko access aur manipulate kar sakte ho.
+=> SQL ko American National Standards Institute (ANSI) ne 1986 me standard banaya, aur International Organization for Standardization (ISO) ne 1987 me standard recognize kiya.
+
+2. SQL kya kar sakta hai?
+=> SQL queries run kar sakta hai database ke against.
+=> SQL database se data retrieve kar sakta hai.
+=> SQL database me records insert kar sakta hai.
+=> SQL database me records update kar sakta hai.
+=> SQL database se records delete kar sakta hai.
+=> SQL naya database create kar sakta hai.
+=> SQL database me nayi tables create kar sakta hai.
+=> SQL database me stored procedures create kar sakta hai.
+=> SQL database me views create kar sakta hai.
+=> SQL tables, procedures, aur views par permissions set kar sakta hai.
+
+======================= RDBMS kya hai =========================
+
+3. RDBMS kya hai?
+=> RDBMS ka full form hai Relational Database Management System.
+=> RDBMS SQL aur sabhi modern database systems ka base hai, jaise MS SQL Server, IBM DB2, Oracle, MySQL, aur    Microsoft Access.
+=> RDBMS me data tables naam ke database objects me store hota hai.
+=> Ek table related data entries ka collection hota hai.
+=> Table me columns aur rows hoti hain.
+
+==============================  MySQL Introduction ===============================
+
+4. MySQL Introduction:
+=> MySQL ek open-source relational database management system (RDBMS) hai, jo data ko store aur retrieve karne ke liye widely use hota hai.
+Ye ek powerful aur flexible database management platform provide karta hai aur alag-alag operating systems par support hota hai.
+
+========================== MySQL ke Advantages ===============================
+
+5. MySQL ke Advantages:
+=> Fast aur high-performance database.
+=> Use karna, maintain aur administer karna easy.
+=> Easily available aur database ki integrity maintain karta hai.
+=> Scalability, usability, aur reliability provide karta hai.
+=> Low-cost hardware me bhi chal sakta hai.
+=> MySQL simple aur complex queries read aur write kar sakta hai.
+=> InnoDB default aur widely used storage engine hai.
+=> Strong indexing support provide karta hai.
+=> SSL support provide karta hai secure connections ke liye.
+=> Powerful data encryption aur accuracy provide karta hai.
+=> Cross-platform compatibility available hai.
+=> Code repetition minimize karta hai.
+
+============================= Database kya hai ==============================
+
+6. Database kya hai:
+=> Database ek organized data ka collection hai jo MySQL me store hota hai.
+Ye tables, views, procedures aur dusre database objects ka container ka kaam karta hai.
+MySQL me aap ek single server instance ke andar multiple databases create kar sakte ho.
+
+=========================== Tables kya hai =============================
+
+7. Tables kya hai:
+=> Tables MySQL me data store karne ka basic structure hai.
+Ye rows aur columns se bana hota hai, jaise ek grid.
+Har table ek specific entity ya concept ko represent karta hai aur related data hold karta hai.
+
+===================== Columns kya hai =========================
+
+8. Columns kya hai:
+=> Columns, ya fields, table ke individual data elements ko represent karte hain.
+Ye define karte hain ki kis type ka data store hoga, jaise integers, strings, dates, etc.
+
+========================== Rows kya hai ===========================
+
+9. Rows kya hai:
+=> Rows, ya records, table me actual data contain karte hain.
+Har row ek single entry ya instance ko represent karta hai.
+Row me har column ek specific field ke corresponding hota hai.
+
+===================== Primary Key kya hai ========================
+
+10. Primary Key kya hai:
+=> Primary key ek unique identifier hai har row ke liye table me.
+Ye ensure karta hai ki har row uniquely identify ho sake.
+Primary key reference point ka kaam karti hai dusre tables ke liye jo relationship establish karte hain.
+
+============================= Foreign Key kya hai: =====================
+
+11. Foreign Key kya hai:
+=> Foreign key ek field ya fields ka set hai table me, jo dusre table ki primary key ko refer karta hai.
+Ye relationship establish karta hai do tables ke beech, referential integrity maintain karta hai aur data consistency ensure karta hai.
+
+========================== SQL Command: ===========================
+
+12. SQL Command:
+=> MySQL shell open karein => CLI (Command Line Interface) ke through. 
+
+Sr.No	Command	                                  Description
+1	\sql	                             SQL mode me switch karna
+2	\connect root@localhost:3306	     Apne PC se Server ko connect karna
+3	show databases;	                     Sabhi databases dikhana
+4	create database dbName	             Naya database create karna
+5	use dbName	                     Kisi database ko select karna
+6	show tables;	                     Sabhi tables dikhana
+7	create table tableName( column datatype, column datatype );	Nayi table create karna
+8	desc tableName;
+	describe tableName;	        Table ka detail description dikhana
+9	insert into tableName values( val1, val2, val3, …. );	Table me record insert karna
+10	select * from tableName;	Table ke sabhi records dikhana
+11	\quit	                         SQL mode se exit/quit karna
+
+================================= SQL Data Type kya hai ==============================
+
+13. SQL Data Type kya hai:
+=> Data Type specify karta hai ki data kaunsa type ka hoga, jaise integer, floating point, Boolean, etc.
+Ye batata hai ki us type ke possible values kya ho sakte hain, kaunse operations perform kiye ja sakte hain, aur data kaise store hoga.
+MySQL me, har database table me kai columns hote hain, aur har column ka apna specific data type hota hai.
+
+========================= Numeric Data Types: ==============================
+
+14. Numeric Data Types:
+1. bit 	->  0 ya 1 store karne ke liye.
+2. tinyint -> integers store karte hain.
+3. smallint -> integers store karte hain.
+4. int 	-> integers store karte hain.
+5. bigint -> integers store karte hain.
+6. decimal -> decimal/floating point numbers store karte hain.
+7. numeric
+8. float ->  decimal/floating point numbers store karte hain.
+9. double -> decimal/floating point numbers store karte hain.
+10.bool	-> true/false values store karte hain.
+11.boolean -> true/false values store karte hain.
+ 
+================================== Character / String Data Types: =======================
+
+15. Character / String Data Types:
+1. char -> fixed length text store karta hai
+2. varchar -> variable length text store karta hai, matlab jitna text enter hoga, utni space use hoti hai.
+3. tinytext -> long text store karne ke liye, size ke hisaab se vary karte hain.
+4. text -> long text store karne ke liye, size ke hisaab se vary karte hain.
+5. longtext -> long text store karne ke liye, size ke hisaab se vary karte hain.
+
+==================================== Date / Time Data Types: ============================
+
+16. Date / Time Data Types:
+1. DATE → sirf date store karta hai (YYYY-MM-DD).
+2. TIME → sirf time store karta hai (HH:MM:SS).
+3. DATETIME → date aur time dono store karta hai.
+4. TIMESTAMP → automatic current date aur time record karne ke liye.
+5. YEAR → sirf year store karta hai.
+
+============================= Miscellaneous Data Types:  ========================
+
+17.Miscellaneous Data Types: 
+1. JSON → JavaScript Object Notation format me structured data store karta hai.
+2. XML → eXtensible Markup Language format me data store karta hai.
+
+========================== Create / Insert Query: ===============================
+
+18. Create / Insert Query:
+1. Columns ke saath values specify karna (Single Row Insert):
+insert into table_name (col1, col2, ...) values (val1, val2, …);
+👉 Isme aap columns aur unki values specify karte ho.
+
+Example:- insert into students (id, name, age) values (1, 'Rahul', 20);
+
+2. Columns ke saath values specify karna (Multiple Rows Insert):
+insert into table_name (col1, col2, ...) values (val1, val2, …), (val1, val2, …);
+👉 Ek hi query me multiple rows insert karne ke liye.
+Example:-insert into students (id, name, age) values (2, 'Priya', 21), (3, 'Aman', 22);
+
+3. Table ke sabhi columns ke liye values dena (Single Row Insert):
+insert into table_name values (val1, val2, …);
+👉 Isme aapko columns specify nahi karne hote, bas values deni hoti hain sabhi columns ke order me.
+Example:- insert into students values (4, 'Neha', 23);
+
+4. Table ke sabhi columns ke liye values dena (Multiple Rows Insert):
+insert into table_name values (val1, val2, …), (val1, val2, …);
+👉 Ek hi query me multiple rows insert karne ke liye bina columns specify kiye.
+Example:- insert into students values (5, 'Rohan', 20), (6, 'Simran', 22);
+
+================================== Retrieve / Select Query: ============================
+
+19. Retrieve / Select Query:
+1. Table ka saara data dikhana (All Records):
+select * from table_name;
+👉 Ye command table ke sabhi columns aur sabhi rows show karta hai.
+
+2. Specific columns select karna:
+select column1, column2, …, columnN from table_name;
+👉 Sirf unhi columns ka data milega jo aap specify karoge.
+Example:- select name, age from students;
+
+3. Full table dikhana + ek extra column add karke:
+select *, column from table_name;
+👉 Ye pura table show karega aur ek extra column bhi include karega.
+
+4. Alias (Temporary Column Name) use karna:
+select column "alias_name" from table_name;
+ya
+select column as "alias_name" from table_name;
+👉 Alias ka use column ko temporary naam dene ke liye hota hai.
+Example:- select name as "Student_Name" from students;
+
+=================================== Where Clause: ===================================
+
+20. Where Clause:
+=> WHERE clause ka use records filter karne ke liye hota hai.
+=> Ye sirf unhi records ko extract karta hai jo given condition ko fulfill karte hain.
+
+select column1, column2, …. from table_name where condition;
+
+👉 Yaha condition me aap alag-alag operators use kar sakte ho:
+1. = (equal to)
+2. < (less than)
+3. > (greater than)
+4. != / <> (not equal to)
+5. <= (less than or equal to)
+6. >= (greater than or equal to)
+7. BETWEEN (range check karne ke liye)
+8. LIKE (pattern match karne ke liye)
+9. IN (multiple values check karne ke liye)
+Example:- select * from students where age > 18;
+👉 Ye query sirf un students ko dikhayegi jinki age 18 se badi hai.
+
+========================= Update Query: ================================
+
+21. Update Query:
+=> UPDATE statement ka use table me existing records modify karne ke liye hota hai.
+update table_name 
+set column1 = value1, column2 = value2, ... 
+where condition;
+
+Notes (Important):
+=> Jab aap update karte ho toh WHERE clause ka use zaroor karo, taaki sirf wahi record update ho jo aap chahte ho.
+=> Agar aap WHERE clause omit kar doge, toh table ke sabhi records update ho jayenge (jo dangerous ho sakta hai).
+Example:-
+update students 
+set age = 21 
+where id = 1;
+👉 Ye sirf us student ki age update karega jiska id = 1 hai.
+
+update students 
+set age = 25;
+👉 Agar aapne WHERE clause use nahi kiya, toh ye sabhi students ki age = 25 kar dega.
+
+========================== Delete Query: ===============================
+
+22. Delete Query:
+=> DELETE statement ka use table me se existing records delete karne ke liye hota hai.
+
+delete from table_name;  
+-- Ye sabhi records delete karega
+
+delete from table_name where condition;  
+-- Ye sirf unhi rows ko delete karega jo condition ko match karte hain
+
+Notes (Important):
+=> Jab bhi delete query use karo, WHERE clause lagana bahut zaroori hai, warna poora table empty ho jayega.
+=> Without WHERE → saare records delete ho jaayenge.
+=> With WHERE → sirf specific record delete hoga.
+Example:- 
+delete from students where id = 3;
+👉 Ye sirf us student ka record delete karega jiska id = 3 hai.
+
+delete from students;
+👉 Ye students table ke sabhi records delete kar dega, par table structure waise ka waise rahega.
+
+================================= Drop Statement ===============================
+
+23. Drop Statement:
+=> DROP statement ka use ek existing table ya database delete karne ke liye hota hai.
+
+drop table table_name;   
+-- Ye command table ke saare records aur uska structure delete kar dega
+
+drop database db_name;   
+-- Ye command pura database delete kar dega, jisme sabhi tables aur records included hote hain
+
+Notes (Important):
+=> Jab aap DROP TABLE karte ho, toh us table ke saath-saath poora data aur structure dono delete ho jaata hai.
+=> Jab aap DROP DATABASE karte ho, toh pura database, uske tables aur records sab delete ho jaate hain.
+=> Isliye DROP command use karte waqt bahut careful rehna chahiye.
+
+============================= ORDER BY Keyword ==================================
+
+24. ORDER BY Keyword:
+=> ORDER BY keyword ka use query ke result-set ko sort karne ke liye hota hai.
+=> Default me records ascending order (chhote se bada) me aate hain.
+=> Agar descending order chahiye toh DESC keyword use karte hain.
+
+Ascending Order (Default):
+select * from table_name order by column_name;
+👉 Ye records ko chhote se bade order me arrange karega.
+
+Descending Order:
+select * from table_name order by column_name desc;
+👉 Ye records ko bade se chhote order me arrange karega.
+
+Multiple Columns ke saath ORDER BY:
+select * from table_name order by column1 desc, column2 asc;
+👉 Pehle result column1 ke hisaab se sort hoga (descending),
+phir jo equal values hongi unhe column2 ke hisaab se (ascending) sort kiya jaayega.
+
+=================================== IN Operator & NOT IN Operator: ===========================
+
+25. IN Operator & NOT IN Operator:
+IN Operator:
+=> IN operator ka use tab hota hai jab aapko multiple values ke against filter karna ho.
+=> Ye ek shortcut hai multiple OR conditions likhne ke.
+
+select * from table_name where column_name in (value1, value2, value3, ...);
+👉 Example:
+select * from students where city in ('Delhi', 'Mumbai', 'Pune');
+Ye query un students ko dikhayegi jo Delhi, Mumbai ya Pune se hain.
+
+NOT IN Operator:
+=> NOT IN ka use tab hota hai jab aapko specified values ko exclude karna ho.
+select * from table_name where column_name not in (value1, value2, value3, ...);
+👉 Example:
+select * from students where city not in ('Delhi', 'Mumbai');
+Ye query un students ko dikhayegi jo Delhi aur Mumbai ke alawa kisi aur city ke hain.
+
+=============================== BETWEEN Operator ===================================
+
+26. BETWEEN Operator:
+=> BETWEEN operator ka use kisi given range ke beech ke values select karne ke liye hota hai.
+=> Ye range numbers, text ya dates ke liye use ho sakta hai.
+
+BETWEEN Example:
+select * from table_name where column_name between value1 and value2;
+👉 Isme value1 aur value2 dono included hote hain.
+
+Example:
+select * from students where age between 18 and 25;
+Ye query un students ko dikhayegi jinki age 18 se 25 ke beech (including 18 & 25) hai.
+
+NOT BETWEEN Example:
+select * from table_name where column_name not between value1 and value2;
+Example:
+select * from students where age not between 18 and 25;
+Ye query un students ko dikhayegi jinki age 18 se chhoti ya 25 se badi hai.
+
+================================= LIKE Operator: ====================================
+
+27. LIKE Operator:
+=> LIKE operator ka use WHERE clause me hota hai jab aapko kisi specific pattern ke basis par search karna ho.
+=> % (percent sign) → zero, ek ya multiple characters ko represent karta hai.
+=> _ (underscore sign) → ek single character ko represent karta hai.
+
+Note:
+MS Access me % ki jagah * use hota hai aur _ ki jagah ? use hota hai.
+select * from table_name where column like pattern;
+👉 Aap AND/OR operators ke sath multiple conditions combine kar sakte ho.
+
+Common Patterns & Description:
+Pattern	Description
+a%	Word ‘a’ se start hota hai
+%a	Word ‘a’ par end hota hai
+_a%	Word ka second character ‘a’ hai
+%a_	Word ka second last character ‘a’ hai
+%a%	Word me kahin bhi ‘a’ present ho
+_a__	Word ki length fixed hai aur second char ‘a’ hai
+a%o	Word ‘a’ se start aur ‘o’ par end hota hai
+Example:
+select * from students where name like 'A%';
+👉 Ye query un students ko dikhayegi jinke name A se start hote hain.
+
+select * from students where name like '%n';
+👉 Ye query un students ko dikhayegi jinke name n par end hote hain.
+
+================================= GROUP BY: ===============================
+
+28. GROUP BY:
+=> GROUP BY statement un rows ko group karta hai jinke values same hote hain, aur unhe ek summary row me show karta hai.
+=> Iska use mostly aggregate functions ke sath hota hai:
+1. COUNT()
+2. MAX()
+3. MIN()
+4. SUM()
+5. AVG()
+
+select column from table_name 
+where condition 
+group by column_name;
+
+Example:
+select city, count(*) from customers group by city;
+👉 Ye query har city me kitne customers hain wo count karke dikhayegi.
+
+select department, avg(salary) from employees group by department;
+👉 Ye query har department ka average salary show karegi.
+
+=============================== DISTINCT Statement: ===================================
+
+29. DISTINCT Statement:
+=> SELECT DISTINCT ka use tab hota hai jab aapko sirf unique (different) values chahiye hote hain.
+=> Table ke ek column me kabhi kabhi duplicate values hote hain, aur DISTINCT unhe remove karke sirf alag values dikhata hai.
+
+select distinct column_name, ... from table_name;
+
+👉 Example:
+select distinct city from customers;
+Ye query customers table me se sirf unique cities list karegi (duplicates hat jayenge).
+
+LIMIT:
+=> LIMIT ka use query ke result me rows ki maximum count specify karne ke liye hota hai.
+=> Matlab kitne records dikhane hain, ye LIMIT decide karta hai.
+
+select * from table_name limit number;
+
+👉 Example:
+select * from students limit 5;
+Ye query sirf pehle 5 students ka data show karegi.
+
+⚡ Simple words me:
+DISTINCT → duplicates hatane ke liye.
+LIMIT → records ki ginti control karne ke liye.
+
+=========================== Constraints (Rules in SQL): =============================
+
+30. Constraints (Rules in SQL):
+
+1. Unique Constraint
+=> Ye ensure karta hai ki column ke values unique (alag-alag) ho, duplicate na ho.
+=> Primary Key ki tarah hai, lekin difference ye hai ki Unique constraint NULL allow karta hai (sirf ek NULL).
+
+2. Not Null Constraint
+=> Ye constraint ensure karta hai ki column me NULL value nahi dal sakte.
+=> Matlab insert/update karte time value dena hi padega.
+=> Iska use data completeness maintain karne ke liye hota hai.
+
+3. Check Constraint
+=> Ye ek condition/ rule define karta hai jo column ke data ke liye true hona chahiye.
+=> Example: Salary column me sirf positive values ho.
+check (salary > 0)
+
+4. Default Constraint
+=> Agar aap column me value insert nahi karte ho, toh default value automatically add ho jaati hai.
+=> Example: Status column ka default "Active" set karna.
+
+5. Create Index Constraint
+=> Index ka use fast searching aur data retrieval ke liye hota hai.
+=> Ye users ko dikhai nahi dete, bas queries ko speed up karte hain.
+
+⚡ Simple words me:
+=> Unique → Duplicate nahi chalega.
+=> Not Null → Blank nahi chalega.
+=> Check → Custom rule lagana.
+=> Default → Value na ho toh auto-fill karna.
+=> Index → Searching fast karna.
+
+=================================== Primary Key ===================================
+
+31. Primary Key
+=> Primary Key ek column (ya multiple columns ka combination) hota hai jo har record ko uniquely identify karta    hai.
+=> Ye duplicate values allow nahi karta aur NULL values bhi nahi le sakta.
+=> Ek table me sirf ek Primary Key hoti hai, lekin wo composite bhi ho sakti hai (matlab multiple columns ka    combination).
+=> Ye basically Unique + Not Null constraint ka combination hai.
+=> Parent table ke primary key ke values delete nahi kiye ja sakte agar wo child table me foreign key ke    through use ho rahe ho.
+
+Primary Key banane ke tarike
+1. Primary Key column ke saath define karte time:
+create table table_name (
+    column_name datatype primary key,
+    column_name datatype,
+    ...
+);
+
+2. Table create karte waqt alag se define karna:
+create table table_name (
+    column_name datatype,
+    column_name datatype,
+    ...
+    primary key (column_name)
+);
+
+3. Existing table me ALTER karke Primary Key add karna:
+alter table table_name add primary key (column_name);
+
+4. Constraint name ke saath Primary Key add karna:
+alter table table_name
+add constraint pk_tableName primary key (col1, col2);
+👉 Ye example ek composite primary key hai (2 columns ka combination).
+
+Primary Key drop karna
+1. Simple tarike se:
+alter table table_name drop primary key;
+
+2. Constraint ke naam se drop karna:
+alter table table_name drop constraint pk_tableName;
+
+
+⚡ Simple words me:
+=> Primary Key = Unique + Not Null
+=> Har table me sirf ek hi Primary Key hoti hai
+=> Composite Primary Key possible hai (multi-columns)
+
+================================= Foreign Key ==================================
+
+32. Foreign Key
+=> Foreign Key ek column (ya group of columns) hota hai jo do tables ke beech relation banata hai.
+=> Ye ek table ka column hota hai jo dusre table ke Primary Key ko refer karta hai.
+=> Ek table me multiple foreign keys allowed hote hain.
+=> Isme duplicate values aur NULL values aa sakti hain.
+=> Foreign Key ka data Child table me hota hai, jo Parent table ki Primary Key ko reference karta hai.
+=> Agar Parent table ka data delete ho raha ho, toh pehle Foreign Key (child table ke records) handle karne    padte hain, warna error aata hai (depends on ON DELETE rules).
+
+Foreign Key banane ka syntax (create time)
+create table table_name (
+    column_name datatype primary key,
+    column_name datatype,
+    ...
+    foreign key (column_name) references parent_table (parent_column)
+);
+👉 Yaha parent_table wo table hai jisme Primary Key defined hai.
+
+Foreign Key add karna (ALTER TABLE ke through)
+alter table table_name 
+add foreign key (column_name) references parent_table (parent_column);
+
+Constraint name ke saath Foreign Key add karna
+alter table table_name 
+add constraint fk_tableName 
+foreign key (col_name) references parent_table (parent_column);
+
+Foreign Key drop karna
+alter table table_name drop foreign key column_name;
+⚠️ Dhyan rahe: MySQL me foreign key drop karte time kabhi kabhi constraint ka naam use karna padta hai (jo automatically generate hota hai ya manually diya hota hai).
+
+⚡ Simple words me:
+=> Primary Key = Parent table me unique ID
+=> Foreign Key = Child table ka column jo Parent table ke Primary Key ko refer karta hai
+=> Ek table me ek se zyada foreign keys ho sakte hain
+
+===================================== ALTER TABLE Statement =================================
+
+33. ALTER TABLE Statement
+=> ALTER TABLE ka use ek existing table me changes karne ke liye hota hai.
+Iske through hum:- 
+=> New column add kar sakte hain
+=> Existing column modify kar sakte hain
+=> Column delete kar sakte hain
+=> Constraints add/drop kar sakte hain
+
+1. Add a New Column
+alter table table_name
+add column column_name datatype;
+👉 Example:
+alter table students add column age int;
+Ye students table me ek age column add karega.
+
+2. Modify Existing Column
+alter table table_name 
+modify column column_name datatype;
+👉 Example:
+alter table students modify column student_name varchar(100);
+Ye student_name column ka datatype 50 se 100 characters kar dega.
+
+3. Delete Existing Column
+alter table table_name 
+drop column column_name;
+👉 Example:
+alter table students drop column age;
+Ye age column ko students table se delete kar dega.
+
+⚡ Simple words me:
+=> ADD → naya column insert karna
+=> MODIFY → existing column ko change karna
+=> DROP → column delete karna
+
+========================================== Joins in MySQL ===============================
+34. Joins in MySQL
+=> JOIN ka use tab hota hai jab hume 2 ya zyada tables ka data combine karke ek sath fetch karna ho.
+=> Mostly SELECT ke saath use hota hai.
+
+1. INNER JOIN
+=> Sirf wahi records return karta hai jinka match dono tables me hota hai.
+=> Ye sabse common JOIN hai.
+
+select column
+from table1 
+inner join table2
+on table1.column = table2.column;
+👉 Example: Students + Courses, sirf un students ko dikhana jo kisi course me enrolled hain.
+
+2. LEFT JOIN (ya LEFT OUTER JOIN)
+=> Left table ke saare records show karega.
+=> Right table ka data sirf tabhi aayega jab match hoga.
+
+select column
+from table1 
+left join table2 
+on table1.column = table2.column;
+👉 Example: Saare students ko dikhana chahe wo kisi course me enrolled ho ya na ho.
+
+3. RIGHT JOIN (ya RIGHT OUTER JOIN)
+=> Right table ke saare records show karega.
+=> Left table ka data sirf tab aayega jab match hoga.
+
+select column
+from table1 
+right join table2 
+on table1.column = table2.column;
+👉 Example: Saare courses dikhana chahe unme students enrolled ho ya na ho.
+
+4. FULL JOIN (ya FULL OUTER JOIN)
+=> Left aur Right dono tables ke saare records show karta hai.
+=> Jo match hote hain wo ek sath dikhte hain, aur jo match nahi hote wo NULL ke sath show hote hain.
+
+select column
+from table1 
+full join table2 
+on table1.column = table2.column;
+⚠️ Note: MySQL me direct FULL JOIN support nahi hota. Iske liye UNION ka use karte hain.
+
+5. CROSS JOIN (ya Cartesian Product)
+=> Agar koi condition nahi lagayi, toh ye har row ko dusre table ki har row ke sath combine kar deta hai.
+=> Matlab rows × rows combinations ban jaate hain.
+
+select column
+from table1 
+cross join table2;
+
+===================================== SubQuery ==============================
+
+35. SubQuery
+=> SubQuery ek aisi query hoti hai jo ek aur query ke andar nested hoti hai.
+=> Ye ek input ya output ki tarah kaam karti hai.
+=> Subquery pehle execute hoti hai, phir outer query chalti hai.
+=> Ye SELECT, FROM, aur WHERE ke andar use ho sakti hai.
+
+Example of SubQuery (WHERE clause)
+select * 
+from students 
+where course_id = (select course_id from courses where course_name = 'Physics');
+👉 Isme pehle inner query chalegi (Physics ka course_id nikalegi),
+aur fir outer query us course_id ke students show karegi.
+
+⚡ Simple words me:
+=> INNER JOIN → Matching data only
+=> LEFT JOIN → All left + matching right
+=> RIGHT JOIN → All right + matching left
+=> FULL JOIN → All left + all right
+=> CROSS JOIN → All combinations
+=> SubQuery → Query ke andar query
+
+==================== Types of Relationships in SQL ====================
+
+1. One-to-One Relationship
+👉 Table A ka ek record sirf ek hi record Table B me link hoga (aur vice versa).
+Setup: Ek table ka foreign key doosre table ke primary key ko refer kare.
+
+Example: users aur user_profiles
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    username VARCHAR(50)
+);
+
+CREATE TABLE user_profiles (
+    profile_id INT PRIMARY KEY,
+    user_id INT UNIQUE,
+    profile_data VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+✅ Output: Har user ka ek hi profile hoga.
+
+2. One-to-Many Relationship
+👉 Table A ka ek record Table B ke multiple records se link ho sakta hai, lekin Table B ka ek record sirf ek hi record Table A se link hoga.
+
+Setup: "Many" side (Table B) me foreign key hoti hai jo "One" side (Table A) ke primary key ko refer karti hai.
+Example: departments aur employees
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(50)
+);
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(50),
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+✅ Output: Ek department me bahut saare employees ho sakte hain.
+
+3. Many-to-Many Relationship
+👉 Table A ke ek record ke multiple records Table B me ho sakte hain, aur Table B ke ek record ke multiple records Table A me ho sakte hain.
+Setup: Ek extra table banate hain (junction table) jisme dono tables ke foreign keys store hote hain.
+
+Example: students aur courses
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(50)
+);
+
+CREATE TABLE courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(50)
+);
+
+CREATE TABLE student_courses (
+    student_id INT,
+    course_id INT,
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+✅ Output: Ek student multiple courses me enroll ho sakta hai aur ek course me multiple students ho sakte hain.
+
+4. Many-to-One Relationship
+👉 Table B ke multiple records ek hi record Table A se link ho sakte hain.
+(Yeh basically One-to-Many ka ulta view hai).
+
+Example: Teachers aur Courses
+CREATE TABLE Teachers (
+    teacher_id INT PRIMARY KEY,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255)
+);
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(255),
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES Teachers(teacher_id)
+);
+✅ Output: Ek teacher multiple courses padha sakta hai.
+
+5. Self-Referencing Relationship
+👉 Ek hi table ka ek column apne hi primary key ko refer kare.
+
+Example: employees jisme ek employee ka manager bhi ek employee hi hai.
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(50),
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
+);
+✅ Output: Ek employee ke upar ek aur employee as manager ho sakta hai.
+🔑 Summary:
+1. One-to-One: Ek user ↔ ek profile
+2. One-to-Many: Ek department → multiple employees
+3. Many-to-Many: Ek student ↔ multiple courses
+4. Many-to-One: Multiple courses → ek teacher
+5. Self-Referencing: Employee → Manager (same table)
+
+=============================== EXECUTE statement MySQL =================
+
+1. EXECUTE use thay che prepared statements ne run karva mate.
+=> Pehla tame query PREPARE karo cho (e dynamic hoy ke parameterized hoy).
+=> Pachhi tame ene EXECUTE thi run karo cho.
+
+1. DDL – Data Definition Language
+👉 Ye queries database ya table ka structure banane / badalne ke liye hoti hai.
+
+Examples:
+CREATE → naya database ya table banana
+ALTER → table ka structure change karna (column add, datatype change)
+DROP → pura table/database delete karna
+TRUNCATE → table ka saara data delete karna (structure bacha rehta hai)
+
+2. DML – Data Manipulation Language
+👉 Ye queries data ko insert, update, delete karne ke liye hoti hai.
+
+Examples:
+INSERT → naya record add karna
+UPDATE → existing record change karna
+DELETE → record delete karna
+
+3. DQL – Data Query Language
+👉 Ye queries sirf data fetch / select karne ke liye hoti hai.
+
+Examples:
+SELECT → table se data nikalna
+
+4. DCL – Data Control Language
+👉 Ye queries permissions aur access control ke liye hoti hai.
+
+Examples:
+GRANT → kisi ko permission dena
+REVOKE → permission wapas lena
+
+5. TCL – Transaction Control Language
+👉 Ye queries transactions (save/rollback) manage karne ke liye hoti hai.
+
+Examples:
+COMMIT → changes permanently save karna
+ROLLBACK → changes cancel karna
+SAVEPOINT → ek checkpoint banana (rollback ke liye)
+
+✅ Easy yaad rakhne ka tarika:
+1. DDL → Structure (banane/badalne ke liye)
+2. DML → Data (insert/update/delete karne ke liye)
+3. DQL → Query (sirf select/fetch karne ke liye)
+4. DCL → Control (permission ke liye)
+5. TCL → Transaction (save/undo karne ke liye)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

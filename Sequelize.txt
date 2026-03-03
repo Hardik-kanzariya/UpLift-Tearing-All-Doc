@@ -1,0 +1,2433 @@
+1. What is Sequelize
+2. Model Basics 
+3. Model Instances
+4. Model Querying - Basics
+5. Model Querying - Finders
+6. Getters, Setters & Virtuals
+7. Validations & Constraints
+8. Raw Queries
+9. Associations
+10.Paranoid
+11.Migrations
+12.Eager Loading
+13.Creating with Associations
+14.Advanced M:N Associations
+15.Association Scopes
+16.Polymorphic Associations
+
+1. what is Sequelize ? 
+=> Sequelize ek promise-based ORM (Object Relational Mapper) hai jo Node.js ke saath use hota hai.
+Iska kaam hai tumhari database ke saath interaction ko easy banana. Matlab SQL queries likhne ke bajaye tum JavaScript code likh sakte ho aur woh andar se SQL me convert ho jaata hai.
+
+Ye support karta hai:
+=> Postgres, MySQL, MariaDB, SQLite, SQL Server, Oracle, Redshift, Snowflake
+=> Transactions (safe DB operations)
+=> Relations (1-to-1, 1-to-many, many-to-many)
+=> Eager aur Lazy loading (related data fetch karna)
+=> Replication (read ke liye multiple DB replicas handle karna)
+
+============================================ Core Concepts ====================================================
+
+================================================= Model Basics ============================================
+
+1. What is Model
+=> Sequelize me Model ek class hoti hai jo database ke table ko represent karti hai.
+=> Model define karne se tum Sequelize ko batate ho ki table ka naam kya hai aur kaunse columns hain.
+=> Example: Model ka naam User ho sakta hai, aur table ka naam database me Users ho.
+
+2. Model define 2 type
+=> 1.sequelize.define()
+=> 2.class extends Model .init() 
+
+=> 1. sequelize.define()
+
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
+
+const User = sequelize.define(
+  'User',
+  {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+    },
+  }
+);
+console.log(User === sequelize.models.User); // true
+
+2. class extends Model aur .init() use karke
+=> const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
+
+class User extends Model {}
+
+User.init(
+  {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: DataTypes.STRING,
+  },
+  {
+    sequelize,
+    modelName: 'User',
+  }
+);
+
+console.log(User === sequelize.models.User); // true
+
+==================== Caveat with Public Class Fields ====================
+🔹 Caveat with Public Class Fields
+=> Agar tum ek class field ka naam same rakh doge jaisa model attribute hai, toh problem hogi.
+Kyuki Sequelize apne getter/setter banata hai aur tumhara field usko shadow kar dega (overwrite ho jayega).
+
+❌ Invalid Example:
+class User extends Model {
+  id; // Yeh sequelize ke getter/setter ko block kar dega ❌
+}
+
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+  },
+  { sequelize }
+);
+
+const user = new User({ id: 1 });
+console.log(user.id); // undefined
+
+✅ Valid Example:
+class User extends Model {
+  otherPublicField; // Yeh theek hai kyunki kisi attribute ko shadow nahi karta
+}
+
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+  },
+  { sequelize }
+);
+
+const user = new User({ id: 1 });
+console.log(user.id); // 1
+
+⚡ Summary:
+=> Model define karne ke 2 tareeke: sequelize.define() aur Model.init().
+=> Dono internally same kaam karte hain.
+=> Class fields ka dhyaan rakho: agar attribute ke naam jaisa field class me likh diya toh getter/setter block ho jaayenge.
+=> TypeScript me safe way hai declare use karna.
+
+============================ Table Name Inference ======================
+
+🔹 Table Name Inference (Naam kaise decide hota hai?)
+=> Jab tum Sequelize me ek model banate ho, tum modelName dete ho jaise User.
+=> Agar tumne table ka naam explicitly nahi diya, toh Sequelize automatically model name ka plural bana deta hai.
+
+👉 Example:
+=> Model name: User
+=> Table name: Users (Sequelize ne plural bana diya).
+
+Ye pluralization ek library inflection ke through hota hai. Iska matlab irregular plurals bhi correct banenge:
+=> Person → People
+=> Mouse → Mice
+
+🔹 Agar tum pluralization disable karna chahte ho
+=> Sequelize me ek option hai freezeTableName: true.
+=> Isse table name exactly wahi hoga jo model name hai.
+
+sequelize.define(
+  'User',
+  {
+    // attributes
+  },
+  {
+    freezeTableName: true, // ab table ka naam "User" hi rahega
+  }
+);
+
+🔹 Global level par apply karna
+=> Agar tum chahte ho ki har model ke liye table name plural na bane, toh sequelize instance banate waqt option pass kar sakte ho:
+
+const sequelize = new Sequelize('sqlite::memory:', {
+  define: {
+    freezeTableName: true,
+  },
+});
+=> Ab chahe tum User, Post, ya Category model banao, unke table names wahi rahenge (singular form).
+
+🔹 Agar tum specific custom table name dena chahte ho
+=> Directly tableName option use kar lo.
+
+sequelize.define(
+  'User',
+  {
+    // attributes
+  },
+  {
+    tableName: 'Employees', // ab ye model "Employees" table use karega
+  }
+);
+
+⚡ Summary:
+=> By default Sequelize automatically plural banata hai model name ka.
+=> freezeTableName: true use karke tum isko disable kar sakte ho.
+=> Global config se sab models ke liye apply kar sakte ho.
+=> Ya phir tableName option se custom naam de sakte ho.
+
+🔹 Model Synchronization kya hai?
+=> Jab tum ek model define karte ho, tum Sequelize ko batate ho ki table kaisa dikhna chahiye    (columns, types, etc).
+=> Lekin database me actual table ho bhi sakta hai, ya nahi bhi ho sakta. Aur agar ho bhi, toh    uska structure alag ho sakta hai.
+
+👉 Isi problem ko solve karne ke liye synchronization use hota hai.
+Ye ensure karta hai ki model aur database table ka structure match kare.
+🔹 Methods of Sync
+
+1. User.sync()
+=> Agar table exist nahi karta → naya table create karega.
+=> Agar already hai → kuch nahi karega.
+
+await User.sync();
+
+2. User.sync({ force: true })
+=> Pehle table ko drop karega (agar exist karta hai).
+=> Fir dobara naye model structure ke hisaab se create karega.
+
+await User.sync({ force: true });
+console.log("User table recreate ho gaya!");
+
+3. User.sync({ alter: true })
+=> Table ka current structure check karega.
+=> Jo differences honge model aur table me, unko update karega.
+=> Jaise column add/remove/change karna.
+
+await User.sync({ alter: true });
+
+🔹 Sab models ek sath sync karna
+await sequelize.sync({ force: true });
+console.log("Sabhi models sync ho gaye!");
+
+🔹 Tables drop karna
+Single model ka table drop:
+await User.drop();
+console.log("User table drop ho gaya!");
+
+Saare models ke tables drop:
+await sequelize.drop();
+console.log("Sabhi tables drop ho gaye!");
+
+🔹 Safety Check with match option
+=> Kabhi kabhi galti se production DB me destructive sync run ho jata hai.
+=> Isko prevent karne ke liye match option use karte hain (Regex ke through DB name check karta hai).
+
+Example:
+
+sequelize.sync({ force: true, match: /_test$/ });
+
+
+➡️ Ye sirf tabhi chalega jab database ka naam _test par end hota ho.
+
+🔹 Production me kya karein?
+
+⚠️ force: true aur alter: true production ke liye risky hote hain kyunki data loss ya table corruption ho sakta hai.
+
+✅ Iske liye Sequelize ka Migration system use karte hain (Sequelize CLI ke saath).
+Migration me tum changes step-by-step track kar sakte ho (safe aur version controlled).
+
+⚡ Summary:
+=> sync() → agar table nahi hai toh banao.
+=> sync({ force: true }) → pehle drop karo fir create.
+=> sync({ alter: true }) → table ko modify karke model ke equal karo.
+=> sequelize.sync() → saare models ek sath sync.
+=> drop() → table(s) delete karne ke liye.
+=> Production me → Migrations use karo, direct sync mat karo.
+
+🔹 Timestamps (Automatic time fields)
+=> By default, Sequelize har model me do extra fields add karta hai:
+1. createdAt → kab record create hua tha
+2. updatedAt → last time kab record update hua tha
+👉 Ye fields automatically handle hote hain Sequelize ke level pe (SQL triggers nahi).
+Iska matlab agar tum direct SQL query run karoge (Sequelize ke bahar se), toh ye fields update nahi honge.
+
+Disable timestamps:
+sequelize.define(
+  'User',
+  {
+    // attributes
+  },
+  {
+    timestamps: false, // ab createdAt aur updatedAt nahi banenge
+  }
+);
+
+🔹 Sirf ek timestamp ya custom naam dena
+=> Tum customize kar sakte ho ki createdAt ya updatedAt chahiye ya nahi, aur naam change bhi kar sakte ho.
+
+class Foo extends Model {}
+Foo.init(
+  {
+    // attributes
+  },
+  {
+    sequelize,
+    timestamps: true,   // timestamps enable rehne chahiye
+    createdAt: false,   // createdAt disable
+    updatedAt: 'updateTimestamp', // custom naam
+  }
+);
+👉 Is case me model ke table me sirf ek column hoga: updateTimestamp.
+
+🔹 Column Declaration Shorthand
+=> Agar tum sirf column ka data type specify kar rahe ho, toh short syntax use kar sakte ho.
+
+// Normal
+sequelize.define('User', {
+  name: {
+    type: DataTypes.STRING,
+  },
+});
+
+// Short-hand
+sequelize.define('User', {
+  name: DataTypes.STRING,
+});
+
+🔹 Default Values
+=> By default → column ka value NULL hota hai agar explicitly kuch na diya ho.
+=> Tum defaultValue property use karke apna default set kar sakte ho.
+
+sequelize.define('User', {
+  name: {
+    type: DataTypes.STRING,
+    defaultValue: 'John Doe', // agar kuch na diya toh ye set hoga
+  },
+});
+
+Special Default Values
+=> Kuch special constants bhi hote hain jaise DataTypes.NOW.
+
+sequelize.define('Foo', {
+  bar: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW, 
+    // record insert hote time current timestamp set hoga
+  },
+});
+
+⚡ Summary:
+=> timestamps: true → createdAt aur updatedAt auto add hote hain.
+=> timestamps: false → disable karne ke liye.
+=> Tum individually disable/rename kar sakte ho.
+=> Columns ke liye short-hand syntax available hai.
+=> defaultValue se tum default set kar sakte ho (strings ya special values like NOW).
+
+
+🔹 Data Types in Sequelize
+=> Har model ke column ka ek data type hota hai, jisse DB ko pata chalta hai ki kaunse type ka data store hoga.
+
+1. Strings
+DataTypes.STRING;          // VARCHAR(255)
+DataTypes.STRING(1234);    // VARCHAR(1234)
+DataTypes.STRING.BINARY;   // VARCHAR BINARY
+DataTypes.TEXT;            // TEXT
+DataTypes.TEXT('tiny');    // TINYTEXT
+DataTypes.CITEXT;          // CITEXT (sirf PostgreSQL/SQLite)
+DataTypes.TSVECTOR;        // PostgreSQL only
+
+2. Boolean
+DataTypes.BOOLEAN;   // true/false (MySQL me TINYINT(1))
+
+3. Numbers
+DataTypes.INTEGER;          // INTEGER
+DataTypes.BIGINT;           // BIGINT
+DataTypes.FLOAT;            // FLOAT
+DataTypes.DOUBLE;           // DOUBLE
+DataTypes.DECIMAL(10, 2);   // DECIMAL with precision
+
+
+👉 MySQL/MariaDB me tum UNSIGNED aur ZEROFILL bhi use kar sakte ho:
+
+DataTypes.INTEGER.UNSIGNED;
+DataTypes.INTEGER.ZEROFILL;
+
+4. Dates
+DataTypes.DATE;        // DATETIME (MySQL/SQLite), TIMESTAMP WITH TIME ZONE (Postgres)
+DataTypes.DATE(6);     // Fractional seconds support
+DataTypes.DATEONLY;    // Sirf date (without time)
+
+5. UUIDs
+{
+  type: DataTypes.UUID,
+  defaultValue: DataTypes.UUIDV4, // auto-generate UUID
+}
+
+🔹 Column Options
+=> allowNull: false → column NULL nahi ho sakta
+=> defaultValue → agar value na di ho toh default use karega
+=> unique → unique constraint lagata hai (single ya composite)
+=> primaryKey → column ko primary key banata hai
+=> autoIncrement → auto incrementing integer column
+=> field → DB column name ko customize karna
+=> references → foreign key define karne ke liye
+=> comment → column par comment (MySQL, PostgreSQL, MSSQL supported)
+
+Example:
+class Foo extends Model {}
+Foo.init(
+  {
+    flag: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    myDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    title: { type: DataTypes.STRING, allowNull: false },
+
+    uniqueOne: { type: DataTypes.STRING, unique: 'compositeIndex' },
+    uniqueTwo: { type: DataTypes.INTEGER, unique: 'compositeIndex' },
+    someUnique: { type: DataTypes.STRING, unique: true },
+
+    identifier: { type: DataTypes.STRING, primaryKey: true },
+    incrementMe: { type: DataTypes.INTEGER, autoIncrement: true },
+
+    fieldWithUnderscores: { 
+      type: DataTypes.STRING, 
+      field: 'field_with_underscores',
+    },
+
+    commentMe: {
+      type: DataTypes.INTEGER,
+      comment: 'This is a column with a comment',
+    },
+  },
+  {
+    sequelize,
+    modelName: 'foo',
+    indexes: [{ unique: true, fields: ['someUnique'] }],
+  }
+);
+
+🔹 Custom Methods in Models
+=> Sequelize ke models ES6 classes hote hain, toh tum apni custom methods add kar sakte ho.
+
+class User extends Model {
+  static classLevelMethod() {
+    return 'foo';
+  }
+  instanceLevelMethod() {
+    return 'bar';
+  }
+  getFullname() {
+    return [this.firstname, this.lastname].join(' ');
+  }
+}
+
+User.init(
+  {
+    firstname: DataTypes.TEXT,
+    lastname: DataTypes.TEXT,
+  },
+  { sequelize }
+);
+
+// Usage
+console.log(User.classLevelMethod()); // 'foo'
+
+const user = User.build({ firstname: 'Jane', lastname: 'Doe' });
+console.log(user.instanceLevelMethod()); // 'bar'
+console.log(user.getFullname());         // 'Jane Doe'
+
+⚡ Summary:
+=> Sequelize ke paas built-in data types hote hain (STRING, BOOLEAN, INTEGER, DATE, UUID, etc.).
+=> Columns ke liye tum options specify kar sakte ho (allowNull, defaultValue, unique, primaryKey, autoIncrement, references, comment).
+=> Models ES6 classes hote hain → tum apne custom methods (instance aur static) likh sakte ho.
+
+================================================== Model Instance ======================================================
+
+🔹 Model Instance kya hota hai?
+=> Model = ek ES6 class (jaise User)
+=> Instance = us model ka ek object (table ka ek row).
+=> Har instance basically ek DAO (Data Access Object) hota hai jo ek record ko represent karta hai.
+
+🔹 Example Setup
+const { Sequelize, Model, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
+
+const User = sequelize.define('user', {
+  name: DataTypes.TEXT,
+  favoriteColor: {
+    type: DataTypes.TEXT,
+    defaultValue: 'green',
+  },
+  age: DataTypes.INTEGER,
+  cash: DataTypes.INTEGER,
+});
+
+(async () => {
+  await sequelize.sync({ force: true });
+  // code yahan chalega
+})();
+
+🔹 Instance banane ke 2 tareeqe
+
+1. build()
+=> Ye object banata hai lekin DB me save nahi karta.
+
+const jane = User.build({ name: 'Jane' });
+console.log(jane instanceof User); // true
+console.log(jane.name);            // "Jane"
+👉 Abhi tak database me kuch nahi gaya. Sirf ek JS object bana hai.
+
+Agar tumhe DB me persist karna ho → save() use karo:
+await jane.save();
+console.log("Jane database me save ho gayi!");
+
+2. create()
+=> Shortcut hai jo build + save ek saath karta hai.
+
+const jane = await User.create({ name: 'Jane' });
+// Ab Jane DB me exist karti hai!
+console.log(jane instanceof User); // true
+console.log(jane.name);            // "Jane"
+
+⚡ Summary
+=> build() → sirf object banata hai, DB touch nahi karta.
+=> save() → ek existing instance ko DB me persist karta hai.
+=> create() → dono step ek saath (object + DB save).
+=> Instances ek row of table ko represent karte hain.
+
+🔹 Logging Instances
+=> Agar tum seedha console.log(jane) karoge toh bahut saara extra Sequelize ka internal data    print ho jayega.
+
+👉 Correct way:
+const jane = await User.create({ name: 'Jane' });
+
+// ❌ Don't
+console.log(jane);
+
+// ✅ Do this
+console.log(jane.toJSON());
+console.log(JSON.stringify(jane, null, 4));
+
+🔹 Default Values
+=> Agar tum build ya create karte waqt koi field nahi dete, toh default value lagti hai:
+
+const jane = User.build({ name: 'Jane' });
+console.log(jane.favoriteColor); // "green" (default value)
+
+🔹 Updating an Instance
+
+1. Simple property update + save
+const jane = await User.create({ name: 'Jane' });
+jane.name = 'Ada';
+await jane.save(); 
+// DB me bhi update ho gaya
+
+2. Multiple fields with set
+
+jane.set({ name: 'Ada', favoriteColor: 'blue' });
+await jane.save();
+
+3. Using update (direct ek object ke saath)
+
+await jane.update({ name: 'Ada' });
+// Ye sirf "name" ko update karega
+
+🔹 Deleting an Instance
+
+await jane.destroy();
+console.log("Jane DB se delete ho gayi!");
+
+🔹 Reloading an Instance
+=> Agar tum object ko modify kar do, par DB ki original value wapas chahiye → reload().
+
+jane.name = 'Ada';
+await jane.reload();
+console.log(jane.name); // "Jane" (DB wali value aa gayi)
+
+🔹 Saving only some fields
+=> Agar tum multiple attributes change karte ho, par sirf kuch hi fields save karna hai →    fields option use karo:
+
+jane.name = 'Jane II';
+jane.favoriteColor = 'blue';
+await jane.save({ fields: ['name'] });
+// DB me sirf "name" update hoga, favoriteColor DB me purana hi rahega
+
+🔹 Change Awareness
+save() smart hai 👍
+=> Agar koi change nahi hua toh koi query DB pe nahi bheje ga.
+=> Agar sirf kuch fields change hue, toh wahi update karega.
+
+🔹 Increment & Decrement
+=> Concurrency safe tareeke se numeric fields ko increment/decrement karna:
+
+const jane = await User.create({ name: 'Jane', age: 100, cash: 5000 });
+
+// Single field
+await jane.increment('age', { by: 2 });
+
+// Multiple fields
+await jane.increment({ age: 2, cash: 100 });
+
+// Short syntax if same increment
+await jane.increment(['age', 'cash'], { by: 2 });
+
+// Decrement bhi same tarike se
+await jane.decrement('age', { by: 5 });
+
+⚡ Summary
+=> .toJSON() use karo log karne ke liye.
+=> Default values auto apply hoti hain.
+=> save(), set(), update() se values update hoti hain.
+=> destroy() se instance delete hota hai.
+=> reload() se DB wali fresh value milti hai.
+=> save({ fields }) se selective save possible hai.
+=> increment() & decrement() safe numeric updates ke liye hain.
+
+================================ Model Querying - Basics ===========================
+
+🔹 Simple INSERT Queries
+
+// Naya user create karna
+const jane = await User.create({ firstName: 'Jane', lastName: 'Doe' });
+console.log("Jane ka auto-generated ID:", jane.id);
+
+=> Model.create() = build() + save() ka shortcut hai.
+=> Agar tum chahte ho ki user sirf kuch fields hi set kare, use fields option:
+
+const user = await User.create(
+  { username: 'alice123', isAdmin: true },
+  { fields: ['username'] } // sirf username set hoga
+);
+console.log(user.username); // 'alice123'
+console.log(user.isAdmin);  // false (default)
+
+🔹 Simple SELECT Queries
+
+1. Find all
+const users = await User.findAll();
+console.log(users.every(user => user instanceof User)); // true
+console.log('All users:', JSON.stringify(users, null, 2));
+
+Ye basically SQL me:
+=> SELECT * FROM Users;
+
+2. Specific attributes select karna
+Model.findAll({
+  attributes: ['foo', 'bar'], // sirf ye columns
+});
+
+SQL equivalent:
+=> SELECT foo, bar FROM ...
+
+3. Attributes rename karna
+Model.findAll({
+  attributes: ['foo', ['bar', 'baz'], 'qux'], // bar ko alias "baz" de diya
+});
+
+
+SQL:
+=> SELECT foo, bar AS baz, qux FROM ...
+
+4. Aggregation functions (COUNT, SUM, etc.)
+Model.findAll({
+  attributes: ['foo', [sequelize.fn('COUNT', sequelize.col('hats')), 'n_hats'], 'bar'],
+});
+
+SQL:
+=> SELECT foo, COUNT(hats) AS n_hats, bar FROM ...
+
+=> Aggregation use karte waqt alias dena zaruri hai, tabhi model instance se access kar paoge:    instance.n_hats.
+
+5. Aggregation ke saath sari attributes
+Model.findAll({
+  attributes: {
+    include: [[sequelize.fn('COUNT', sequelize.col('hats')), 'n_hats']]
+  }
+});
+=> Ye approach short aur future-proof hai agar model me columns change hote hain.
+
+6. Kuch attributes exclude karna
+Model.findAll({
+  attributes: { exclude: ['baz'] }
+});
+SQL me:- SELECT id, foo, bar, qux FROM ...
+=> Matlab tum specific columns ko select se hata bhi sakte ho.
+
+⚡ Summary:
+=> create() → insert ka shortcut.
+=> findAll() → SELECT * ya specific columns.
+=> attributes → columns choose karne ke liye.
+=> include → extra columns add karna (aggregations ke liye).
+=> exclude → unwanted columns remove karna.
+=> sequelize.fn → aggregation functions ke liye (COUNT, SUM, etc
+
+🔹 WHERE Clauses Basics
+Post.findAll({
+  where: { authorId: 2 }
+});
+// Ye SQL me hota hai: SELECT * FROM post WHERE authorId = 2;
+=> Agar operator na diya ho, Sequelize default Op.eq (equal)` assume karta hai.
+   Equivalent syntax:
+
+const { Op } = require('sequelize');
+Post.findAll({
+  where: {
+    authorId: { [Op.eq]: 2 }
+  }
+});
+
+Multiple checks (AND)
+Post.findAll({
+  where: { authorId: 12, status: 'active' }
+});
+// SQL: SELECT * FROM post WHERE authorId = 12 AND status = 'active';
+
+
+Equivalent with Op:
+Post.findAll({
+  where: { [Op.and]: [{ authorId: 12 }, { status: 'active' }] }
+});
+
+OR queries
+Post.findAll({
+  where: { [Op.or]: [{ authorId: 12 }, { authorId: 13 }] }
+});
+// SQL: authorId = 12 OR authorId = 13
+=> Agar same column par OR use kar rahe ho, aur readable chahiye:
+
+Post.destroy({
+  where: { authorId: { [Op.or]: [12, 13] } }
+});
+// DELETE FROM post WHERE authorId = 12 OR authorId = 13
+
+🔹 Common Sequelize Operators
+const { Op } = require('sequelize');
+Post.findAll({
+  where: {
+    someAttribute: {
+      [Op.eq]: 3,          // = 3
+      [Op.ne]: 20,         // != 20
+      [Op.is]: null,       // IS NULL
+      [Op.not]: true,      // IS NOT TRUE
+      [Op.gt]: 6,          // > 6
+      [Op.gte]: 6,         // >= 6
+      [Op.lt]: 10,         // < 10
+      [Op.lte]: 10,        // <= 10
+      [Op.between]: [6,10], // BETWEEN 6 AND 10
+      [Op.notBetween]: [11,15], // NOT BETWEEN 11 AND 15
+      [Op.in]: [1,2],      // IN [1,2]
+      [Op.notIn]: [1,2],   // NOT IN [1,2]
+      [Op.like]: '%hat',   // LIKE '%hat'
+      [Op.startsWith]: 'hat', // LIKE 'hat%'
+      [Op.endsWith]: 'hat',   // LIKE '%hat'
+      [Op.substring]: 'hat',  // LIKE '%hat%'
+    }
+  }
+});
+=> PostgreSQL specific operators bhi hain: Op.iLike, Op.notILike, Op.regexp, Op.any, etc.
+
+🔹 Shorthand syntax for Op.in
+Post.findAll({
+  where: { id: [1,2,3] } // same as [Op.in]: [1,2,3]
+});
+
+🔹 Logical combinations
+AND + OR
+
+Foo.findAll({
+  where: {
+    rank: { [Op.or]: { [Op.lt]: 1000, [Op.eq]: null } }, // rank < 1000 OR rank IS NULL
+    createdAt: { 
+      [Op.lt]: new Date(),
+      [Op.gt]: new Date(new Date() - 24*60*60*1000) 
+    }, // createdAt < now AND > yesterday
+    [Op.or]: [
+      { title: { [Op.like]: 'Boat%' } },
+      { description: { [Op.like]: '%boat%' } }
+    ]
+  }
+});
+
+NOT operator
+Project.findAll({
+  where: {
+    name: 'Some Project',
+    [Op.not]: [
+      { id: [1,2,3] },
+      { description: { [Op.like]: 'Hello%' } }
+    ]
+  }
+});
+
+
+SQL me generate hoga:
+SELECT * FROM `Projects`
+WHERE (
+  `Projects`.`name` = 'Some Project'
+  AND NOT (
+    `Projects`.`id` IN (1,2,3)
+    AND `Projects`.`description` LIKE 'Hello%'
+  )
+)
+
+⚡ Summary:
+=> where → filtering ke liye.
+=> Default = equality [Op.eq].
+=> Op.and, Op.or, Op.not → complex logical conditions.
+=> [Op.gt/lt/gte/lte] → number comparisons.
+=> [Op.in] → array of values.
+=> [Op.like], [Op.startsWith], [Op.endsWith] → string pattern matching.
+
+🔹 Advanced Queries with Functions
+=> Agar aapko SQL function apply karke filter karna ho, jaise:
+
+WHERE char_length("content") = 7
+
+Toh Sequelize me use karte hain:-
+Post.findAll({
+  where: sequelize.where(
+    sequelize.fn('char_length', sequelize.col('content')), // SQL function + column
+    7 // comparison
+  ),
+});
+=> sequelize.fn('functionName', args...) → SQL function call.
+=> sequelize.col('columnName') → table column.
+=> Ye approach string directly pass karne se better hai kyunki Sequelize proper escaping aur    dialect compatibility handle karta hai.
+
+🔹 Complex Example
+
+Multiple conditions aur logical operators ke saath:
+
+Post.findAll({
+  where: {
+    [Op.or]: [
+      sequelize.where(sequelize.fn('char_length', sequelize.col('content')), 7),
+      { content: { [Op.like]: 'Hello%' } },
+      {
+        [Op.and]: [
+          { status: 'draft' },
+          sequelize.where(sequelize.fn('char_length', sequelize.col('content')), { [Op.gt]: 10 })
+        ]
+      }
+    ]
+  }
+});
+
+
+SQL me generate hoga:
+SELECT ...
+FROM "posts" AS "post"
+WHERE (
+  char_length("content") = 7
+  OR
+  "post"."content" LIKE 'Hello%'
+  OR (
+    "post"."status" = 'draft'
+    AND
+    char_length("content") > 10
+  )
+)
+
+🔹 Postgres-only Range Operators
+=> Postgres me range types ke liye advanced operators use kar sakte hain:
+
+[Op.contains]: 2,           // @> '2'::integer
+[Op.contains]: [1,2],       // @> [1,2)
+[Op.contained]: [1,2],      // <@ [1,2)
+[Op.overlap]: [1,2],        // && [1,2)
+[Op.adjacent]: [1,2],       // -|- [1,2)
+[Op.strictLeft]: [1,2],     // << [1,2)
+[Op.strictRight]: [1,2],    // >> [1,2)
+[Op.noExtendRight]: [1,2],  // &< [1,2)
+[Op.noExtendLeft]: [1,2],   // &> [1,2)
+=> Ye sirf Postgres dialect me kaam karte hain.
+=> Range ke bounds include/exclude karne ka control bhi milta hai.
+
+🔹 Deprecated Operator Aliases
+=> Sequelize v4 me aap string aliases use kar sakte the, jaise $gt.
+=> Ab ye deprecated hai, aur recommended hai Op Symbols use karna.
+
+Agar phir bhi use karna ho:-
+const sequelize = new Sequelize('sqlite::memory:', {
+  operatorsAliases: { $gt: Op.gt }
+});
+
+Foo.findAll({
+  where: { $gt: 6 } // works like [Op.gt]
+});
+=> Recommended: Directly [Op.gt] ya [Op.lt] jaise Symbols use karein.
+
+⚡ Summary:
+=> sequelize.fn + sequelize.col → SQL functions on columns.
+=> [Op.or], [Op.and], [Op.not] → complex logic combine karne ke liye.
+=> Postgres-specific: range operators jaise Op.contains, Op.overlap, etc.
+=> Operator strings like $gt → deprecated, always use [Op.gt].
+
+🔹 Simple UPDATE Queries
+=> update method ke saath bhi where option use hota hai:
+
+// Last name null wale sab users ka lastName "Doe" set karo
+await User.update(
+  { lastName: 'Doe' },
+  { where: { lastName: null } }
+);
+
+Ye generate karega:-
+UPDATE Users SET lastName='Doe' WHERE lastName IS NULL;
+
+🔹 Simple DELETE Queries
+=> destroy method me bhi where use hota hai:
+
+// Sab users jinka firstName "Jane" hai delete karo
+await User.destroy({ where: { firstName: 'Jane' } });
+
+// Table ko completely truncate karna
+await User.destroy({ truncate: true });
+
+🔹 Bulk Create
+=> Ek saath multiple records create karne ke liye bulkCreate use hota hai:
+
+const captains = await Captain.bulkCreate([
+  { name: 'Jack Sparrow' },
+  { name: 'Davy Jones' }
+]);
+
+console.log(captains.length); // 2
+console.log(captains[0] instanceof Captain); // true
+console.log(captains[0].name); // 'Jack Sparrow'
+
+
+Validations:-
+
+await Foo.bulkCreate([{ name: 'abc123' }, { name: 'name too long' }], { validate: true });
+
+=> Agar validate: true, toh validations run honge aur error throw hoga agar koi record invalid ho.
+
+Specific fields insert karna:
+
+await User.bulkCreate([{ username: 'foo' }, { username: 'bar', admin: true }], {
+  fields: ['username']
+});
+// 'admin' ignore ho jayega
+
+🔹 Ordering (ORDER BY)
+=> order option se query ka result sort kar sakte ho:
+
+Subtask.findAll({
+  order: [
+    ['title', 'DESC'],                   // simple column
+    [sequelize.fn('max', sequelize.col('age')), 'DESC'], // function
+    [{ model: Task, as: 'Task' }, 'createdAt', 'DESC'],  // association column
+    sequelize.random()                    // random order
+  ]
+});
+=> order me: string, array, Sequelize.fn, Sequelize.col ya association objects use kar sakte ho.
+=> Nested associations ke liye array/object ka combination use hota hai.
+
+🔹 Grouping (GROUP BY)
+=> group option se SQL me GROUP BY create hota hai:
+
+Project.findAll({ group: 'name' }); // GROUP BY name
+
+=> Syntax ordering ke jaisa hai, lekin direction (ASC/DESC) nahi hota.
+
+🔹 Limits & Pagination
+// Top 10 rows
+Project.findAll({ limit: 10 });
+
+// Skip first 8 rows
+Project.findAll({ offset: 8 });
+
+// Skip 5 aur next 5 fetch karo
+Project.findAll({ offset: 5, limit: 5 });
+
+=> Usually order ke saath use hota hai for pagination.
+
+🔹 Utility Methods
+count
+const totalProjects = await Project.count();
+const bigProjects = await Project.count({ where: { id: { [Op.gt]: 25 } } });
+
+max, min, sum
+await User.max('age'); // 40
+await User.min('age'); // 5
+await User.sum('age'); // 55
+
+await User.max('age', { where: { age: { [Op.lt]: 20 } } }); // 10
+await User.sum('age', { where: { age: { [Op.gt]: 5 } } });  // 50
+
+increment & decrement
+await User.increment({ age: 5 }, { where: { id: 1 } });  // age += 5
+await User.increment({ age: -5 }, { where: { id: 1 } }); // age -= 5
+
+// Multiple fields increment/decrement bhi possible hai
+await User.increment({ age: 2, cash: 100 }, { where: { id: 1 } });
+
+
+⚡ Summary:-
+=> Update/Destroy → where filter ke saath.
+=> bulkCreate → ek saath multiple records insert, optional validate aur fields.
+=> Ordering & Grouping → order aur group, functions, associations aur raw SQL support.
+=> Pagination → limit + offset.
+=> Utility Methods → count, max, min, sum, increment, decrement.
+
+
+=================================== Model Querying - Finders ==========================
+
+🔹 Finder Methods Overview
+=> Finder methods SELECT queries generate karte hain.
+=> By default, jo result milega, wo model ka instance hota hai, na ki simple JS object.
+=> Agar plain JS object chahiye, toh { raw: true } pass kar sakte ho:
+
+ const users = await User.findAll({ raw: true });
+
+🔹 findAll
+=> Ye method table ke sab records fetch karta hai.
+=> Optional where, order, limit, offset etc. ke saath use hota hai.
+
+const users = await User.findAll({ where: { favoriteColor: 'green' } });
+
+🔹 findByPk
+=> Primary key ke basis pe ek single record fetch karta hai.
+
+const project = await Project.findByPk(123);
+if (project === null) {
+  console.log('Not found!');
+} else {
+  console.log(project instanceof Project); // true
+  console.log(project.id); // 123
+}
+
+🔹 findOne
+=> First matching record fetch karta hai, where ke basis pe.
+
+const project = await Project.findOne({ where: { title: 'My Title' } });
+if (project) {
+  console.log(project instanceof Project); // true
+  console.log(project.title); // 'My Title'
+}
+
+🔹 findOrCreate
+=> Record find karne ki koshish karta hai. Agar record nahi mila, naya record create kar deta hai.
+
+Return karta hai [instance, created] — created boolean hai jo batata hai ki naya create hua ya existing mila.
+
+const [user, created] = await User.findOrCreate({
+  where: { username: 'sdepold' },
+  defaults: { job: 'Technical Lead JavaScript' },
+});
+
+console.log(user.username); // 'sdepold'
+console.log(user.job);      // Agar naya create hua toh 'Technical Lead JavaScript'
+console.log(created);       // true agar naya create hua, false agar existing mila
+
+🔹 findAndCountAll
+=> Ye findAll + count ka combination hai.
+=> Useful hota hai pagination ke liye: aapko records chahiye + total count bhi pata ho.
+
+const { count, rows } = await Project.findAndCountAll({
+  where: { title: { [Op.like]: 'foo%' } },
+  offset: 10,
+  limit: 2,
+});
+
+console.log(count); // total matching records
+console.log(rows);  // limited results
+=> Agar group use hota hai, count array return karega har group ka count ke saath.
+
+⚡ Summary:-
+
+Method	        Use Case
+findAll	        Multiple records fetch karne ke liye
+findByPk	Primary key se ek record fetch karne ke liye
+findOne  	First matching record fetch karne ke liye
+findOrCreate	Record find karo, nahi toh create kar do
+findAndCountAll	Records fetch + total count (pagination ke liye)
+
+
+============================= Getters, Setters & Virtuals ==============================
+
+🔹 Getters
+=> Getters custom read logic ke liye use hote hain.
+=> Getter automatically call hota hai jab aap field ko read karte ho.
+=> Important: Getter ke andar this.getDataValue('fieldName') use karo, direct this.fieldName se infinite loop ho jayega.
+
+const User = sequelize.define('user', {
+  username: {
+    type: DataTypes.STRING,
+    get() {
+      const rawValue = this.getDataValue('username');
+      return rawValue ? rawValue.toUpperCase() : null;
+    },
+  },
+});
+
+const user = User.build({ username: 'SuperUser123' });
+console.log(user.username);         // 'SUPERUSER123'
+console.log(user.getDataValue('username')); // 'SuperUser123'
+=> Database me original value wahi stored hoti hai jo getDataValue se milegi.
+
+🔹 Setters
+=> Setters custom write logic ke liye use hote hain.
+=> Setter automatically call hota hai jab aap value set karte ho.
+=> this.setDataValue('fieldName', value) se actual value store hoti hai.
+
+const User = sequelize.define('user', {
+  password: {
+    type: DataTypes.STRING,
+    set(value) {
+      // Example: hash password before storing
+      this.setDataValue('password', hash(value));
+    },
+  },
+});
+
+const user = User.build({ password: 'mySecret' });
+console.log(user.password); // hashed value
+=> Setters me aap dusre fields ka bhi use kar sakte ho (jaise salt ke liye username).
+
+🔹 Combining Getters & Setters
+=> Example: Post content ko gzip karke store karna aur read karte waqt unzip karna:
+
+const { gzipSync, gunzipSync } = require('zlib');
+
+const Post = sequelize.define('post', {
+  content: {
+    type: DataTypes.TEXT,
+    get() {
+      const storedValue = this.getDataValue('content');
+      return gunzipSync(Buffer.from(storedValue, 'base64')).toString();
+    },
+    set(value) {
+      const gzipped = gzipSync(value);
+      this.setDataValue('content', gzipped.toString('base64'));
+    },
+  },
+});
+
+const post = await Post.create({ content: 'Hello everyone!' });
+console.log(post.content);             // 'Hello everyone!'
+console.log(post.getDataValue('content')); // gzipped base64 string
+
+🔹 Virtual Fields
+=> Virtual fields database me exist nahi karte, par Sequelize automatically populate karta hai.
+=> Useful: calculated fields (jaise fullName from firstName + lastName).
+
+const User = sequelize.define('user', {
+  firstName: DataTypes.TEXT,
+  lastName: DataTypes.TEXT,
+  fullName: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    },
+    set(value) {
+      throw new Error('Do not try to set fullName directly!');
+    },
+  },
+});
+
+const user = await User.create({ firstName: 'John', lastName: 'Doe' });
+console.log(user.fullName); // 'John Doe'
+=> Database me fullName column exist nahi karega, par JS object me ye field available hoga.
+
+🔹 Deprecated: getterMethods & setterMethods
+=> Sequelize v7 me removed.
+=> Pehle ye options use hote the model definition me, par ab VIRTUAL fields aur native JS getters/setters preferred hain.
+
+const User = sequelize.define(
+  'user',
+  { firstName: DataTypes.STRING, lastName: DataTypes.STRING },
+  {
+    getterMethods: {
+      fullName() { return this.firstName + ' ' + this.lastName; },
+    },
+    setterMethods: {
+      fullName(value) {
+        const [first, ...rest] = value.split(' ');
+        this.setDataValue('firstName', first);
+        this.setDataValue('lastName', rest.join(' '));
+      },
+    },
+  }
+);
+
+let user = await User.create({ firstName: 'John', lastName: 'Doe' });
+console.log(user.fullName); // 'John Doe'
+
+user.fullName = 'Someone Else';
+await user.save();
+=> Note: Modern approach: Virtual fields + native getters/setters.
+
+=============================== Validations & Constraints =====================
+
+🔹 Difference: Validations vs Constraints
+Feature	             Validations	        Constraints
+Level	             Sequelize (JS)	        SQL Database
+Execution	JS me hi check hota hai	     DB query ke waqt check hota hai
+Example	     isEmail, len, custom validator	UNIQUE, NOT NULL
+
+Key:
+=> Validation fail → SQL query nahi jaati.
+=> Constraint fail → SQL query jaati hai, DB error throw karta hai (SequelizeUniqueConstraintError etc).
+
+🔹 Unique Constraint
+const User = sequelize.define('user', {
+  username: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    unique: true, // DB-level UNIQUE constraint
+  },
+});
+=> DB me ye username TEXT UNIQUE banata hai.
+=> Duplicate username insert karne ki koshish → error.
+
+🔹 allowNull (NULL values)
+=> Default: null allowed.
+=> allowNull: false → field cannot be null.
+
+username: {
+  type: DataTypes.TEXT,
+  allowNull: false,
+}
+
+Note:
+=> allowNull check → mix of validation + constraint.
+=> JS me null set karne par ValidationError.
+=> DB me direct SQL query → NOT NULL constraint fail.
+
+🔹 Field-level Validators
+=> Built-in validators (via validator.js) + custom validators.
+
+hashedPassword: {
+  type: DataTypes.STRING(64),
+  validate: {
+    is: /^[0-9a-f]{64}$/i,  // regex validation
+    notEmpty: true,          // empty string not allowed
+    len: [64, 64],           // length exactly 64
+    isEven(value) {          // custom validator example
+      if (parseInt(value, 16) % 2 !== 0) {
+        throw new Error('Password hash must be even (just an example)');
+      }
+    },
+  },
+},
+
+
+Tips:
+Custom message:
+
+isInt: { msg: 'Must be an integer number of pennies' }
+isIn: { args: [['en','zh']], msg: 'Must be English or Chinese' }
+=> Built-in validator with array arguments → [min,max], [ ['val1','val2'] ] etc.
+
+🔹 allowNull + Validators
+=> allowNull: false + value null → all validators skipped, ValidationError thrown.
+=> allowNull: true + value null → built-in validators skipped, custom validators still run.
+
+username: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  validate: { len: [5, 10] }, // skipped if null
+}
+
+Conditional null validation:-
+name: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  validate: {
+    customValidator(value) {
+      if (value === null && this.age !== 10) {
+        throw new Error("name can't be null unless age is 10");
+      }
+    }
+  }
+}
+
+
+Custom error for not-null:-
+name: {
+  type: DataTypes.STRING,
+  allowNull: false,
+  validate: { notNull: { msg: 'Please enter your name' } }
+}
+
+🔹 Model-wide Validators
+=> Model-wide validation → check multiple fields together.
+=> Example: latitude and longitude → dono set hone chahiye ya dono null hone chahiye.
+
+class Place extends Model {}
+Place.init({
+  name: Sequelize.STRING,
+  latitude: { type: DataTypes.INTEGER, validate: { min: -90, max: 90 } },
+  longitude: { type: DataTypes.INTEGER, validate: { min: -180, max: 180 } },
+}, {
+  sequelize,
+  validate: {
+    bothCoordsOrNone() {
+      if ((this.latitude === null) !== (this.longitude === null)) {
+        throw new Error('Either both latitude and longitude, or neither!');
+      }
+    }
+  }
+});
+
+Validation error example:-
+{
+  "latitude": ["Invalid number: latitude"],
+  "bothCoordsOrNone": ["Either both latitude and longitude, or neither!"]
+}
+
+
+Tip:- Field-specific validator bhi ye kar sakta tha, but model-wide cleaner & maintainable hai.
+
+
+==================================== Raw Queries ====================================
+
+🔹 Basic Raw Query
+=> Sequelize me agar aapko direct SQL execute karna ho, sequelize.query use karte hain.
+
+const [results, metadata] = await sequelize.query(
+  'UPDATE users SET y = 42 WHERE x = 12'
+);
+=> results → result set (SELECT ke liye rows).
+=> metadata → DB dialect ke hisaab se extra info (affected rows, etc).
+Note: MSSQL/MySQL me dono same reference hoti hain.
+
+🔹 QueryTypes
+=> Agar aapko metadata nahi chahiye aur sirf rows chahiye, QueryTypes specify kar sakte hain:
+
+const { QueryTypes } = require('sequelize');
+
+const users = await sequelize.query('SELECT * FROM users', {
+  type: QueryTypes.SELECT,
+});
+=> users → direct rows array.
+=> Available types: SELECT, UPDATE, INSERT, DELETE, etc.
+
+🔹 Using Models
+=> Agar aapka query kisi defined model ke data se related hai:
+
+const projects = await sequelize.query('SELECT * FROM projects', {
+  model: Projects,  // model definition
+  mapToModel: true, // Sequelize instance me map kare
+});
+=> Har element ab Project ka instance hai, na ki plain object.
+
+🔹 Logging, Plain, Raw Options
+await sequelize.query('SELECT 1', {
+  logging: console.log,  // query print kare
+  plain: true,           // sirf pehli row return
+  raw: false,            // model instances create kare (agar model diya ho)
+  type: QueryTypes.SELECT
+});
+=> plain: true → sirf ek row return.
+=> raw: true → plain JS object return.
+
+🔹 Nesting “Dotted” Attributes
+=> Agar column names me . hain:-
+
+const records = await sequelize.query('SELECT 1 as `foo.bar.baz`', {
+  type: QueryTypes.SELECT,
+});
+console.log(records[0]);
+// Output: { 'foo.bar.baz': 1 }
+
+
+With nest: true:-
+const records = await sequelize.query('SELECT 1 as `foo.bar.baz`', {
+  nest: true,
+  type: QueryTypes.SELECT,
+});
+console.log(records[0]);
+// Output: { foo: { bar: { baz: 1 } } }
+=> nest: true → automatically nested objects.
+
+🔹 Replacements (Query Parameters)
+=> Unnamed (?): order based replacement
+=> Named (:key): object based replacement
+
+await sequelize.query(
+  'SELECT * FROM projects WHERE status = ?',
+  { replacements: ['active'], type: QueryTypes.SELECT }
+);
+
+await sequelize.query(
+  'SELECT * FROM projects WHERE status = :status',
+  { replacements: { status: 'active' }, type: QueryTypes.SELECT }
+);
+
+Array replacements automatically handle IN(:status) queries:-
+await sequelize.query(
+  'SELECT * FROM projects WHERE status IN(:status)',
+  { replacements: { status: ['active', 'inactive'] }, type: QueryTypes.SELECT }
+);
+
+
+Wildcards % bhi use kar sakte ho:-
+await sequelize.query(
+  'SELECT * FROM users WHERE name LIKE :search_name',
+  { replacements: { search_name: 'ben%' }, type: QueryTypes.SELECT }
+);
+
+🔹 Bind Parameters
+
+Replacements vs Bind:
+
+Feature	                        Replacements	                 Bind Parameters
+Escaping	  Sequelize escapes and injects into SQL	 Sent separately to DB
+Syntax	                         ? or :key	                   $1, $2 or $key
+Safety	                            Safe	                Safe, DB handles binding
+Can’t use for	               Table/column names	         Table/column names
+
+// Array binding
+await sequelize.query(
+  'SELECT * FROM projects WHERE status = $1',
+  { bind: ['active'], type: QueryTypes.SELECT }
+);
+
+// Object binding
+await sequelize.query(
+  'SELECT * FROM projects WHERE status = $status',
+  { bind: { status: 'active' }, type: QueryTypes.SELECT }
+);
+=> $$ → escape literal $ in string.
+=> PostgreSQL me typecast zaroori ho sakta hai ($1::varchar).
+
+💡 Tip:
+Replacements → query me inject hone se pehle escape hota hai.
+Bind → query ke saath separately pass hota hai → aur bhi safe.
+
+================================ Associations ================================
+
+🔹 Sequelize ke 4 Association Types
+=> Sequelize main 4 types ke associations hote hain:-
+
+1. hasOne → One-to-One
+2. belongsTo → One-to-One
+3. hasMany → One-to-Many
+4. belongsToMany → Many-to-Many (via junction table)
+
+Syntax:-
+const A = sequelize.define('A', {/* attributes */});
+const B = sequelize.define('B', {/* attributes */});
+
+A.hasOne(B);                 // A has one B
+A.belongsTo(B);               // A belongs to B
+A.hasMany(B);                 // A has many B
+A.belongsToMany(B, { through: 'C' }); // A belongs to many B via junction table C
+
+=> through → required for Many-to-Many
+=> Source model → jispe call kiya (A)
+=> Target model → jo argument me pass kiya (B)
+
+🔹 Standard Relationships
+=> Pairs me define karna recommended hai:
+
+Relationship	Sequelize Methods
+One-to-One	hasOne + belongsTo
+One-to-Many	hasMany + belongsTo
+Many-to-Many	belongsToMany + belongsToMany
+
+🔹 One-to-One Example
+Foo.hasOne(Bar);     // Foreign key Bar me create hoga
+Bar.belongsTo(Foo);  // Bar ka fooId column banega
+
+Options:-
+Foo.hasOne(Bar, { onDelete: 'RESTRICT', onUpdate: 'CASCADE', foreignKey: 'myFooId' });
+Bar.belongsTo(Foo);
+
+=> foreignKey → custom name
+=> allowNull: false → mandatory relationship
+
+🔹 One-to-Many Example
+Team.hasMany(Player);   // Player table me foreign key create hoga
+Player.belongsTo(Team); // Player ka teamId banega
+
+
+Options same as One-to-One:-
+Team.hasMany(Player, { foreignKey: 'clubId', onDelete: 'SET NULL' });
+Player.belongsTo(Team);
+
+🔹 Many-to-Many Example
+Movie.belongsToMany(Actor, { through: 'ActorMovies' });
+Actor.belongsToMany(Movie, { through: 'ActorMovies' });
+=> Junction table ActorMovies automatically create hoti hai
+=> Junction table me foreign keys movieId aur actorId create hote hain
+
+Custom junction model bhi pass kar sakte ho:-
+
+const ActorMovies = sequelize.define('ActorMovies', {
+  MovieId: { type: DataTypes.INTEGER, references: { model: Movie, key: 'id' } },
+  ActorId: { type: DataTypes.INTEGER, references: { model: Actor, key: 'id' } },
+});
+Movie.belongsToMany(Actor, { through: ActorMovies });
+Actor.belongsToMany(Movie, { through: ActorMovies });
+
+🔹 Fetching Associations
+
+1️.Lazy Loading
+const captain = await Captain.findOne({ where: { name: 'Jack Sparrow' } });
+const ship = await captain.getShip(); // Sirf jab chahiye tab query
+
+2️.Eager Loading
+const captain = await Captain.findOne({ where: { name: 'Jack Sparrow' }, include: Ship });
+console.log(captain.ship.name); // Ek hi query me ship bhi fetch
+
+🔹 Aliases & Custom Foreign Keys
+
+Direct Foreign Key
+Ship.belongsTo(Captain, { foreignKey: 'bossId' });
+
+Alias
+Ship.belongsTo(Captain, { as: 'leader' }); // Foreign key -> leaderId
+
+
+Eager loading: include: 'leader' ya { model: Captain, as: 'leader' }
+
+Both
+Ship.belongsTo(Captain, { as: 'leader', foreignKey: 'bossId' });
+
+🔹 Instance Methods (Mixins)
+hasOne / belongsTo
+
+foo.getBar();
+foo.setBar(bar);
+foo.createBar({ name: 'new' });
+
+hasMany
+foo.getBars();
+foo.countBars();
+foo.addBar(bar);
+foo.addBars([bar1, bar2]);
+foo.removeBar(bar);
+foo.createBar({ name: 'new' });
+foo.setBars([]); // un-associate all
+
+
+belongsToMany
+foo.getBars({ joinTableAttributes: [] });
+foo.addBar(bar);
+foo.removeBar(bar);
+foo.setBars([bar1, bar2]);
+=> Method names auto-generate hote hain (get, add, set + ModelName)
+=> Alias use karne par methods alias ke naam se banenge
+
+🔹 Using Non-Primary Keys
+
+belongsTo (foreign key in source model)
+Ship.belongsTo(Captain, { targetKey: 'name', foreignKey: 'captainName' });
+
+hasOne / hasMany (foreign key in target model)
+Foo.hasOne(Bar, { sourceKey: 'name', foreignKey: 'fooName' });
+
+
+belongsToMany (junction table)
+=> sourceKey → source model ka field
+=> targetKey → target model ka field
+
+Foo.belongsToMany(Bar, { through: 'foo_bar', sourceKey: 'name', targetKey: 'title' });
+=> Ensure unique constraint on non-primary key field
+
+💡 Tip:
+belongsTo → foreign key in source
+
+hasOne/hasMany → foreign key in target
+
+belongsToMany → foreign keys in junction table
+
+
+======================================== Paranoid ==================================
+
+🔹 Paranoid Tables kya hai?
+=> Paranoid table me records soft-delete hote hain, yani delete karne par record database se remove nahi hota.
+=> Instead, ek special column (default: deletedAt) me timestamp save hota hai.
+=> Soft-deleted records by default queries me ignore hote hain.
+
+🔹 Model define karna as Paranoid
+const { Model, DataTypes } = require('sequelize');
+
+class Post extends Model {}
+Post.init({
+  title: DataTypes.STRING,
+}, {
+  sequelize,
+  timestamps: true,    // paranoid ke liye timestamps true honi chahiye
+  paranoid: true,      // enable soft-delete
+  deletedAt: 'destroyTime', // optional: custom name
+});
+=> deletedAt ka default column name hai, lekin aap change kar sakte ho (destroyTime example).
+=> Important: timestamps: false ke sath paranoid nahi chalega.
+
+🔹 Deleting Records
+
+1️.Soft-delete (default)
+await Post.destroy({
+  where: { id: 1 },
+});
+// UPDATE "posts" SET "deletedAt"=[timestamp] WHERE "id"=1 AND "deletedAt" IS NULL
+
+2️.Hard-delete (force delete)
+await Post.destroy({
+  where: { id: 1 },
+  force: true,
+});
+// DELETE FROM "posts" WHERE "id" = 1
+
+Instance method example
+const post = await Post.create({ title: 'test' });
+await post.destroy();             // soft-delete
+await post.destroy({ force: true }); // hard-delete
+
+🔹 Restoring Records
+=> Soft-deleted records ko restore kar sakte ho restore() method se.
+
+Instance version
+const post = await Post.create({ title: 'test' });
+await post.destroy(); // soft-delete
+await post.restore(); // restore back
+
+Static version
+await Post.restore({
+  where: { likes: { [Op.gt]: 100 } }, // conditionally restore
+});
+
+🔹 Queries behavior
+
+By default soft-deleted records ignored hote hain:-
+await Post.findByPk(123);  // null if soft-deleted
+await Post.findAll({ where: { foo: 'bar' } }); // ignores soft-deleted
+
+Agar soft-deleted records bhi chahiye → paranoid: false use karo:-
+await Post.findByPk(123, { paranoid: false });
+await Post.findAll({ where: { foo: 'bar' }, paranoid: false });
+
+
+✅ Key points
+=> Paranoid = soft-delete
+=> deletedAt = soft-delete timestamp
+=> destroy({ force: true }) = hard-delete
+=> restore() = recover soft-deleted record
+=> Queries ignore soft-deleted by default, paranoid: false se override
+
+
+================================ Advanced Association Concepts =================================
+
+
+🔹 Eager Loading kya hai?
+=> Eager Loading ka matlab hai ek query me multiple models fetch karna, jisme ek main model aur uske associated    models hotay hain.
+=> SQL me iska matlab hota hai JOIN.
+=> Sequelize automatically associated models ko ek naya field me attach karta hai.
+
+🔹 Basic Example
+Models:
+
+const User = sequelize.define('user', { name: DataTypes.STRING }, { timestamps: false });
+const Task = sequelize.define('task', { name: DataTypes.STRING }, { timestamps: false });
+const Tool = sequelize.define('tool', { name: DataTypes.STRING, size: DataTypes.STRING }, { timestamps: false });
+
+User.hasMany(Task);
+Task.belongsTo(User);
+User.hasMany(Tool, { as: 'Instruments' });
+
+Fetching single associated element
+const tasks = await Task.findAll({ include: User });
+console.log(tasks[0].user instanceof User); // true
+
+=> Task.belongsTo(User) → singular field name (user)
+=> User.hasMany(Task) → plural field name (tasks)
+
+Fetching all associated elements (1:M)
+const users = await User.findAll({ include: Task });
+console.log(users[0].tasks); // array of Task instances
+=> Field name pluralized (tasks) because one user has many tasks
+
+Aliased association
+
+const users = await User.findAll({
+  include: { model: Tool, as: 'Instruments' },
+});
+=> Agar association alias hai (as: 'Instruments') → include me same alias use karna padega.
+
+Shortcuts bhi work karte hain:-
+User.findAll({ include: 'Instruments' });
+User.findAll({ include: { association: 'Instruments' } });
+
+🔹 Required eager loading
+=> required: true → INNER JOIN (sirf records with associated models)
+
+User.findAll({ include: { model: Task, required: true } });
+
+🔹 Filtering associated model
+=> include.where → filter associated models
+
+User.findAll({
+  include: {
+    model: Tool,
+    as: 'Instruments',
+    where: { size: { [Op.ne]: 'small' } },
+  },
+});
+=> SQL me INNER JOIN generate hoga by default.
+
+Top-level WHERE on nested columns
+User.findAll({
+  where: { '$Instruments.size$': { [Op.ne]: 'small' } },
+  include: { model: Tool, as: 'Instruments' },
+});
+=> $nested.column$ syntax → deeply nested columns filter karne ke liye
+=> required: true add karne se INNER JOIN, false se LEFT JOIN
+
+🔹 RIGHT JOIN
+=> Default LEFT JOIN hota hai
+=> right: true → RIGHT JOIN (dialect dependent)
+=> required: true ke sath right ka effect nahi hota
+
+🔹 Multiple eager loading
+Foo.findAll({
+  include: [
+    { model: Bar, required: true },
+    { model: Baz, where: { ... } },
+    Qux // shorthand syntax
+  ],
+});
+
+🔹 Many-to-Many eager loading
+Foo.belongsToMany(Bar, { through: 'Foo_Bar' });
+Bar.belongsToMany(Foo, { through: 'Foo_Bar' });
+
+const fetchedFoo = await Foo.findOne({ include: Bar });
+console.log(fetchedFoo.Bars[0].Foo_Bar); // junction table data
+
+=> through.attributes → specify which columns to fetch
+=> through.where → filter junction table rows
+
+🔹 Include all models
+User.findAll({ include: { all: true } });        // all associations
+User.findAll({ include: { all: true, nested: true } }); // nested associations
+
+🔹 Including soft-deleted records
+User.findAll({
+  include: { model: Tool, as: 'Instruments', paranoid: false },
+});
+
+🔹 Ordering eager loaded associations
+=> Top-level order array me model chain specify karo
+
+Company.findAll({
+  include: Division,
+  order: [[Division, 'name', 'ASC']],
+});
+=> Nested: [Division, Department, 'name', 'DESC']
+=> Many-to-many: [Division, DepartmentDivision, 'name', 'ASC']
+=> separate: true → order works inside include (only for has-many)
+
+🔹 Nested eager loading
+const users = await User.findAll({
+  include: {
+    model: Tool,
+    as: 'Instruments',
+    include: {
+      model: Teacher,
+    },
+  },
+});
+=> Where clause on nested model → INNER JOIN
+=> required: false → LEFT JOIN to include all parent models
+
+🔹 findAndCountAll with include
+User.findAndCountAll({
+  include: [{ model: Profile, required: true }],
+  limit: 3,
+});
+=> required: true → only count parents with associated records
+=> Include with where automatically sets required: true
+
+✅ Key points
+1. include → eager load associated models
+2. Singular/plural fields → depends on association type
+3. Aliases → as must match
+3. Filtering → where in include vs top-level $nested.column$
+4. Required → INNER JOIN, default LEFT JOIN
+5. Many-to-many → junction table fetched automatically
+6. Ordering → top-level order, nested arrays
+7. Soft-deleted → paranoid: false
+
+=========================================== Creating with Associations ==============================
+
+🔹 Basics
+=> Ek instance ko nested associations ke saath ek hi step me create kiya ja sakta hai, agar saare elements naye    hain.
+=> Updates aur deletions ke liye har action separately karna padega.
+
+🔹 BelongsTo / HasMany / HasOne
+Models:-
+
+class Product extends Model {}
+Product.init({ title: Sequelize.STRING }, { sequelize, modelName: 'product' });
+
+class User extends Model {}
+User.init({ firstName: Sequelize.STRING, lastName: Sequelize.STRING }, { sequelize, modelName: 'user' });
+
+class Address extends Model {}
+Address.init({
+  type: DataTypes.STRING,
+  line1: Sequelize.STRING,
+  line2: Sequelize.STRING,
+  city: Sequelize.STRING,
+  state: Sequelize.STRING,
+  zip: Sequelize.STRING,
+}, { sequelize, modelName: 'address' });
+
+
+Associations:-
+Product.User = Product.belongsTo(User);
+User.Addresses = User.hasMany(Address); // HasOne bhi work karta hai
+
+Ek hi step me create karna
+return Product.create({
+  title: 'Chair',
+  user: {
+    firstName: 'Mick',
+    lastName: 'Broadstone',
+    addresses: [
+      {
+        type: 'home',
+        line1: '100 Main St.',
+        city: 'Austin',
+        state: 'TX',
+        zip: '78704',
+      },
+    ],
+  },
+}, {
+  include: [
+    { association: Product.User, include: [User.Addresses] },
+  ],
+});
+=> include option Sequelize ko batata hai ki nested associations bhi create karni hain.
+=> Naming important hai: user lowercase kyunki model name user hai. HasMany associations plural hote hain (addresses).
+
+BelongsTo with alias
+const Creator = Product.belongsTo(User, { as: 'creator' });
+
+return Product.create({
+  title: 'Chair',
+  creator: { firstName: 'Matt', lastName: 'Hansen' },
+}, {
+  include: [Creator],
+});
+=> Alias (as) use karte waqt include me alias bhi specify karna zaroori hai.
+
+🔹 HasMany / BelongsToMany
+=> Example: Product ke multiple tags.
+
+class Tag extends Model {}
+Tag.init({ name: Sequelize.STRING }, { sequelize, modelName: 'tag' });
+
+Product.hasMany(Tag); // belongsToMany bhi work karta hai
+
+Create product with multiple tags
+Product.create({
+  id: 1,
+  title: 'Chair',
+  tags: [{ name: 'Alpha' }, { name: 'Beta' }],
+}, { include: [Tag] });
+
+HasMany with alias
+const Categories = Product.hasMany(Tag, { as: 'categories' });
+
+Product.create({
+  id: 1,
+  title: 'Chair',
+  categories: [
+    { id: 1, name: 'Alpha' },
+    { id: 2, name: 'Beta' },
+  ],
+}, {
+  include: [{ association: Categories, as: 'categories' }],
+});
+=> Alias (categories) specify karna zaroori hai include me.
+
+✅ Key Points
+1. Nested objects ek hi step me create kiye ja sakte hain.
+2. Updates/deletes nested objects ke liye al al actions perform karni padti hain.
+3. include option mandatory hai nested creation ke liye.
+4. Alias (as) use karte waqt include me bhi alias specify karo.
+5. HasMany → plural field, HasOne / BelongsTo → singular field.
+
+
+=========================== Advanced Many-to-Many (M:N) associations =================================
+
+🔹 Basic Many-to-Many
+Models:-
+const User = sequelize.define('user', { username: DataTypes.STRING, points: DataTypes.INTEGER }, { timestamps: false });
+const Profile = sequelize.define('profile', { name: DataTypes.STRING }, { timestamps: false });
+
+
+Simple M:N relationship:-
+
+User.belongsToMany(Profile, { through: 'User_Profiles' });
+Profile.belongsToMany(User, { through: 'User_Profiles' });
+=> through: 'User_Profiles' → Sequelize automatically create karega junction table User_Profiles with columns    userId aur profileId.
+=> Composite unique key bhi automatically create hota hai.
+
+🔹 Custom through table
+const User_Profile = sequelize.define('User_Profile', { selfGranted: DataTypes.BOOLEAN }, { timestamps: false });
+
+User.belongsToMany(Profile, { through: User_Profile });
+Profile.belongsToMany(User, { through: User_Profile });
+=> Extra columns (selfGranted) bhi add kar sakte ho.
+=> Add relation with extra info:
+
+const amidala = await User.create({ username: 'p4dm3', points: 1000 });
+const queen = await Profile.create({ name: 'Queen' });
+await amidala.addProfile(queen, { through: { selfGranted: false } });
+
+🔹 Create with nested associations
+const amidala = await User.create({
+  username: 'p4dm3',
+  points: 1000,
+  profiles: [{ name: 'Queen', User_Profile: { selfGranted: true } }],
+}, { include: Profile });
+
+
+Eager load ke baad nested info milti hai:-
+{
+  "username": "p4dm3",
+  "profiles": [
+    {
+      "name": "Queen",
+      "User_Profile": { "selfGranted": true }
+    }
+  ]
+}
+
+🔹 Super Many-to-Many
+=> Many-to-Many table ko primary key dekar Super M:N bana sakte ho.
+=> Ye approach nested includes aur flexible queries ke liye useful hai.
+
+const Grant = sequelize.define('grant', { id: { primaryKey: true, autoIncrement: true }, selfGranted: DataTypes.BOOLEAN }, { timestamps: false });
+
+User.belongsToMany(Profile, { through: Grant });
+Profile.belongsToMany(User, { through: Grant });
+User.hasMany(Grant);
+Grant.belongsTo(User);
+Profile.hasMany(Grant);
+Grant.belongsTo(Profile);
+=> Ab hum User.findAll({ include: Profile }) aur User.findAll({ include: Grant }) dono kar sakte hain.
+
+🔹 Aliases & Custom keys
+Product.belongsToMany(Category, { as: 'groups', through: 'product_categories' });
+Category.belongsToMany(Product, { as: 'items', through: 'product_categories' });
+
+// Custom foreign keys
+Product.belongsToMany(Category, { through: 'product_categories', foreignKey: 'objectId', otherKey: 'typeId' });
+Category.belongsToMany(Product, { through: 'product_categories', foreignKey: 'typeId', otherKey: 'objectId' });
+=> Alias → include me use hota hai.
+=> foreignKey & otherKey → through table me columns ka naam change karte hain.
+
+🔹 Eager loading & attributes from through table
+User.findOne({
+  include: {
+    model: Profile,
+    through: { attributes: ['selfGranted'] } // sirf ye column chahiye
+  },
+});
+=> attributes: [] → nested through field ko completely hide kar deta hai.
+
+🔹 Many-to-Many-to-Many (Super M:N recursive)
+
+Scenario: Game championship
+=> Players belong to teams in a specific game.
+
+Models:
+const Player = sequelize.define('Player', { username: DataTypes.STRING });
+const Team = sequelize.define('Team', { name: DataTypes.STRING });
+const Game = sequelize.define('Game', { name: DataTypes.STRING });
+
+// Game ↔ Team (Super M:N)
+const GameTeam = sequelize.define('GameTeam', { id: { primaryKey: true, autoIncrement: true } });
+Team.belongsToMany(Game, { through: GameTeam });
+Game.belongsToMany(Team, { through: GameTeam });
+GameTeam.belongsTo(Game);
+GameTeam.belongsTo(Team);
+Game.hasMany(GameTeam);
+Team.hasMany(GameTeam);
+
+// Player ↔ GameTeam (Super M:N)
+const PlayerGameTeam = sequelize.define('PlayerGameTeam', { id: { primaryKey: true, autoIncrement: true } });
+Player.belongsToMany(GameTeam, { through: PlayerGameTeam });
+GameTeam.belongsToMany(Player, { through: PlayerGameTeam });
+PlayerGameTeam.belongsTo(Player);
+PlayerGameTeam.belongsTo(GameTeam);
+Player.hasMany(PlayerGameTeam);
+GameTeam.hasMany(PlayerGameTeam);
+=> Is setup se hum Game → Teams → Players easily query kar sakte hain:
+
+const game = await Game.findOne({
+  where: { name: 'Winter Showdown' },
+  include: { model: GameTeam, include: [Player, Team] },
+});
+
+
+Output example:
+- Team "The Martians" played game "Winter Showdown" with players: s0me0ne, greenhead
+- Team "The Plutonians" played game "Winter Showdown" with players: not_spock, bowl_of_petunias
+
+✅ Summary:-
+1. Simple M:N → through table (auto ya custom)
+2. Super M:N → primary key + hasMany + belongsTo for flexibility
+3. Aliases → include me use, foreign keys → through table me
+4. Nested attributes → through.attributes ya joinTableAttributes
+5. Recursive Super M:N → Many-to-Many-to-Many, jaise Game → Teams → Players
+
+
+======================================== Association Scopes =============================
+
+🔹 Concept
+=> Model scopes → automatically apply hote hain Model static calls pe, jaise Model.scope('foo').findAll().
+=> Association scopes → automatically apply hote hain instance calls pe, jaise instance.getSomething(), instance.addSomething(), instance.createSomething().
+
+Example:
+
+const Foo = sequelize.define('foo', { name: DataTypes.STRING });
+const Bar = sequelize.define('bar', { status: DataTypes.STRING });
+
+// Association scope
+Foo.hasMany(Bar, {
+  scope: { status: 'open' },
+  as: 'openBars',
+});
+
+await sequelize.sync();
+const myFoo = await Foo.create({ name: 'My Foo' });
+
+// Instance call
+const bars = await myFoo.getOpenBars();
+
+
+Generated SQL:
+
+SELECT `id`, `status`, `createdAt`, `updatedAt`, `fooId`
+FROM `bars` AS `bar`
+WHERE `bar`.`status` = 'open' AND `bar`.`fooId` = 1;
+=> Notice: { status: 'open' } automatically WHERE clause me add ho gaya.
+=> Iska matlab association scope automatically apply ho gaya instance mixin call pe. ✅
+
+🔹 Achieving the same with standard model scopes
+=> Association scope use na karna ho, to standard model scopes bhi kaam karte hain:
+
+// Add scope to Bar
+Bar.addScope('open', {
+  where: { status: 'open' },
+});
+
+Foo.hasMany(Bar); // normal association
+Foo.hasMany(Bar.scope('open'), { as: 'openBars' }); // association with scope
+=> myFoo.getOpenBars() ab bhi same SQL generate karega.
+=> Difference: association scope → simpler, automatically instance methods pe apply hota hai.
+
+🔹 Summary:-
+1.Model scope → static calls pe apply hota hai (Model.findAll())
+2.Association scope → instance calls pe apply hota hai (instance.getSomething())
+3.Association scopes can be placed:
+=> on the target model (like Bar above)
+=> on the through table (for Many-to-Many)
+4.Alternative → standard model scopes + scoped association
+
+====================================== Polymorphic Associations ================================
+
+🔹 One-to-Many Polymorphic Association
+Models:
+class Comment extends Model {
+  getCommentable(options) {
+    if (!this.commentableType) return Promise.resolve(null);
+    const mixinMethodName = `get${this.commentableType[0].toUpperCase()}${this.commentableType.slice(1)}`;
+    return this[mixinMethodName](options);
+  }
+}
+Comment.init({
+  title: DataTypes.STRING,
+  commentableId: DataTypes.INTEGER,
+  commentableType: DataTypes.STRING,
+}, { sequelize, modelName: 'comment' });
+
+Image.hasMany(Comment, {
+  foreignKey: 'commentableId',
+  constraints: false,
+  scope: { commentableType: 'image' },
+});
+Comment.belongsTo(Image, { foreignKey: 'commentableId', constraints: false });
+
+Video.hasMany(Comment, {
+  foreignKey: 'commentableId',
+  constraints: false,
+  scope: { commentableType: 'video' },
+});
+Comment.belongsTo(Video, { foreignKey: 'commentableId', constraints: false });
+
+Hooks for eager loading:
+Comment.addHook('afterFind', findResult => {
+  if (!Array.isArray(findResult)) findResult = [findResult];
+  for (const instance of findResult) {
+    if (instance.commentableType === 'image' && instance.image !== undefined) {
+      instance.commentable = instance.image;
+    } else if (instance.commentableType === 'video' && instance.video !== undefined) {
+      instance.commentable = instance.video;
+    }
+    delete instance.image; delete instance.dataValues.image;
+    delete instance.video; delete instance.dataValues.video;
+  }
+});
+
+Notes:-
+comment.getCommentable() → automatically correct type (Image ya Video) return karega.
+afterFind hook → eager loaded data ko commentable field me set karta hai.
+
+🔹 Lazy Loading Example
+const image = await Image.create({ url: 'https://placekitten.com/408/287' });
+const comment = await image.createComment({ content: 'Awesome!' });
+
+console.log(comment.commentableId === image.id); // true
+console.log(comment.commentableType); // "image"
+const associated = await comment.getCommentable(); // image instance
+
+🔹 Many-to-Many Polymorphic Association (Tags Example)
+=> Ek tag ko multiple taggables (Image ya Video) pe lagana.
+=> Ek taggable ke multiple tags ho sakte hain.
+
+class Tag extends Model {
+  async getTaggables(options) {
+    const images = await this.getImages(options);
+    const videos = await this.getVideos(options);
+    return images.concat(videos);
+  }
+}
+Tag.init({ name: DataTypes.STRING }, { sequelize, modelName: 'tag' });
+
+class Tag_Taggable extends Model {}
+Tag_Taggable.init({
+  tagId: { type: DataTypes.INTEGER, unique: 'tt_unique_constraint' },
+  taggableId: { type: DataTypes.INTEGER, unique: 'tt_unique_constraint', references: null },
+  taggableType: { type: DataTypes.STRING, unique: 'tt_unique_constraint' },
+}, { sequelize, modelName: 'tag_taggable' });
+
+// Associations
+Image.belongsToMany(Tag, {
+  through: { model: Tag_Taggable, unique: false, scope: { taggableType: 'image' } },
+  foreignKey: 'taggableId',
+  constraints: false,
+});
+Tag.belongsToMany(Image, { through: { model: Tag_Taggable, unique: false }, foreignKey: 'tagId', constraints: false });
+
+Video.belongsToMany(Tag, {
+  through: { model: Tag_Taggable, unique: false, scope: { taggableType: 'video' } },
+  foreignKey: 'taggableId',
+  constraints: false,
+});
+Tag.belongsToMany(Video, { through: { model: Tag_Taggable, unique: false }, foreignKey: 'tagId', constraints: false });
+=> getTaggables() → images + videos combine karke return karega.
+=> scope → automatically taggableType filter SQL me apply karega.
+
+🔹 Association Scope on Target Model
+Image.belongsToMany(Tag, {
+  through: { model: Tag_Taggable, unique: false, scope: { taggableType: 'image' } },
+  scope: { status: 'pending' },
+  as: 'pendingTags',
+  foreignKey: 'taggableId',
+  constraints: false,
+});
+=> image.getPendingTags() → SQL me dono scopes apply honge:-
+   1.tag_taggable.taggableType = 'image' (through table)
+   2.tag.status = 'pending' (target table)
+
+💡 Summary :-
+1. Polymorphic association → ek foreign key multiple models ke liye use hota hai.
+2. One-to-Many → Comment belongs to Image ya Video.
+3. Many-to-Many → Tag belongs to multiple taggables (Image/Video).
+4. Scopes → automatically filter lagate hain through table ya target table pe.
+5. Lazy vs Eager → getCommentable() aur afterFind hook ka combo use hota hai.
+6. Constraints false → foreign key multiple tables ko point kar raha hai, isliye references disable hote hain.
+
+================================== Hooks =======================================
+
+🔹 Hooks kya hote hain?
+=> Hooks = lifecycle events jo model methods ke before aur after execute hote hain.
+=> Example: Agar aapko save hone se pehle koi field set karni hai → beforeUpdate hook use karo.
+=> Important: Hooks sirf models pe kaam karte hain, instances pe nahi.
+
+🔹 Hooks ka Firing Order (Common)
+1. beforeBulkCreate(instances, options) / beforeBulkDestroy(options) / beforeBulkUpdate(options)
+2. beforeValidate(instance, options)
+=> Validation process hoti hai
+3. afterValidate(instance, options) / validationFailed(instance, options, error)
+4. beforeCreate(instance, options) / beforeUpdate / beforeSave / beforeDestroy / beforeUpsert
+5. afterCreate / afterUpdate / afterSave / afterDestroy / afterUpsert
+6. afterBulkCreate(instances, options) / afterBulkDestroy(options) / afterBulkUpdate(options)
+
+Tip: Hooks ke arguments reference ke through pass hote hain → aap changes kar sakte ho aur wo DB me reflect hoga.
+
+🔹 Hooks declare karne ke 3 tarike
+1️.init() me hooks define karna
+User.init(
+  { username: DataTypes.STRING },
+  {
+    hooks: {
+      beforeValidate: (user, options) => { user.mood = 'happy'; },
+      afterValidate: (user, options) => { user.username = 'Toni'; },
+    },
+    sequelize,
+  },
+);
+
+2️.addHook() method
+User.addHook('beforeValidate', (user, options) => { user.mood = 'happy'; });
+
+User.addHook('afterValidate', 'rejectHighAccess', (user, options) => {
+  if(user.accessLevel > 10) return Promise.reject(new Error("Too high!"));
+});
+
+3️.Direct method
+User.beforeCreate(async (user, options) => {
+  user.password = await hashPassword(user.password);
+});
+
+🔹 Hooks remove karna
+Book.addHook('afterCreate', 'notifyUsers', (book) => { /* ... */ });
+Book.removeHook('afterCreate', 'notifyUsers'); // hook remove ho gaya
+=> Note: Hook remove karne ke liye name zaruri hai.
+
+🔹 Global / Universal Hooks
+=> Ye hooks saare models ke liye chalenge.
+=> Example: Timestamps customize karna:
+
+const User = sequelize.define('User', {}, {
+  hooks: {
+    beforeCreate: (record) => { record.dataValues.createdAt = new Date(); },
+    beforeUpdate: (record) => { record.dataValues.updatedAt = new Date(); },
+  },
+});
+
+Permanent Global Hooks
+sequelize.addHook('beforeCreate', () => { console.log('Always runs'); });
+=> Ye hamesha run hota hai, chahe model apna hook define kare ya nahi.
+
+🔹 Connection Hooks
+sequelize.beforeConnect(async (config) => { config.password = await getAuthToken(); });
+sequelize.afterConnect((connection) => { console.log('Connected!'); });
+sequelize.beforeDisconnect((connection) => { console.log('Disconnecting'); });
+sequelize.afterDisconnect((connection) => { console.log('Disconnected'); });
+=> Useful for dynamically getting credentials ya low-level connection access.
+
+🔹 Instance Hooks
+=> Ye ek object pe run hote hain:
+
+User.beforeCreate(user => {
+  if(user.accessLevel > 10 && user.username !== 'Boss') {
+    throw new Error("Can't grant access level above 10");
+  }
+});
+
+=> Bulk operations me individual instance hooks tab trigger hote hain jab { individualHooks: true } use kiya ho.
+
+🔹 Model / Bulk Hooks
+=> Bulk operations (bulkCreate, update, destroy) ke liye:
+
+YourModel.beforeBulkCreate((instances, options) => { ... });
+YourModel.afterBulkUpdate((options) => { ... });
+=> Important: bulk hooks individual hooks ko trigger nahi karte by default. { individualHooks: true } chahiye.
+
+await Model.update({ username: 'Tony' }, { where: { accessLevel: 0 }, individualHooks: true });
+
+🔹 Hooks aur Transactions
+=> Hooks me agar transaction pass kiya gaya hai → options.transaction use karo:
+
+User.addHook('afterCreate', async (user, options) => {
+  await User.update({ mood: 'sad' }, { where: { id: user.id }, transaction: options.transaction });
+});
+
+await sequelize.transaction(async t => {
+  await User.create({ username: 'someguy', mood: 'happy' }, { transaction: t });
+});
+=> Internal transactions (e.g., findOrCreate) me bhi same rule apply hota hai.
+
+🔹 Associations aur Hooks
+=> One-to-One / One-to-Many: add/set mixins → beforeUpdate & afterUpdate run hote hain.
+=> Many-to-Many:
+add mixin → junction model pe beforeBulkCreate & afterBulkCreate run.
+remove mixin → junction model pe beforeBulkDestroy & afterBulkDestroy.
+{ individualHooks: true } → individual hooks bhi run honge.
+
+🔹 Hooks aur Cascade Deletes
+=> Normally ON DELETE CASCADE → hooks trigger nahi honge.
+=> Agar chaho → association me { hooks: true } pass karo:
+
+User.hasMany(Post, { onDelete: 'cascade', hooks: true });
+
+=> Caution: Extra SELECT queries chalenge, transaction me nahi toh partial delete ho sakta hai, paranoid mode me kaam nahi karega.
+
+💡 Summary:-
+1. Hooks = lifecycle events → before/after create/update/destroy.
+2. Instance hooks → single object pe, model hooks → bulk ya individual.
+3. Global hooks → saare models ke liye, permanent ya default.
+4. Connection hooks → DB connect/disconnect aur pool acquire/release.
+5. Transactions → options.transaction use karo hooks me.
+6. Bulk operations → { individualHooks: true } agar per-instance hooks chahiye.
+7. Cascade delete hooks → { hooks: true }, lekin cautiously use karo.
+
+================================ Migrations =================================
+
+🔹 Migration Kya Hoti Hai?
+=> Jaise code ke liye Git use karte ho version control ke liye, waise hi Migrations database ke structure (tables, columns, relations, etc.) ka version control hoti hain.
+Isse aap database ka structure aage ya piche le ja sakte ho (forward migration aur rollback).
+
+Har migration ek file hoti hai jisme do functions hote hain:-
+=> up: naya change apply karne ke liye
+=> down: us change ko revert (undo) karne ke liye
+=> Aur inko manually call nahi karte — CLI inhe automatically call karega.
+
+🔹 CLI Install Karna
+=> Sabse pehle Sequelize-CLI install karo:
+
+npm install --save-dev sequelize-cli
+
+🔹 Project Init
+=> Init command run karo:
+
+npx sequelize-cli init
+
+
+Ye kuch folders create karega:-
+=> config/ → DB config (username, password, host, dialect)
+=> models/ → models rakhe jayenge
+=> migrations/ → migrations files
+=> seeders/ → test/sample data ke seeds
+
+🔹 Config Setup
+=> config/config.json me database ka connection set karo:
+
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "mydb_dev",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
+
+🔹 Model aur Migration Banana
+=> Agar ek User model banana hai:
+
+npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
+
+
+Ye karega:-
+1. models/user.js file banayega
+2. migrations/XXXXXXXXXXXXXX-create-user.js file banayega
+
+🔹 Migration Run Karna
+=> Table create karne ke liye:
+
+npx sequelize-cli db:migrate
+
+=> Ye SequelizeMeta table maintain karega jisme track rahega ki kaunsi migration chal chuki hai.
+
+🔹 Migration Undo
+=> Latest migration revert karne ke liye:
+
+npx sequelize-cli db:migrate:undo
+
+
+Sab undo karne ke liye:
+
+npx sequelize-cli db:migrate:undo:all
+
+🔹 Seeds (Demo Data)
+Seeder generate karo:
+
+npx sequelize-cli seed:generate --name demo-user
+
+
+Ye ek file banayega seeders/XXXXXXXXXXXXXX-demo-user.js.
+Example:
+
+module.exports = {
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert('Users', [{
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'example@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }]);
+  },
+
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.bulkDelete('Users', null, {});
+  }
+};
+Run seeds:
+npx sequelize-cli db:seed:all
+
+
+Undo seed:
+npx sequelize-cli db:seed:undo
+
+🔹 Advance Migration Examples
+Column add karna:
+
+queryInterface.addColumn('Users', 'age', { type: Sequelize.INTEGER });
+
+
+Table drop karna:
+queryInterface.dropTable('Users');
+
+
+Foreign key add karna:
+
+userId: {
+  type: Sequelize.INTEGER,
+  references: {
+    model: 'Users',
+    key: 'id'
+  }
+}
+
+🔹 Custom Paths (.sequelizerc)
+Aap CLI ko bata sakte ho ki config/migrations/seeders alag path pe hain:
+
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve('config', 'database.json'),
+  'models-path': path.resolve('db', 'models'),
+  'seeders-path': path.resolve('db', 'seeders'),
+  'migrations-path': path.resolve('db', 'migrations')
+};
+
+🔹 Storage Options
+=> By default migrations ka record DB ke SequelizeMeta table me store hota hai.
+Lekin aap ise change kar sakte ho:
+=> sequelize (default)
+=> json (file me save hoga)
+=> none (no tracking – not recommended)
+
+⚡ Summary
+=> Migration = database ka version control
+=> CLI = migration aur seeding ko manage karne ke liye tool
+=> up = apply migration, down = rollback
+=> Seeds = dummy/test data insert karna
+
+
+
+
+

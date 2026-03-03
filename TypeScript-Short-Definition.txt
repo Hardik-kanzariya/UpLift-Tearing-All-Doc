@@ -1,0 +1,161 @@
+1. Intro to TypeScript
+=> TypeScript ek superset hai JavaScript ka, jo types add karta hai aur code ko zyada safe aur maintainable banata hai.
+
+Example:- JS me agar variable type alag alag values le sakta hai, TS me type fix kar sakte ho.
+
+2. Basic Types in TypeScript
+=> Ye fundamental data types hote hain jo variables me use hote hain:
+
+number → 123, 45.6
+
+string → "Hello"
+
+boolean → true/false
+
+any → koi bhi type
+
+void → return value nahi
+
+null and undefined → Special types.
+
+any → Any type allow kare che (not recommended, but useful when type unknown)
+
+unknown → Safer alternative of any. Type check karvo pade use karva pehla.
+
+never → Functions je kabhi return nai kare (error throw kare ya infinite loop).
+
+3. Type Annotation
+=> Variable ya function me explicitly type declare karna.
+
+Example:-
+let age: number = 25;
+
+4. Object Types
+=> Objects ke liye type define karna.
+
+Example:-
+let person: {name: string, age: number} = {name: "Rahul", age: 20};
+
+5. Narrowing
+=> Type ko check karke specific type tak narrow karna.
+
+Example:-
+function printId(id: number | string) {
+  if (typeof id === "string") {
+    console.log(id.toUpperCase());
+  }
+}
+
+6. Classes
+=> Object-oriented programming ka concept, jisme properties aur methods define karte hain.
+
+Example:-
+class Person {
+  name: string;
+  constructor(name: string) { this.name = name; }
+  greet() { console.log(`Hello ${this.name}`); }
+}
+
+7. Modules
+=> Code ko alag files me divide karna aur import/export karna.
+
+Example:-
+// person.ts
+export class Person {}
+
+// main.ts
+import { Person } from "./person";
+
+8. TypeScript for JavaScript Programmers
+=> JS programmers ke liye TS ka guide; JS syntax familiar hai, sirf types add karne hote hain.
+
+9. Type Manipulation
+=> Type ko modify ya transform karna using TypeScript features.
+
+Example: Partial, Readonly etc.
+
+10. Creating Types from Types
+=>  Existing types se nayi types banani.
+
+Example:-
+type Person = {name: string, age: number};
+type PersonName = Person["name"];
+
+11. Generics
+=>  Flexible types jo function/class ko multiple types ke sath use karte hain.
+
+Example:-
+function identity<T>(arg: T): T { return arg; }
+
+12. Keyof Type Operator
+=>  Ek object ke keys ko type banata hai.
+
+Example:-
+type Person = {name: string, age: number};
+type Keys = keyof Person; // "name" | "age"
+
+13. Typeof Type Operator
+=>  Variable ka type nikalta hai.
+
+Example:-
+let age = 25;
+type AgeType = typeof age; // number
+
+14. Indexed Access Types
+=>  Object ke ek key ka type nikalna.
+
+Example:-
+type Person = {name: string, age: number};
+type AgeType = Person["age"]; // number
+
+15. Conditional Types
+=>  Types ko conditions ke basis pe define karna.
+
+Example:-
+type Check<T> = T extends string ? "Yes" : "No";
+
+16. Mapped Types
+=>  Existing type ke properties ko modify karke new type banana.
+
+Example:-
+type ReadOnly<T> = { readonly [P in keyof T]: T[P] };
+
+17. Template Literal Types
+=>  String types ko dynamically create karna template literals ki tarah.
+
+Example:-
+type Greeting = `Hello ${string}`;
+
+18. Utility Types
+=>  Built-in types jo type manipulation easy banate hain.
+
+Examples:- Partial, Readonly, Pick, Record
+
+19. Explicit Types & Inference
+=> Explicit: Type explicitly define karna
+=> Inference: TypeScript automatically type detect karta hai
+
+20. TypeScript Async Programming
+=>  Async code likhne ka tarika, promises aur async/await ka use karke.
+
+Example:-
+async function fetchData() {
+  const data = await fetch("url");
+}
+
+21. TypeScript Error Handling
+=>  Errors ko safely handle karna using try/catch aur types.
+
+Example:-
+try { throw new Error("Oops"); } 
+catch (err: any) { console.log(err.message); }
+
+22. Decorators
+=>  Special functions jo class ya method ke behavior ko modify karte hain.
+
+Example:-
+function Log(target: any, propertyKey: string) { console.log(propertyKey); }
+class Person {
+  @Log
+  name: string;
+}

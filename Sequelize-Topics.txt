@@ -1,0 +1,16 @@
+1. What is Sequelize
+2. Model Basics 
+3. Model Instances
+4. Model Querying - Basics
+5. Model Querying - Finders
+6. Getters, Setters & Virtuals
+7. Validations & Constraints
+8. Raw Queries
+9. Associations
+10.Paranoid
+11.Migrations
+12.Eager Loading
+13.Creating with Associations
+14.Advanced M:N Associations
+15.Association Scopes
+16.Polymorphic Associations

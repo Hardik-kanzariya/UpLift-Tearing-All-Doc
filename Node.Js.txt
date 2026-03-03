@@ -1,0 +1,1029 @@
+1.What is Node 
+2.Basic Modules
+fs os http core uitts path 
+3.middleware
+4.express
+5.request
+6.response
+7.payload
+
+
+=> Mongodb
+1. MongoDB Create Database
+2. MongoDB Create Collection
+3. MongoDB Insert
+4. MongoDB Find
+5. MongoDB Update
+6. MongoDB Delete
+7. MongoDB Query Operator
+8. MongoDB Update Query Operators
+9. MongoDB Aggregation Pipelines
+10.MongoDB Indexing & Search
+11.MongoDB Schema Validation
+
+
+
+1. What is Node.Js ?
+=> Node.js ek JavaScript runtime environment hai jo aapko JavaScript code browser ke bahar run karne deta hai. Normally JS sirf browser me chalta hai, lekin Node.js ki help se aap server-side applications bhi JS me bana sakte ho.
+
+============================ Installed in Tsx =========================
+
+1. Project setup
+mkdir my-express-app
+cd my-express-app
+npm init -y
+
+
+2. Install dependencies
+npm install express
+npm install -D tsx typescript @types/node @types/express
+
+3. Create tsconfig.json
+npx tsc --init
+
+4.Run with tsx
+npx tsx src/index.ts
+"scripts": {
+    "dev": "tsx watch src/index.ts"
+  }
+
+5.Direct run
+npm run dev
+
+6.npm install --save-dev tsx nodemon
+	
+7.npm install express multer mongoose
+  npm install --save-dev typescript ts-node nodemon @types/node @types/express @types/multer
+
+
+============================= Basic Modules in Node.js =====================
+1. fs (File System)
+=> Ye module files ke saath kaam karne ke liye use hota hai.
+Aap file read, write, update, delete sab kar sakte ho.
+
+2. Http
+=> Web server banane ke liye use hota hai.
+Isse aap request-response handle kar sakte ho. 
+
+3. path
+=> File aur folder ke path handle karne ke liye use hota hai.
+
+4. os (Operating System)
+=> System related info ke liye (CPU, memory, hostname, etc.)
+
+5. events
+=> Node.js event-driven hai.
+Aap custom events create aur listen kar sakte ho.
+
+6. url
+=> URLs ko parse aur handle karne ke liye.
+
+7. util
+=> Utilities module jo debugging aur formatting ke liye kaam aata hai.
+
+=================================== Middleware =======================
+1.What is Middleware 
+=> Middleware ek aisa function hota hai jo request (req) aur response (res) ke beech mein execute hota hai. Express.js (ya NestJS / Koa) mein middleware kaafi use hota hai:
+
+Logging (request ko console mein dikhana)
+Authentication / Authorization
+Error Handling
+Data Validation
+Response Modification
+
+1. Application-level Middleware
+=> Directly app.use() ya app.get/post() ke sath use hota hai.
+=> Poore app par apply hota hai ya specific route par.
+
+2. Router-level Middleware
+=> Express Router() ke sath use hota hai.
+=> Ek specific group of routes par lagta hai.
+
+3. Error-handling Middleware
+=> Special middleware jo errors ko catch karta hai.
+=> Signature 4 parameters hoti hain → (err, req, res, next) 
+
+4. Built-in Middleware
+=> Express ke andar kuch built-in middlewares hote hain:
+   express.json() → JSON parse karega
+   express.urlencoded() → Form-data parse karega
+   express.static() → Static files serve karega
+
+5. Third-party Middleware
+=> Community packages jo middleware provide karte hain. Examples:
+   cors → CORS handling
+   helmet → Security headers
+   morgan → Logging
+   multer → File upload
+
+1. Body Parsing / Data Handling Middleware
+=> body-parser (ab express.json() me merge ho gaya hai)
+   multer → File uploads
+   cookie-parser → Cookies parse karna
+
+2. Authentication & Authorization Middleware
+=> Login / JWT / Session handle karne ke liye.
+Examples:
+passport → Authentication strategies (Google, Facebook, Local etc.)
+express-jwt → JWT token verification
+express-session → Session management
+
+5. CORS & Proxy Middleware
+=> Cross-origin aur proxy handling.
+Examples:
+cors → Cross-Origin Resource Sharing
+http-proxy-middleware → API gateway / proxy
+
+6. Validation Middleware
+=> Input data ko validate karna.
+Examples:
+express-validator → Request validation
+joi (with celebrate) → Schema-based validation
+
+================================= request response payload ========================== 
+1. Request (req)
+=> Jab client (jaise browser, Postman, mobile app) server ko data bhejta hai, use request kehte hain.
+   Node.js me req object ke andar yeh data aata hai.
+Example: agar user form submit kare, toh name/email jaise data req.body me milega.
+
+app.get("/hello", (req, res) => {
+  console.log(req.query);  // query params data
+  console.log(req.params); // URL params data
+  console.log(req.body);   // body data (payload)
+});
+
+2. Response (res)
+=> Jab server client ko reply bhejta hai, usse response kehte hain.
+   Node.js me res object ka use karke response bhejte hain.
+
+app.get("/hello", (req, res) => {
+  res.send("Hello World!"); // text response
+  // res.json({msg: "Hello World!"}); // JSON response
+});
+
+3. Payload
+=> Payload matlab woh actual data jo request ke sath bheja jata hai (mostly body ke andar).
+   POST/PUT request me req.body ke through aata hai.
+   Payload ko server process karta hai aur fir response deta hai.
+
+app.post("/data", (req, res) => {
+  const payload = req.body; // jo client ne bheja
+  console.log(payload);
+
+  res.json({
+    message: "Payload received",
+    data: payload
+  });
+});
+
+Request (req) = Client → Server ko data Mokle che.
+Response (res) = Server → Client ko answer Mokle che.
+Payload = Request ka andar ka data (mostly body ke andar)
+
+
+================================ Mongodb Database =====================================
+
+========================== MongoDB Getting Started =================================
+
+   MongoDB kya hai?
+=> MongoDB ek document database hai. Isko aap apne system (local) pe install kar sakte ho ya cloud pe use kar sakte ho (jaise MongoDB Atlas).
+
+SQL vs Document Databases
+SQL (Relational DB):-
+=> Data ko tables mein store karte hain.
+=> Agar data related hai, to alag-alag tables se join karke nikalna padta hai.
+
+MongoDB (Document DB / Non-Relational):-
+=> Data ko documents ke form mein store karta hai.
+=> Ek hi document mein saara related data rakh sakte ho.
+=> Reading fast hoti hai kyunki join kam karna padta hai.
+=> Tables ki jagah yahan collections hote hain.
+
+Local vs Cloud Database
+Local Install:-
+=> Aap apne system pe MongoDB server install karke use kar sakte ho.
+=> Free hai, lekin aapko khud server manage karna padega (updates, maintenance, etc).
+
+Cloud (MongoDB Atlas):
+=> Easy option hai.
+=> Free account banake ek "Shared Cluster" setup kar sakte ho.
+=> Maintenance ka tension nahi.
+
+Cluster Setup (MongoDB Atlas)
+1. Free account banao.
+2. Ek Shared Cluster create karo aur apna cloud provider + region select karo.
+3. Security ke liye:
+=> Database User banao (username + password).
+=> Network Access me apna IP address add karo (taaki aap connect kar sako).
+
+MongoDB Shell (mongosh) Install
+=> Terminal se connect hone ke liye mongosh use hota hai.
+=> Install karne ke baad verify karo:
+mongosh --version
+=> Tutorial mein version v1.3.1 use hua hai.
+
+Database se Connect karna
+1. MongoDB Atlas Dashboard → "Databases" → Cluster → "Connect".
+2. Option select karo "Connect with the MongoDB Shell".
+3. Connection string copy karo, jo kuch aisa dikhega:
+=> mongosh "mongodb+srv://cluster0.ex4ht.mongodb.net/myFirstDatabase" --apiVersion 1 --username       YOUR_USER_NAME
+4. Terminal mein paste karo aur enter dabao.
+5. Password daalo jo aapne database user create karte time banaya tha.
+6 .Ab aap connected ho gaye! 🎉
+
+
+================================ MongoDB Query API ==========================
+
+MongoDB Query API
+=> MongoDB Query API wo tarika hai jisse aap apne database ke andar data ke sath interact karte ho.
+Isse aap apna data insert, find, update, delete, transform, join sab kuch kar sakte ho.
+
+Query API do tarike se use hota hai:
+1. CRUD Operations → Create, Read, Update, Delete (basic kaam jo aap data ke sath karte ho).
+2. Aggregation Pipelines → Advanced data processing aur transformation.
+
+MongoDB Query API ke Uses
+1. Adhoc Queries
+=> Aap turant data ko query kar sakte ho mongosh, Compass GUI, VS Code extension ya fir programming language ke driver (jaise Node.js, Python, Java, etc.) use karke.
+
+2. Data Transformations (Aggregation)
+=> Aap aggregation pipelines use karke data ko filter, group, sort, calculate kar sakte ho.
+=> Example: Total students count, average marks, sales report.
+
+3. Document Joins
+=> SQL join ki tarah aap alag collections ka data combine kar sakte ho ($lookup operator).
+
+4. Graph & Geospatial Queries
+=> Graph jaise relationships handle karna.
+=> Location-based queries (jaise "2km ke andar ke restaurants dikhana").
+
+5. Full-text Search
+=> Text ke andar search karna (jaise search engine).
+
+6. Indexing
+=> Queries ko fast banane ke liye indexes use karte ho (jaisa SQL mein hota hai).
+
+7. Time Series Analysis
+=> Time-based data (logs, sensor data, stock prices, IoT) analyze karne ke liye.
+👉 Simple shabdon mein: Query API = MongoDB ka remote control, jisse aap data ko manipulate aur analyze kar sakte ho.
+
+====================== MongoDB Create Database =========================
+
+🗄️ MongoDB: Create Database using mongosh 
+
+1. Current Database Check karna
+=> Jab aap mongosh se connect kar lete ho, to yeh command likho:-
+   db
+👉 Ye aapko batayega ki aap abhi kis database me connected ho.
+Agar aapne MongoDB Atlas ka connection string use kiya hai, to default database hoga:
+myFirstDatabase
+
+2. Show All Databases
+=> Apne cluster me available databases dekhne ke liye:-
+   show dbs
+⚠️ Dhyaan do: Agar myFirstDatabase empty hai (kuch bhi data nahi dala abhi tak), to wo list me nahi dikhega.
+MongoDB me empty database ka matlab hai ki wo exist nahi karta.
+
+3. Change / Create a Database
+=> MongoDB me database tabhi create hota hai jab usme data insert karte ho.
+Lekin aap ek new database select/change karne ke liye likh sakte ho:
+  use blog
+👉 Ab aap blog database me ho.
+Lekin dhyaan rahe: Ye database tab tak actually create nahi hoga jab tak aap koi collection/document add nahi karte.
+
+4. Example (Database Create with Content)
+=> Ek document insert karke blog database ko create karte hain:
+db.posts.insertOne({
+  title: "My First Blog",
+  content: "Hello MongoDB!",
+  author: "Rahul"
+})
+👉 Ab blog database officially create ho gaya.
+Ab agar aap show dbs likho, to blog database list me dikhne lagega.
+
+✅ Summary (Simple Steps):
+1. db → current database check karo
+2. show dbs → saare databases dekho
+3. use databaseName → new database create/change karo
+4. Insert karo → database officially create ho jayega
+
+================================== MongoDB Insert =============================
+
+1️. Insert One Document (insertOne)
+
+// MongoDB module import karna
+let MongoClient = require('mongodb').MongoClient;
+
+// MongoDB ka URL (local MongoDB server)
+let url = "mongodb://localhost:27017/";
+
+// MongoDB se connect karna
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+
+  // "mydb" database select karna
+  let dbo = db.db("mydb");
+
+  // Document create karna (record jaisa)
+  let myobj = { name: "Company Inc", address: "Highway 37" };
+
+  // "customers" collection me insert karna
+  dbo.collection("customers").insertOne(myobj, function(err, res) {
+    if (err) throw err;
+    console.log("✅ 1 document inserted");
+    db.close(); // connection band karna
+  });
+});
+👉 Is code ko demo_mongodb_insert.js ke naam se save karo
+
+👉 Terminal me run karo:
+node demo_mongodb_insert.js
+
+Output:
+✅ 1 document inserted
+
+2️. Insert Multiple Documents (insertMany)
+let MongoClient = require('mongodb').MongoClient;
+let url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  let dbo = db.db("mydb");
+
+  // Multiple documents ka array
+  let myobj = [
+    { name: 'John', address: 'Highway 71'},
+    { name: 'Peter', address: 'Lowstreet 4'},
+    { name: 'Amy', address: 'Apple st 652'}
+  ];
+
+  dbo.collection("customers").insertMany(myobj, function(err, res) {
+    if (err) throw err;
+    console.log("✅ Number of documents inserted: " + res.insertedCount);
+    db.close();
+  });
+});
+
+👉 Output:
+✅ Number of documents inserted: 3
+
+3️. Insert with Custom _id
+=> Agar tum _id khud specify nahi karte ho, toh MongoDB khud ek unique _id generate karega.
+   Lekin agar khud dena hai, toh unique hona chahiye.
+
+let MongoClient = require('mongodb').MongoClient;
+let url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  let dbo = db.db("mydb");
+
+  // Custom _id ke sath documents
+  let myobj = [
+    { _id: 101, name: 'Chocolate Heaven'},
+    { _id: 102, name: 'Tasty Lemon'},
+    { _id: 103, name: 'Vanilla Dream'}
+  ];
+  dbo.collection("products").insertMany(myobj, function(err, res) {
+    if (err) throw err;
+    console.log("✅ Documents inserted with custom IDs");
+    console.log(res.insertedIds); // inserted IDs show karega
+    db.close();
+  });
+});
+
+👉 Output (example):
+✅ Documents inserted with custom IDs
+[ 101, 102, 103 ]
+
+⚡ Important Notes:
+Agar collection exist nahi karta hai → MongoDB automatically create kar dega.
+Agar _id specify nahi karte ho → MongoDB khud ek unique _id assign kar dega.
+insertOne() → ek hi document ke liye
+insertMany() → ek se zyada documents ke liye
+
+=================================== MongoDB Find ==================================
+
+🔹 1. find()
+=> Ye method sirf ek document return karega (jo sabse pehle match karega). Agar tum query object empty dete ho {}, to ye collection ka pehla document return karega.
+👉 Example (demo_mongodb_findone.js):
+let MongoClient = require('mongodb').MongoClient;
+let url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  let dbo = db.db("mydb");
+  // Pehla document find karega
+  dbo.collection("customers").findOne({}, function(err, result) {
+    if (err) throw err;
+    console.log(result.name);  // sirf name field print karega
+    db.close();
+  });
+});
+Company Inc.
+
+
+🔹 2. findOne()
+=> Ye method sirf ek hi document return karega (jo sabse pehle match karega).
+   Agar query empty hai → to sabse pehla document return karega.
+👉 Example:
+db.posts.findOne()
+
+🔹 3. Querying Data (Filter lagana)
+=> Agar tumhe sirf specific condition ke documents chahiye to query pass karna hota hai.
+👉 Example:
+db.posts.find({ category: "News" })
+Ye saare documents laayega jaha category = "News" hoga.
+
+🔹 4. Projection (Fields control karna)
+=> Projection use hota hai decide karne ke liye ki kaunse fields result me aayenge.
+⚡ Rules:
+=> 1 → Field include karne ke liye
+=> 0 → Field exclude karne ke liye
+=> _id by default include hota hai, exclude karna ho to specifically _id: 0 likhna padega.
+=> Tum ek hi projection me mix 0 aur 1 nahi kar sakte (sirf _id exception hai).
+
+👉 Example 1: Sirf title aur date chahiye
+db.posts.find({}, { title: 1, date: 1 })
+Output me title, date aur _id aayega.
+
+👉 Example 2: _id field exclude karna
+db.posts.find({}, { _id: 0, title: 1, date: 1 })
+Ab result me sirf title aur date aayega, _id nahi hoga.
+
+👉 Example 3: Koi ek field exclude karna (baaki sab aayenge)
+db.posts.find({}, { category: 0 })
+Ye category ko exclude karega, baaki fields show hongi.
+
+👉 Example 4: ❌ Galat (error aayega)
+db.posts.find({}, { title: 1, date: 0 })
+Kyuki tumne ek field ko include aur ek ko exclude kar diya hai (mixing allowed nahi hai except _id).
+
+💡 Simple Bhasha me:
+=> find() → multiple documents.
+=> findOne() → sirf ek document.
+=> Query object → filter lagane ke liye.
+=> Projection → result me kaunse fields aayenge decide karne ke liye.
+
+=============== MongoDB Query Operators  ====================
+
+🔹 Comparison Operators (Values compare karne ke liye)
+
+1. $eq → Equal to (barabar)
+db.users.find({ age: { $eq: 25 } })
+// saare users jinka age 25 hai
+
+2. $ne → Not equal (barabar nahi)
+db.users.find({ age: { $ne: 25 } })
+// saare users jinka age 25 nahi hai
+
+3. $gt → Greater than (zyada)
+db.users.find({ age: { $gt: 18 } })
+// saare users jinka age 18 se zyada hai
+
+4. $gte → Greater than or equal to (zyada ya barabar)
+db.users.find({ age: { $gte: 18 } })
+// saare users jinka age 18 ya usse zyada hai
+
+5.$lt → Less than (kam)
+db.users.find({ age: { $lt: 18 } })
+// saare users jinka age 18 se kam hai
+
+6. $lte → Less than or equal to (kam ya barabar)
+db.users.find({ age: { $lte: 18 } })
+// saare users jinka age 18 ya usse kam hai
+
+7. $in → Array ke andar values match karava mate use thye che 
+db.users.find({ city: { $in: ["Delhi", "Mumbai"] } })
+// saare users jo Delhi ya Mumbai ke hai
+
+🔹 Logical Operators (Multiple conditions ke liye)
+
+1. $and → Dono conditions match honi chahiye
+db.users.find({ $and: [ { age: { $gt: 18 } }, { city: "Delhi" } ] })
+// saare users jinka age > 18 aur city Delhi hai
+
+2. $or → Koi ek condition match hove jove.
+db.users.find({ $or: [ { age: { $lt: 18 } }, { city: "Mumbai" } ] })
+// users jinka age < 18 ya phir city Mumbai hai
+
+3. $nor → Dono condition match no kare.
+db.users.find({ $nor: [ { age: { $lt: 18 } }, { city: "Delhi" } ] })
+// users jinka age < 18 nahi hai aur city Delhi bhi nahi hai
+
+4. $not → Jo condition ko satisfy nahi karte
+db.users.find({ age: { $not: { $gt: 30 } } })
+// users jinka age > 30 nahi hai
+
+🔹 Evaluation Operators (Check / Match karne ke liye)
+
+1. $regex → Regular expression (pattern matching)
+db.users.find({ name: { $regex: "^A" } })
+// saare users jinka naam A se start hota hai
+
+2. $text → Full-text search (pehle text index banana padega)
+db.articles.find({ $text: { $search: "mongodb" } })
+// saare documents jisme "mongodb" word hai
+
+3. $where → JavaScript expression ke basis par filter
+db.users.find({ $where: "this.age > 25" })
+// saare users jinka age 25 se zyada hai
+
+💡 Short Samajh Lo:
+=> Comparison → barabar, zyada, kam, array check karna
+=> Logical → and/or/not type conditions
+=> Evaluation → regex, text search, JS condition	
+
+=============== MongoDB Update Query Operator =================
+
+🔹 Field Update Operators
+
+1. $currentDate → Field ko current date-time set karava mate thye che.
+db.users.updateOne(
+  { name: "Amit" },
+  { $currentDate: { lastModified: true } }
+)
+// "lastModified" field me current date set ho jayega
+
+2. $inc → Kisi numeric field ko increase - decrease karava mate thye che.
+db.users.updateOne(
+  { name: "Amit" },
+  { $inc: { age: 1 } }
+)
+// age +1 ho jayega
+
+3. $rename → Field nu name change karava mate use thye che.
+db.users.updateOne(
+  {},
+  { $rename: { fullname: "name" } }
+)
+// "fullname" field rename hoke "name" ban jayega
+
+4. $set → Field ne value ne add - update karava mate use thye che.
+db.users.updateOne(
+  { name: "Amit" },
+  { $set: { city: "Delhi" } }
+)
+// city field set/update ho jayega
+
+5. $unset → Field remove karava mate use thye che.
+db.users.updateOne(
+  { name: "Amit" },
+  { $unset: { city: "" } }
+)
+// city field delete ho jayega
+
+🔹 Array Update Operators
+
+1. $addToSet → Array ma element add karava pan duplicate no thava de.
+db.users.updateOne(
+  { name: "Amit" },
+  { $addToSet: { hobbies: "cricket" } }
+)
+// cricket sirf ek baar add hoga
+
+2. $pop → Array mathi first ane last element remove karava mate use thye che.
+db.users.updateOne(
+  { name: "Amit" },
+  { $pop: { hobbies: 1 } }   // last element remove
+)
+db.users.updateOne(
+  { name: "Amit" },
+  { $pop: { hobbies: -1 } }  // first element remove
+)
+
+3. $pull → Array ma se specific value ya matching condition na elements remove kare che.
+db.users.updateOne(
+  { name: "Amit" },
+  { $pull: { hobbies: "football" } }
+)
+// football hobby remove ho jayegi
+
+4. $push → Array ma nava element ne add karava mate use (duplicates allowed)
+db.users.updateOne(
+  { name: "Amit" },
+  { $push: { hobbies: "reading" } }
+)
+// hobbies array me "reading" add ho jayega
+
+💡 Shortcut samajh lo:
+=> Fields → $set, $unset, $inc, $rename, $currentDate
+=> Arrays → $push (add), $addToSet (unique add), $pop (remove first/last), $pull (remove matching)
+
+========================= MongoDB Aggregation Pipelines ============================
+
+🔹 Aggregation Pipeline Kya Hai?
+=> Ye ek data processing pipeline hai jema multiple stages (steps) hoy che.
+=> Har stage pichle stage ke result per kaam kare ceh.
+=> Isse tu filter, group, sort, calculate, transform sab kar sakta hai.
+
+🔹 Sample Data Load Karna
+=> MongoDB Atlas me jaa → Database → Ellipsis (…) → Load Sample Dataset
+=> Ye tujhe pre-loaded collections dega jaise sample_mflix.movies, sample_supplies.sales etc.
+=> Inhi ka use karke aggregation pipeline easily samjh aa jaata hai.
+
+1. $group :- data ne group karava hoy tayre use thya che.
+=> $group ka use tab hota hai jab tu apne data ko group karna chahta hai kisi ek field ke basis pe.
+=> Isme ek _id dena padta hai jiske hisaab se documents group honge.
+=> Important ⚡: Ye _id aggregation ka hota hai, ye document ka default _id (ObjectId) nahi hai.
+
+🔹 Example
+Sample data: sample_airbnb → listingsAndReviews collection
+db.listingsAndReviews.aggregate([
+  { $group : { _id : "$property_type" } }
+])
+👉 Ye query kya karegi?
+Sare documents ko property_type ke hisaab se group karegi.
+Har ek unique property_type ek bar dikh jaayega.
+
+🔹 Output Example
+Maan le tere paas ye data hai:
+{ property_type: "Apartment" }
+{ property_type: "House" }
+{ property_type: "Apartment" }
+{ property_type: "Condo" }
+
+To $group ka result hoga:
+{ _id: "Apartment" }
+{ _id: "House" }
+{ _id: "Condo" }
+
+🔹 Extra Usage
+=> Agar tujhe count bhi nikalna hai har property type ka, to aise kar:
+db.listingsAndReviews.aggregate([
+  { $group: { _id: "$property_type", total: { $sum: 1 } } }
+])
+
+👉 Output:
+{ _id: "Apartment", total: 2 }
+{ _id: "House", total: 1 }
+{ _id: "Condo", total: 1 }
+💡 Shortcut yaad rakh:
+=> _id: "$fieldName" → uss field ke basis pe group karna
+=> $sum: 1 → count nikalna
+=> $avg, $max, $min → calculations karna
+
+2. $limit :- limit set karava mate use thye che 1 page ma ketla documents show karava che.
+=> $limit ka kaam hai aggregation pipeline me documents ki ginti ko limit karna.
+=> Matlab kitne documents aage next stage ko pass karne hain, wo tu $limit me number dekar decide karta hai.
+
+🔹 Example
+Sample data: sample_mflix → movies collection
+db.movies.aggregate([
+  { $limit: 1 }
+])
+👉 Iska matlab hai:
+Sirf 1 movie document ko output me dikhana.
+Agar tu $limit: 5 kare, to 5 movies aayengi.
+
+3. $project :- project nu kam find() jevu che and tamare kay fields joye che ane kay fields nathi joti 
+=> $project ka kaam hai → sirf specific fields ko next stage me bhejna.
+=> Ye bilkul waise hi kaam karta hai jaise find() method ke projection object me hota hai.
+=> Matlab tu decide karta hai kaunse fields chahiye aur kaunse nahi.
+🔹 Example
+Sample data: sample_restaurants → restaurants collection
+db.restaurants.aggregate([
+  {
+    $project: {
+      "name": 1,
+      "cuisine": 1,
+      "address": 1
+    }
+  },
+  {
+    $limit: 5
+  }
+])
+👉 Output me:
+=> Sirf name, cuisine, aur address fields aayengi
+=> Saath me by default _id field bhi aa jaati hai (jab tak tu usko exclude na kare)
+🔹 Fields ko include / exclude karna
+=> 1 → field ko include kar
+=> 0 → field ko exclude kar
+⚠️ Important Rule:
+=> Tu ek hi object me mix (0 aur 1 dono) nahi kar sakta
+=> Sirf _id field ek exception hai → usko tu alag se 0 karke hata sakta hai
+✅ Example 1: _id ko hatana
+db.restaurants.aggregate([
+  {
+    $project: {
+      "_id": 0,
+      "name": 1,
+      "cuisine": 1
+    }
+  }
+])
+👉 Ab sirf name aur cuisine aayenge, _id field exclude ho jaayegi.
+✅ Example 2: Sirf exclude karna
+db.restaurants.aggregate([
+  {
+    $project: {
+      "address": 0,
+      "grades": 0
+    }
+  }
+])
+👉 Sab fields aayengi except address aur grades.
+
+4. $sort :- sort te documents ne sort karava ane ascending ane descending order mate use thy che.
+=> $sort ka kaam hai → documents ko sort (ascending ya descending order) me arrange karna.
+=> Sorting hamesha previous stage ke output pe hoti hai.
+Order decide karne ke liye:
+=> 1 → Ascending (chhote se bada)
+=> -1 → Descending (bade se chhota)
+
+🔹 Example
+Sample data: sample_airbnb → listingsAndReviews collection
+db.listingsAndReviews.aggregate([ 
+  { 
+    $sort: { "accommodates": -1 } 
+  },
+  {
+    $project: {
+      "name": 1,
+      "accommodates": 1
+    }
+  },
+  {
+    $limit: 5
+  }
+])
+👉 Ye query kya karegi:
+1. Pehle sab documents ko accommodates field ke descending order me sort karegi
+2. Fir sirf name aur accommodates fields dikhayegi
+3. Aur finally, sirf top 5 documents return karegi
+
+🔹 Example 2: Ascending order
+db.listingsAndReviews.aggregate([
+  { $sort: { "accommodates": 1 } },
+  { $limit: 5 }
+])
+👉 Ye query sabse kam accommodates wale 5 listings dikhayegi.
+
+🔹 Multiple Fields Sorting
+=> Agar tu ek se zyada fields pe sort karna chahta hai, to sabko ek saath de sakta hai 👇
+
+db.listingsAndReviews.aggregate([
+  { $sort: { "accommodates": -1, "price": 1 } },
+  { $limit: 5 }
+])
+👉 Ye pehle accommodates ke descending order me sort karega
+👉 Aur agar tie ho jaye, to price ke ascending order me
+
+⚡Shortcut yaad rakh:
+=> $sort = arrange data
+=> 1 = ascending, -1 = descending
+Best results ke liye aksar $sort ke baad $limit use hota hai (top N records ke liye).
+
+5. $match :- document ne filter karne ke liye.
+=> $match ka kaam hai → documents ko filter karna jo given query ke hisaab se match karte hain.
+=> Ye aggregation pipeline me bilkul find() jaisa kaam karta hai.
+=> Agar tu $match ko pipeline ke shuru me lagata hai, to performance bhi improve hoti hai 🚀 kyunki baaki stages ko kam documents process karne padte hain.
+
+🔹 Example
+Sample data: sample_airbnb → listingsAndReviews collection
+db.listingsAndReviews.aggregate([ 
+  { $match : { property_type : "House" } },
+  { $limit: 2 },
+  { 
+    $project: {
+      "name": 1,
+      "bedrooms": 1,
+      "price": 1
+    }
+  }
+])
+👉 Ye query kya karegi:
+1. $match → Sirf wahi documents lega jinke property_type = "House" hai
+2. $limit: 2 → Sirf 2 hi documents lega
+3. $project → Sirf name, bedrooms, aur price fields dikhayega
+$match = filter kar documents (just like find)
+Pipeline ke starting me use karna = fast results
+
+6. $addFields :- nava fields ne add karava mate thye che.
+=> $addFields ka use hota hai → naye fields add karne ke liye documents me.
+=> Ye field kisi calculation ka result ho sakta hai, ya existing fields ka combination bhi.
+=> Matlab tu apne document me extra info "on the fly" create kar sakta hai, bina original document ko change kiye.
+
+🔹 Example
+Sample DB: sample_restaurants → restaurants collection
+db.restaurants.aggregate([
+  {
+    $addFields: {
+      avgGrade: { $avg: "$grades.score" }
+    }
+  },
+  {
+    $project: {
+      "name": 1,
+      "avgGrade": 1
+    }
+  },
+  {
+    $limit: 5
+  }
+])
+
+👉 Ye query kya karegi:
+1. $addFields → Ek naya field avgGrade add karegi, jo har restaurant ke grades.score ka average hoga.
+2. $project → Sirf name aur avgGrade dikhayega.
+3. $limit: 5 → Sirf 5 restaurants ke results dikhayega.
+Result kuch aisa aayega:
+[
+  { "name": "Restaurant A", "avgGrade": 8.6 },
+  { "name": "Restaurant B", "avgGrade": 7.4 },
+  ...
+]
+⚡ Shortcut yaad rakh:
+$addFields = "Document me naya column jodna" (calculation ya condition ke base pe).
+Original data change nahi hota, bas result pipeline me extra field milta hai.
+
+7. $count :- document ne total ginti karava mate thye che je pervious stage mathi ave che.
+=> $count ka kaam hota hai → documents ki total ginti karna jo previous stage se aaye hain.
+=> Ye ek naya document return karta hai jisme count ka field hota hai.
+=> Field ka naam tum khud de sakte ho.
+
+🔹 Example
+Sample DB: sample_restaurants → restaurants collection
+db.restaurants.aggregate([
+  {
+    $match: { "cuisine": "Chinese" }
+  },
+  {
+    $count: "totalChinese"
+  }
+])
+👉 Ye query kya karegi:
+1. $match → Sirf wo restaurants select karegi jinka cuisine "Chinese" hai.
+2. $count → Selected documents ki ginti karegi aur result me ek field "totalChinese" ke naam se dega.
+Result kuch aisa aayega:
+[ 
+  { "totalChinese": 23 } 
+]
+
+8. $lookup Aggregation Stage:- do collections ne join karava mate use thye che.
+=> $lookup ka kaam hota hai → left outer join perform karna ek collection ke documents ko dusre collection ke documents ke saath, same database me.
+=> Matlab, ek collection ke documents ke saath related data doosre collection se merge kar sakte ho.
+
+🔹 Required Fields in $lookup
+1. from → dusri collection nu  name
+2. localField → current collection ka field
+3. foreignField → dusri collection ka field
+4. as → naya array field jisme result aayega
+
+🔹 Example
+Sample DB: sample_mflix → comments collection
+db.comments.aggregate([
+  {
+    $lookup: {
+      from: "movies",           // movies collection se join karna hai
+      localField: "movie_id",   // comments.collection ka movie_id field
+      foreignField: "_id",      // movies.collection ka _id field
+      as: "movie_details"       // naya field jisme movie ke details aayenge
+    },
+  },
+  {
+    $limit: 1
+  }
+])
+👉 Is query ka result:
+=> Har comment document ke saath, ek naya field "movie_details" add ho jaayega.
+=> Ye field ek array hoga jisme us comment ke related movie ka data milega.
+=> $limit: 1 se sirf pehla document dikhaya jaayega.
+
+⚡ Shortcut yaad rakh:
+=> $lookup = MongoDB ka join operator
+=> localField aur foreignField match hote hi, related data as me aa jaata hai.
+
+⚡ Shortcut yaad rakh:
+=> $count = "Documents ki total ginti karke ek field me return karo"
+=> Pehle filter karo ($match) ya koi aur stage, phir $count lagao.
+
+9. $out :- last stage che collection ma save kare che ane te collection exist nathi kartu tu tote nay banave ane exist kar tu hache to overwrite karede che.
+=> $out ka kaam hai → aggregation pipeline ke results ko ek nayi collection me write karna.
+=> Dhyaan rahe: $out hamesha last stage hona chahiye pipeline me.
+
+🔹 Example
+Sample DB: sample_airbnb → listingsAndReviews collection
+db.listingsAndReviews.aggregate([
+  {
+    $group: {
+      _id: "$property_type",  // properties ko group kar rahe hain property_type ke hisaab se
+      properties: {
+        $push: {
+          name: "$name",
+          accommodates: "$accommodates",
+          price: "$price"
+        }
+      }
+    }
+  },
+  { $out: "properties_by_type" }  // result ko nayi collection me save karenge
+])
+🔹 Explanation
+1. Stage 1: $group
+=> Properties ko group kar diya property_type ke basis pe.
+=> Har property ke liye name, accommodates, aur price fields push kiye.
+
+2. Stage 2: $out
+=> Jo documents stage 1 se mile, unhe nayi collection properties_by_type me save kar diya.
+
+⚡ Shortcut yaad rakh:
+=> $out = Save aggregation result to a new collection
+=> Pipeline ka last stage hamesha $out hota hai.
+
+💡 Shortcut yaad rakh:
+=> $match = filter
+=> $group = group + calculations
+=> $sort = order
+=> $project = select specific fields
+=> $limit / $skip = pagination
+
+========================= MongoDB Indexes Overview ==============================	
+
+1️. Single Field Index:- single filed ne search karava mate use thye che.
+=> એક field માટે fast lookup.
+=> Ascending (1) / Descending (-1) order.
+db.users.createIndex({ name: 1 })
+Queries: { name: "Raj" }
+
+2️. Compound Index:- 1 thi vathare filed par search karava mate use thy che. 
+=> Jab aap ek se zyada fields pe index banate ho, use Compound Index kehte hain.
+=> Example: Agar aap firstName aur lastName dono fields ke combination ko fast query karna chahte ho.
+=> MongoDB ek query me dono fields ke combination pe search karne me fast ho jaata hai.
+=> Multiple fields per index.
+=> Order matters → leftmost prefix queries efficiently use index.
+db.users.createIndex({ name: 1, age: -1 })
+Queries: { name: "Raj", age: { $gte: 20 } }
+
+3️. Unique Index:- a field ma duplicate values allows nathi karti jem ke email te unique hoy che.
+=> jab aap unique index banate ho, toh us field me duplicate values allow nahi hoti.
+=> Example: email field har user ke liye unique ho.
+=> Prevent duplicates.
+db.users.createIndex({ email: 1 }, { unique: true })
+Often used on emails, usernames.
+
+4. Text Index:- a use string field mate thy che ane text ne search karava mate thy che.
+=> MongoDB me text index aapko text search karne deta hai ($text operator ke saath).
+=> Ye specially string fields ke liye hota hai, jaise: title, description, content, etc.
+=> Aap full-text search kar sakte ho jaise: "find all docs containing word 'Node.js'".
+
+
+5. Hashed Index:- use field ne value ne hash ma store karava mate thye che use sharding sathe thye che.
+=> Hashed index MongoDB me kisi field ke value ka hash store karta hai.
+=> Mostly ye sharding ke liye use hota hai (data ko cluster me distribute karne ke liye).
+=> Ye equality queries (jaise { userId: 123 }) ke liye fast hota hai.
+=> Lekin ye range queries (jaise { age: { $gt: 20 } }) ke liye use nahi hota.
+userSchema.index({ userId: "hashed" });
+
+6. Geospatial Index:- location-based par thye che je data ne fast query karava mate thye che.
+=> MongoDB me geospatial index location-based data ko fast query karne ke liye hota hai.
+=> Aap 2d (legacy coordinates) ya 2dsphere (latitude/longitude Earth sphere) index use karte ho.
+=> Isse aap queries kar sakte ho jaise:
+"Mujhe 2 km radius ke andar ke restaurants dikhado"
+"Point A ke nearest hospitals find karo"
+userSchema.index({ location: "2dsphere" });
+
+7. Sparse Index:- index aje documents par kam kare che je filed hache te na par kam kara che.
+=> MongoDB me sparse index ka matlab hai: index sirf un documents par banega jisme wo field exist karti hai.
+=> Normal index me, agar kisi document me wo field missing hai, tab bhi uska null value index me aa jata hai.
+=> Sparse index me missing field waale docs ignore hote hain.
+👉 Useful jab aapki collection me optional fields ho (jaise email, phone, address) aur har document me wo nahi hote.
+userSchema.index({ phone: 1 }, { sparse: true });
+
+8. TTL Index (Time-To-Live):- a ake special index cheje documents ne automatic delete kare nakhai che spcific time pache. 
+=> TTL (Time-To-Live) index MongoDB ka ek special index hai jo documents ko automatic delete kar deta hai ek specific time ke baad.
+=> Ye mostly use hota hai logs, sessions, tokens, temporary data ke liye.
+=> TTL index sirf Date type field par banaya ja sakta hai.
+userSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 });
+
+=========================== MongoDB Schema Validation ===============================
+
+=========== indexing =====================
+1. single field index  je index ne single filed index search karava mate tye che 
+2. compound index te multiple index search karava mate thye che 
+3. hash index te value ne hash ma convert karava mate thye che 
+4. TTL time to live special index che je documents ne automatically delete kari nakhe che
+5. sparse index je document ma field exist karti hache tena pare kam kare che .
+6. Geospatial index location based par work kare che je query ne fast karava mate thye che
+7. text Index use string ne field mate thy che ane text search karava mate thye che 
+
+
+query operator1.eq  2.neq 3.le 4.leq 5.ge 6.geq 7.in 8.and 9.or 10.nor 11.not
+
+update query operator
+1.currentDate => Field na current date-time set karava mate thye che.
+2.inc => Kisi numeric field ko increase - decrease karava mate thye che
+3.rename => field nu name rename karava mate use thye che 
+4.set => Field ne value ne add - update karava mate use thye che.
+5.nset => Field remove karava mate use thye che.
+6.addToSet => Array ma element add karava pan duplicate no thava de. 
+7.pop => Array mathi first ane last element remove karava mate use thye che.
+8.push => element ne add karava mate thye che  
+9.pull => Array ma se specific value ya matching condition na elements remove kare che.
+
+Aggregation pipelines
+1.group 2.limit 3.project 4.match 5.sort 6.addFields 7.count 8.out 9.lookup
+
+
+

@@ -1,0 +1,4467 @@
+1. What is Next.Js
+2. Installation
+3. Project Structure
+4. Layouts and Pages
+5. Linking and Navigating
+6. Server and Client Components
+7. Cache Components
+8. Fetching Data
+9. Updating Data
+10.Caching and Revalidating
+11.Error Handling
+12.CSS
+13.Image Optimization
+14.Font Optimization
+15.Metadata and OG images
+16.Route Handlers
+17.ISR (Incremental Static Regeneration)
+18.Lazy loading 
+19.Font Module
+20.Form Component
+21.Image Component
+22.Link Component
+23.Script Component
+
+
+--------------------------------- 1. What is Next.Js ------------------------
+
+1. Next.js kya hai?
+=> Next.js ek React framework hai — matlab React ke upar bana hua tool,
+jo web apps banana easy, fast aur SEO-friendly bana deta hai.
+Isko Vercel company ne banaya tha.
+
+
+| Feature                          | Kya karta hai                                                                               |
+| -------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Server-Side Rendering (SSR)**  | Page server se ready milta hai, jisse **SEO** aur **speed** dono better hoti hai.           |
+| **Static Site Generation (SSG)** | Page build time pe hi ban jata hai, fast aur secure.                                        |
+| **Client-Side Rendering (CSR)**  | Normal React jaisa hi hota hai, jab live data chahiye ho.                                   |
+| **API Routes**                   | Backend API directly Next.js ke andar bana sakte ho — alag server ki zarurat nahi.          |
+| **Routing**                      | File-based routing: `pages/` ya `app/` folder me file banao = automatic route ban jata hai. |
+| **Image Optimization**           | `<Image />` component se optimized aur responsive images milti hain.                        |
+
+
+----------------------------------- 2. Installation -------------------------
+
+2. Next Js Installation
+
+npx create-next-app@latest my-app --yes
+cd my-app
+npm run dev
+
+--yes ka matlab hai ki yeh automatically recommended settings use karega (TypeScript, Tailwind, App Router, Turbopack).
+
+🧰 CLI se Custom Setup:-
+=> Agar tu manually choose karna chahta hai (TypeScript, Tailwind, etc.), bas run kar:
+
+npx create-next-app@latest
+
+Phir yeh kuch questions puchega:-
+1. Project name?
+2. Use recommended defaults?
+3. Use TypeScript?
+4. Tailwind CSS use kare?
+5. App Router enable kare?
+6. src/ folder use kare?
+Jis hisaab se tu select karega, waise setup ho jaayega.
+
+🖐️ Manual Installation :-
+=> Agar tu apna Next.js app manually banana chahta hai:
+
+npm i next@latest react@latest react-dom@latest
+
+Phir package.json me yeh scripts add kar:
+
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  }
+}
+
+Scripts ka matlab:-
+1. next dev → Development server start karta hai (Turbopack use karke)
+2. next build → App ko production ke liye build karta hai
+3. next start → Production server run karta hai
+4. eslint → Code linting (code errors check karta hai)
+
+📁 Folder Structure :-
+=> Next.js me file-based routing hoti hai.
+
+1️⃣ app/layout.tsx
+=> Yeh root layout file hoti hai — isme <html> aur <body> tags hote hain.
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+
+2️⃣ app/page.tsx :-
+=> Yeh home page hai.
+
+export default function Page() {
+  return <h1>Hello, Next.js!</h1>
+}
+Bas itna likhne ke baad tu npm run dev karega, aur / pe yeh render hoga.
+
+🖼️ Public Folder (optional) :- 
+=> Static assets (jaise images, fonts) ke liye ek public folder banao.
+
+Example:-
+public/profile.png
+
+
+Use karo:-
+import Image from 'next/image'
+
+export default function Page() {
+  return <Image src="/profile.png" alt="Profile" width={100} height={100} />
+}
+
+💻 TypeScript Setup :-
+Agar tu TypeScript use karna chahta hai:
+=> File ka naam .ts ya .tsx kar de.
+=> npm run dev chalate hi Next.js automatically tsconfig.json bana dega.
+
+✅ Linting Setup :-
+Linting ka matlab — code me errors ya formatting issues check karna.
+
+Option 1: ESLint
+{
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  }
+}
+
+Option 2: Biome (fast & simple)
+{
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome format --write"
+  }
+}
+
+🧭 Absolute Imports (Shortcut Imports) :- 
+=> Imports ko clean aur short banane ke liye tu tsconfig.json me yeh add kar:
+{
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/styles/*": ["styles/*"]
+    }
+  }
+}
+
+Phir tu aise import kar sakta hai:-
+import { Button } from '@/components/button'
+
+
+Instead of long relative path:
+../../../components/button
+
+🎯 Summary :-
+1️⃣ Node.js install hona chahiye
+2️⃣ Run: npx create-next-app@latest my-app --yes
+3️⃣ cd my-app && npm run dev
+4️⃣ Browser me jao: http://localhost:3000
+5️⃣ Code likho app/page.tsx me aur magic dekho 😎
+
+
+------------------------------ 3. Project Structure -------------------------------
+
+3. 🏗️ Next.js Project Structure aur Organization ?
+=> Next.js me tumhara project basically folders aur files ke structure par based hota hai.
+Yani tum file banate ho → wahi tumhara route, layout, aur UI structure decide karta hai.
+
+
+📁 Top-Level Folders (main folders)
+| Folder     | Kaam                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------ |
+| **app**    | Naye **App Router** ke liye – yaha se routes aur layouts manage hote hain.                 |
+| **pages**  | Purana **Pages Router** – agar legacy code hai.                                            |
+| **public** | Static assets jaise images, fonts, etc. (yaha ke files `/` se access hote hain).           |
+| **src**    | Optional – agar tum chaho to sab code `src` folder me rakh sakte ho taaki root clean rahe. |
+
+📄 Top-Level Files (config aur env ke liye)
+| File                                                        | Purpose                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------- |
+| `next.config.js`                                            | Next.js ki main config file                              |
+| `package.json`                                              | Dependencies aur npm scripts                             |
+| `instrumentation.ts`                                        | Performance aur monitoring tools ke liye (OpenTelemetry) |
+| `proxy.ts`                                                  | Request proxy setup                                      |
+| `.env`, `.env.local`, `.env.production`, `.env.development` | Environment variables                                    |
+| `eslint.config.mjs`                                         | ESLint configuration                                     |
+| `.gitignore`                                                | Git ignore list                                          |
+| `tsconfig.json` / `jsconfig.json`                           | TypeScript/JavaScript config                             |
+| `next-env.d.ts`                                             | Next.js ke liye TypeScript declarations                  |
+
+
+🧭 Routing Files (App Router ke andar)
+Har route me kuch special files hoti hain 👇
+| File            | Kaam                                               |
+| --------------- | -------------------------------------------------- |
+| `layout.tsx`    | Shared UI (header, nav, footer) wrap karne ke liye |
+| `page.tsx`      | Actual page content                                |
+| `loading.tsx`   | Loading skeleton UI                                |
+| `error.tsx`     | Error boundary                                     |
+| `not-found.tsx` | 404 page                                           |
+| `route.ts`      | API endpoint                                       |
+| `template.tsx`  | Re-rendered layout                                 |
+| `default.tsx`   | Parallel route fallback page                       |
+
+
+🧱 Nested Routes (Folder = URL Segment)
+Har folder ek URL segment represent karta hai.
+| Path                        | URL             | Notes                                   |
+| --------------------------- | --------------- | --------------------------------------- |
+| `app/layout.tsx`            | —               | Root layout (sab routes wrap karta hai) |
+| `app/page.tsx`              | `/`             | Home page                               |
+| `app/blog/page.tsx`         | `/blog`         | Blog list                               |
+| `app/blog/authors/page.tsx` | `/blog/authors` | Authors page                            |
+📌 Layout files parent-child relationship follow karti hain, matlab ek layout ke andar doosre layout nested hote hain.
+
+🌀 Dynamic Routes
+=> Agar tumhe URL ke parts dynamic banana hain, use square brackets:
+| Path                            | URL Example                                 |
+| ------------------------------- | ------------------------------------------- |
+| `app/blog/[slug]/page.tsx`      | `/blog/my-first-post`                       |
+| `app/shop/[...slug]/page.tsx`   | `/shop/clothing/shirts`                     |
+| `app/docs/[[...slug]]/page.tsx` | `/docs` ya `/docs/api-reference/use-router` |
+📍 params prop se tum URL ke dynamic parts access kar sakte ho.
+
+🧩 Route Groups & Private Folders
+🔹 Route Groups
+Parenthesis ( ) wale folders URL me include nahi hote, bas organization ke liye use hote hain.
+
+Example:
+app/(marketing)/page.tsx → /
+app/(shop)/cart/page.tsx → /cart
+👉 Tum alag-alag layouts bana sakte ho bina URL badle.
+
+🔸 Private Folders
+Underscore _ se shuru hone wale folders routing me include nahi hote.
+Yani yeh non-routable hote hain — helper files, utils, aur internal code ke liye.
+
+Example:
+app/blog/_components/Post.tsx  → not a route
+app/blog/_lib/data.ts          → not a route
+
+
+Useful for:
+1. Internal logic ko separate karna
+2. File conflicts avoid karna
+3. Editor me better sorting
+
+🧱 Parallel aur Intercepted Routes
+=> Special routing features for advanced UI patterns:
+| Pattern       | Meaning              | Use                     |
+| ------------- | -------------------- | ----------------------- |
+| `@folder`     | Named slot           | Sidebar + main content  |
+| `(.)folder`   | Intercept same level | Modal for sibling route |
+| `(..)folder`  | Intercept parent     | Child as overlay        |
+| `(...)folder` | Intercept from root  | Show arbitrary route    |
+
+🧾 Metadata & SEO Files
+| File                           | Purpose                         |
+| ------------------------------ | ------------------------------- |
+| `favicon.ico`                  | Favicon                         |
+| `icon.png` / `icon.tsx`        | App icon                        |
+| `apple-icon.png`               | Apple icon                      |
+| `opengraph-image.png` / `.tsx` | Social media image (Open Graph) |
+| `twitter-image.png` / `.tsx`   | Twitter card image              |
+| `sitemap.xml` / `.ts`          | Sitemap                         |
+| `robots.txt` / `.ts`           | Robots file                     |
+
+🧱 Component Hierarchy
+=> Next.js in special files ko ek particular order me render karta hai:
+layout.tsx
+ ├─ template.tsx
+ │   ├─ error.tsx
+ │   ├─ loading.tsx
+ │   ├─ not-found.tsx
+ │   └─ page.tsx
+Matlab parent layout ke andar child layouts aur pages render hote hain (recursively).
+
+🧩 Colocation (code sath rakhna)
+=> Tumhare app directory ke andar code safely rakh sakte ho bina routing ke affect kiye hue.
+Matlab agar tumne page.tsx ke sath koi helper file rakhi — woh publicly accessible nahi hogi.
+
+Example:
+app/blog/page.tsx       → route
+app/blog/utils/helper.ts → not a route
+
+🧱 Different Organization Strategies
+1. Project files outside app
+=> Routing ke liye app rakho, aur components/hooks/utils bahar rakho.
+
+2. Project files inside app
+=> Saare shared files (components, lib, hooks) app ke andar hi rakho.
+
+3. Split by feature/route
+=> Har route ke sath uska code rakho (feature-based organization).
+
+4. Route groups for layouts
+=> (marketing) aur (shop) jaise groups bana ke alag UI layouts define karo.
+
+🧭 Multiple Root Layouts
+=> Agar app ke alag sections hain (e.g., marketing aur shop) aur dono ka alag UI chahiye,
+toh root layout.tsx hata ke har group me apna layout bana lo 👇
+
+app/(marketing)/layout.tsx
+app/(shop)/layout.tsx
+
+👉 Dono me apna <html> aur <body> define karna padega.
+
+🎯 In Short (Summary)
+Next.js project =
+📁 Folders = Routes
+📄 Files = UI / Config / Logic
+🧩 ( ) → Group
+_ _ → Private
+[] → Dynamic
+
+
+my-app/
+│
+├── app/                         # Yeh pura App Router system hai
+│   │
+│   ├── layout.tsx               → 🧩 Root Layout (HTML + Body) [Sab pages ko wrap karta hai]
+│   ├── page.tsx                 → 🏠 Route:  /
+│   │
+│   ├── (marketing)/             → 🎯 Route Group (URL me show nahi hota)
+│   │   ├── layout.tsx           → Layout for marketing pages
+│   │   ├── page.tsx             → Route:  /
+│   │   ├── about/page.tsx       → Route:  /about
+│   │   └── contact/page.tsx     → Route:  /contact
+│   │
+│   ├── (shop)/                  → 🛍️ Route Group (shop-related)
+│   │   ├── layout.tsx           → Layout for /shop section
+│   │   ├── products/
+│   │   │   ├── page.tsx         → Route:  /products
+│   │   │   └── [id]/page.tsx    → Route:  /products/123  (Dynamic route)
+│   │   ├── cart/page.tsx        → Route:  /cart
+│   │   └── checkout/page.tsx    → Route:  /checkout
+│   │
+│   ├── blog/
+│   │   ├── layout.tsx           → Layout for /blog section
+│   │   ├── page.tsx             → Route:  /blog
+│   │   ├── [slug]/page.tsx      → Route:  /blog/:slug  (e.g., /blog/my-post)
+│   │   ├── _components/         → ⚙️ Private folder (Not routable)
+│   │   │   └── PostCard.tsx
+│   │   └── _lib/                → ⚙️ Private helper folder
+│   │       └── getPosts.ts
+│   │
+│   ├── loading.tsx              → ⏳ Loading UI (Global)
+│   ├── error.tsx                → ❌ Error Boundary
+│   └── not-found.tsx            → 🚫 404 Page
+│
+├── public/
+│   ├── favicon.ico              → 🌐 Site icon
+│   ├── profile.png              → 🖼️ Static image → accessible at /profile.png
+│   └── logo.svg
+│
+├── src/
+│   ├── components/              → 🔧 Shared UI components (Header, Footer, etc.)
+│   ├── lib/                     → 📦 Helper functions (API utils, constants)
+│   ├── hooks/                   → 🪝 Custom React hooks
+│   └── styles/                  → 🎨 Global CSS or Tailwind styles
+│
+├── .env.local                   → 🔒 Environment variables (local)
+├── next.config.js               → ⚙️ Next.js config
+├── tsconfig.json                → 🧠 TypeScript settings
+├── package.json                 → 📦 Dependencies & scripts
+└── README.md                    → 📝 Project documentation
+
+🔗 URL → File Flow Example
+| URL                   | File                                | Notes                |
+| --------------------- | ----------------------------------- | -------------------- |
+| `/`                   | `app/page.tsx`                      | Homepage             |
+| `/about`              | `app/(marketing)/about/page.tsx`    | Marketing route      |
+| `/products`           | `app/(shop)/products/page.tsx`      | Shop route           |
+| `/products/10`        | `app/(shop)/products/[id]/page.tsx` | Dynamic Product page |
+| `/blog`               | `app/blog/page.tsx`                 | Blog home            |
+| `/blog/my-first-post` | `app/blog/[slug]/page.tsx`          | Blog post route      |
+| `/cart`               | `app/(shop)/cart/page.tsx`          | Cart page            |
+| `/checkout`           | `app/(shop)/checkout/page.tsx`      | Checkout page        |
+
+
+------------------------------- 4. Layouts and Pages ------------------------
+
+🧱 1. Creating a Page
+=> Page ek UI component hoy chhe je specific route (URL) par render thay chhe.
+Matlab: /about URL mate page.tsx file banavvi padse.
+
+In Next.js, tu page banave che using:-
+app/page.tsx
+
+ya nested folder ma:-
+app/about/page.tsx
+
+✅ Example:-
+export default function AboutPage() {
+  return <h1>About Us</h1>;
+}
+
+📍 URL: /about
+🧠 Remember: Page = ek route nu final content.
+
+🧩 2. Creating a layout
+=> Layout e ek shared structure hoy chhe je multiple pages ma common hoy chhe —
+jem ke navbar, footer, sidebar etc.
+
+Example:
+Header, Footer, Sidebar — a badha pages ma common hoy.
+
+✅ Example:
+// app/layout.tsx
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <Header />
+        {children}
+        <Footer />
+      </body>
+    </html>
+  );
+}
+=> children = je page tu visit kare che (example: Home, About etc.)
+=> Root layout har page ne wrap kare che.
+
+🧭 3. Creating a Nested Route
+=> Nested route = ek route ni andar bijo route.
+URL ma /blog/post jyaare hoy, tya folders dwara nested route define thay chhe.
+
+✅ Example:-
+app/blog/page.tsx        → /blog
+app/blog/post/page.tsx   → /blog/post
+
+=> So /blog/post ma blog page ni andar post route hoy.
+=> Each folder = one segment of URL.
+
+4. Nesting Layouts
+=> Next.js ma layouts automatically nested thay chhe.
+Root layout app layout ne wrap kare chhe, ane nested folder ma bijo layout hoy to te andar render thay chhe.
+
+✅ Example:-
+app/layout.tsx
+app/blog/layout.tsx
+app/blog/page.tsx
+
+
+Flow:-
+RootLayout (app/layout)
+   ↓
+BlogLayout (app/blog/layout)
+   ↓
+BlogPage (app/blog/page)
+
+=> So RootLayout → BlogLayout → BlogPage ni chain banti.
+
+🧠 Advantage:-
+=> RootLayout ma global UI (Header/Footer)
+=> BlogLayout ma blog-specific sidebar
+
+🔢 5. Creating a Dynamic Segment
+=> Dynamic segment evi route chhe je URL parameter par based hoy.
+Example: /blog/hello-next ane /blog/second-post —
+banna same structure thi generate thay.
+
+✅ Example:-
+app/blog/[slug]/page.tsx
+
+URL Example: /blog/nextjs-routing
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  return <h1>Blog Post: {params.slug}</h1>;
+}
+=> [slug] → dynamic parameter
+=> params object ma slug value male
+🧠 Use when you want to render multiple pages from same component (like products, posts, etc.)
+
+🔍 6. Rendering with Search Params
+=> Search params e query parameters hoy URL ma, jem ke:
+
+✅ Example:-
+/users?page=2&filter=active
+
+export default function UsersPage({ searchParams }: {
+  searchParams: { page?: string; filter?: string };
+}) {
+  return (
+    <p>Page: {searchParams.page}, Filter: {searchParams.filter}</p>
+  );
+}
+
+🧠 Use when:-
+=> You’re doing filtering, sorting, pagination, etc.
+=> You need URL query values.
+
+🕹️ 7. What to Use and When
+| Feature             | When to Use                      | Example                      |
+| ------------------- | -------------------------------- | ---------------------------- |
+| **Page**            | Show unique page per route       | `/about`, `/contact`         |
+| **Layout**          | Common design for multiple pages | Navbar, Footer               |
+| **Nested Route**    | Parent-child route structure     | `/dashboard/settings`        |
+| **Nested Layout**   | Common UI for nested pages       | Dashboard sidebar            |
+| **Dynamic Segment** | URL-based data                   | `/blog/[slug]`, `/user/[id]` |
+| **Search Params**   | Query/filter logic               | `/products?page=2`           |
+
+
+🔗 8. Linking Between Pages
+=> Navigation karva mate Next.js ma <Link> component use thay chhe —
+je fast client-side navigation aape (without page reload).
+
+✅ Example:-
+import Link from "next/link";
+
+export default function Header() {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+    </nav>
+  );
+}
+🧠 <Link> prefetches next page automatically = faster load.
+
+🧮 9. Route Props Helpers
+=> Next.js 14+ (App Router) ma PageProps & LayoutProps helper types automatically generate thay.
+=> Aa Next.js ni TypeScript utilities chhe je tamara params, searchParams, etc. ne type-safe banave chhe.
+
+✅ Example:-
+export default async function Page(props: PageProps<'/blog/[slug]'>) {
+  const { slug } = await props.params;
+  return <h1>Post: {slug}</h1>;
+}
+
+
+🧠 Advantage:-
+=> Strong TypeScript support
+=> Autocomplete for route params
+
+🎯 INTERVIEW ME MOST ASKED QUESTIONS
+| # | Question                                                    | Short Answer                                                                    |
+| - | ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 1 | What is the difference between Pages Router and App Router? | App Router uses React Server Components and layouts for better routing.         |
+| 2 | What is a layout in Next.js?                                | A shared UI wrapper that persists across pages.                                 |
+| 3 | What is a dynamic route?                                    | A route generated from variable data using `[param]`.                           |
+| 4 | What is the difference between params and searchParams?     | `params` = path data (`/user/[id]`), `searchParams` = query string (`?id=123`). |
+| 5 | What is the use of `<Link>` in Next.js?                     | Client-side navigation and prefetching.                                         |
+| 6 | Can layouts be nested?                                      | Yes, each folder can have its own layout that wraps child pages.                |
+| 7 | How does file-based routing work in Next.js?                | The folder and file structure under `app/` determines your routes.              |
+
+
+------------------------------- 5. Linking and Navigating ------------------------------------
+
+5. Linking and Navigating — Next.js ma su thai chhe
+=> Next.js ma, routes (pages) server par render thay chhe by default.
+Matlab: jab user navi page khole, to server thi HTML content aave ane browser ma show thay.
+
+Pan Next.js e normal rendering ne fast banavva mate 3 main features add kare chhe:
+1. 🧠 Prefetching
+2. 🌊 Streaming
+3. ⚡ Client-side transitions
+=> Aa 3 thi navigation bahu smooth ane responsive lage chhe — SPA (Single Page App) ni feel aave.
+
+1️⃣ Server Rendering
+=> Next.js ma Pages ane Layouts by default React Server Components chhe.
+Etle page render server upar thai ne client sudhi HTML + Data aave.
+
+=> App by default Server Components hoy che.
+
+Server rendering na 2 type hoy chhe:
+| Type                                   | When it happens  | Description                                                     |
+| -------------------------------------- | ---------------- | --------------------------------------------------------------- |
+| 🧊 **Static Rendering (Prerendering)** | Build time par   | Page ek vaar build thai ane cache ma save thay. Fast load thay. |
+| 🔥 **Dynamic Rendering**               | Request time par | Har request par page generate thay. (Dynamic data mate)         |
+
+💡 Problem:
+Dynamic routes ma, client ne wait karvu pade server response mate.
+Etle user ne lage “app slow chhe”.
+
+🩵 Solution:
+Next.js prefetch + streaming + client transition use kare chhe jethi navigation instant lage.
+
+2️⃣ Prefetching
+Meaning:
+Route (page) pehla thi background ma load karvanu — jethi user click kare tyare page already ready hoy!
+
+Example:-
+import Link from 'next/link';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <nav>
+          {/* Prefetch auto kare che */}
+          <Link href="/blog">Blog</Link>
+
+          {/* Normal link (no prefetch) */}
+          <a href="/contact">Contact</a>
+        </nav>
+        {children}
+      </body>
+    </html>
+  )
+}
+🧠 How it works:
+=> <Link> component use karso to Next.js automatically route prefetch kare chhe.
+=> User scroll kare ane link viewport ma aave → Next.js background ma page fetch kare.
+
+Static vs Dynamic route prefetch:
+| Type                 | Behavior                                                                         |
+| -------------------- | -------------------------------------------------------------------------------- |
+| 🧊 **Static Route**  | Full route prefetch thay (fast navigation).                                      |
+| 🔥 **Dynamic Route** | Partial prefetch (ya skip). If `loading.tsx` file hoy to skeleton prefetch thay. |
+
+🪄 Purpose: avoid karvu unnecessary server load for pages user shayad kabhi open na kare.
+
+3️⃣ Streaming
+=> Streaming ma server page na parts client ne send kare chhe as soon as they are ready — pura page ready thava ni wait nathi karti.
+
+🔹 User ne page na kuch parts (loading skeleton ya header) turant dekhay chhe.
+🔹 Rest content load thay pachi replace thai jay chhe.
+
+Example:
+// app/dashboard/loading.tsx
+export default function Loading() {
+  return <p>Loading Dashboard...</p>
+}
+Behind the scenes:
+=> Next.js page.tsx ne <Suspense> ma wrap kare chhe.
+=> loading.tsx ma je fallback UI chhe e show thay che jya sudhi main content load na thai.
+
+Benefits:
+✅ Immediate feedback (user ne wait lagto nathi)
+✅ Layouts interactive rahe
+✅ Fast TTFB, FCP, TTI (Core Web Vitals improve thay)
+
+4️⃣ Client-side Transitions
+=> Normal website ma, new page open karte full page reload thay → scroll reset, state lost, slow lagay.
+=> Next.js ma <Link> use karo to client-side transition thay chhe.
+
+Matlab:-
+1. Header, footer jiva shared layouts re-render nathi thata.
+2. Sirf content change thay chhe.
+3. Prefetched data thi fast transition thay chhe.
+
+🧠 Effect:
+App “server-rendered” hoy pan behave kare chhe “client-rendered SPA” ni jem — super fast, smooth navigation.
+
+🔁 Summary Table
+| Concept               | Meaning                       | Benefit               |
+| --------------------- | ----------------------------- | --------------------- |
+| **Server Rendering**  | Page render server par thay   | SEO + Fast first load |
+| **Prefetching**       | Route background ma load thay | Instant page switch   |
+| **Streaming**         | Parts of page send early      | Immediate feedback    |
+| **Client Transition** | Page change without reload    | Smooth SPA-like UX    |
+
+🚦 What can make transitions slow? (Transitions slow kem thai shake chhe?)
+=> Next.js ma navigation fast hoy chhe (thanks to prefetching, streaming, client-side transitions)
+— pan kayi situations ma transition slow feel thai shake chhe.
+Aa chhe common reasons 👇
+
+1️⃣ Dynamic routes without loading.tsx
+👉 Problem:
+Jare tame dynamic route (e.g. /blog/[slug]) open karo chho,
+to Next.js ne server thi data fetch karvu pade.
+Server response aave tya sudhi user ne blank screen dekhay — etle lagay “slow chhe”.
+
+👉 Solution:
+Dynamic route ma loading.tsx file add karo.
+Aa file loading skeleton ya spinner show kare chhe jya sudhi data load thai.
+
+📁 Example:
+// app/blog/[slug]/loading.tsx
+export default function Loading() {
+  return <p>Loading Blog Post...</p>
+}
+🔹 loading.tsx thi user ne turant visual feedback male chhe
+🔹 Prefetching pan partial thai shake chhe
+
+💡 Tip:
+Dev mode ma “Next.js Devtools” thi check kari shako ke route static chhe ke dynamic.
+
+2️⃣ Dynamic segments without generateStaticParams
+👉 Problem:
+Jo dynamic routes (like /blog/[slug]) ne static build time par generate na karo,
+to e route har request par render thase (slow).
+
+👉 Solution:
+generateStaticParams() add karo — jethi Next.js build time ma pages generate kare.
+
+📁 Example:
+// app/blog/[slug]/page.tsx
+export async function generateStaticParams() {
+  const posts = await fetch('https://.../posts').then(res => res.json())
+
+  return posts.map(post => ({
+    slug: post.slug,
+  }))
+}
+💡 Result:
+Aa thi Next.js page pre-render kari ne fast serve kare chhe.
+
+3️⃣ Slow networks
+👉 Problem:
+Agar user ni internet speed slow hoy to prefetch complete thai pehla click thai shake chhe.
+Etle page transition slow lage chhe.
+
+👉 Solution:
+Visual feedback show karo jya sudhi route load thai — e user experience improve kare chhe.
+
+Example — use useLinkStatus() hook:
+
+'use client'
+import { useLinkStatus } from 'next/link'
+
+export default function LoadingIndicator() {
+  const { pending } = useLinkStatus()
+  return (
+    <span aria-hidden className={`link-hint ${pending ? 'is-pending' : ''}`} />
+  )
+}
+
+💡 You can add CSS animation delay (100ms) jethi indicator only show thay
+jo loading genuinely long hoy.
+Athva ek progress bar pan use kari shako chho.
+
+4️⃣ Disabling Prefetching
+👉 Problem:
+Tame <Link prefetch={false}> muki ne prefetch disable karo chho to
+Next.js route pehla thi load nathi karto.
+
+Static routes — load only on click.
+Dynamic routes — wait for server render → slow transition.
+
+📁 Example:
+<Link prefetch={false} href="/blog">
+  Blog
+</Link>
+
+
+👉 When to disable:
+=> Jo tamari paas 1000+ links hoy (infinite scroll table etc.)
+=> Prefetch kare to bandwidth waste thay.
+✅ Better option: Hover-based prefetch (only when user mouse kare)
+
+Example:-
+'use client'
+import Link from 'next/link'
+import { useState } from 'react'
+
+function HoverPrefetchLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const [active, setActive] = useState(false)
+
+  return (
+    <Link
+      href={href}
+      prefetch={active ? null : false}
+      onMouseEnter={() => setActive(true)}
+    >
+      {children}
+    </Link>
+  )
+}
+Etle prefetch only when user likely click karse 👌
+
+5️⃣ Hydration not completed
+👉 Problem:
+<Link> ek Client Component chhe.
+Jo hydration (React JS load) complete nathi thayu to <Link> prefetch start nathi karto.
+
+👉 Why?
+Large JS bundles → slow hydration → delay in prefetch.
+
+👉 Solution:-
+=> Use Selective Hydration (React automatically kare chhe)
+=> Use @next/bundle-analyzer to check large bundles.
+=> Move logic from client → server jya possible hoy.
+
+🧭 Bonus: Native History API
+=> Next.js ma tame native JS methods window.history.pushState ane replaceState pan use kari shako chho
+— without page reload.
+
+▶️ pushState
+New entry add kare browser history ma.
+Example: sort order update karva.
+
+'use client'
+import { useSearchParams } from 'next/navigation'
+
+export default function SortProducts() {
+  const searchParams = useSearchParams()
+
+  function updateSorting(sortOrder: string) {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('sort', sortOrder)
+    window.history.pushState(null, '', `?${params.toString()}`)
+  }
+
+  return (
+    <>
+      <button onClick={() => updateSorting('asc')}>Sort Ascending</button>
+      <button onClick={() => updateSorting('desc')}>Sort Descending</button>
+    </>
+  )
+}
+
+🔁 replaceState
+Current history entry replace kare (back jayi nahi shake).
+Example: language (locale) switch karva.
+
+'use client'
+import { usePathname } from 'next/navigation'
+
+export function LocaleSwitcher() {
+  const pathname = usePathname()
+
+  function switchLocale(locale: string) {
+    const newPath = `/${locale}${pathname}`
+    window.history.replaceState(null, '', newPath)
+  }
+
+  return (
+    <>
+      <button onClick={() => switchLocale('en')}>English</button>
+      <button onClick={() => switchLocale('fr')}>French</button>
+    </>
+  )
+}
+
+🧾 Summary Table
+| Problem            | Cause                          | Solution              |
+| ------------------ | ------------------------------ | --------------------- |
+| Dynamic route slow | No `loading.tsx`               | Add loading.tsx       |
+| No pre-render      | Missing `generateStaticParams` | Add it                |
+| Slow internet      | Prefetch incomplete            | Add loading indicator |
+| Prefetch disabled  | `<Link prefetch={false}>`      | Use hover prefetch    |
+| Hydration delay    | Large JS                       | Optimize bundle size  |
+
+
+-------------------------------- 6. Server and Client Components ----------------------------
+
+1️⃣ Server Components — (Default che Next.js ma)
+=>  “By default, Next.js ma je layout.tsx, page.tsx hoy e Server Components hoy che.”
+=> App by default Server Components hoy che.
+
+👉 Use karo jyaare:-
+=> Data fetch karvu hoy (DB, API, etc.)
+=> Secret API keys use karva hoy
+=> Client ma unnecessary JS send nahi karvu hoy
+=> Fast page load karvu hoy (Server rendering + streaming)
+
+🔹 Example:-
+// app/[id]/page.tsx
+
+import LikeButton from '@/app/ui/like-button'
+import { getPost } from '@/lib/data'
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const post = await getPost(id)
+
+  return (
+    <div>
+      <h1>{post.title}</h1>
+      <LikeButton likes={post.likes} />
+    </div>
+  )
+}
+➡️ Aa code Server par run thay che.
+E database mathi post fetch kare che.
+Pan je <LikeButton /> che e interactive che — to e Client ma run thase.
+
+------------------------------ Client Components --------------------------
+
+2️⃣ Client Components — (User side, interactive parts)
+=> “Jya user click kare, input de, ya UI interact kare — e Client Component hoy.”
+=> Client Components ni under je pane component hache te by default client Component hache.
+
+👉 Use karo jyaare:-
+=> Buttons, Forms, Modals
+=> useState, useEffect, onClick
+=> Browser APIs (e.g. localStorage, window, navigator.geolocation)
+=> Custom React hooks use karva hoy
+
+🔹 Example:
+// app/ui/like-button.tsx
+
+'use client'  // 👈 A line required for client component
+
+import { useState } from 'react'
+
+export default function LikeButton({ likes }: { likes: number }) {
+  const [count, setCount] = useState(likes)
+
+  return (
+    <button
+      onClick={() => setCount(count + 1)}
+      className="px-4 py-2 bg-blue-600 text-white rounded"
+    >
+      ❤️ {count} Likes
+    </button>
+  )
+}
+➡️ Aa button browser ma run thay che,
+user click kare tyare state change thay — interactive behavior!
+
+3️⃣ “use client” su kare che?
+=> Top ma "use client" likhvu compulsory che to tell Next.js:
+“Aa component browser ma run karavo”
+=> Without "use client", Next.js e component ne server component ma treat kare che.
+
+🔍 4️⃣ Backend ma su thay che?
+=> Next.js backend ma 2 process kare che:-
+
+1. Server render kare che:-
+=> Server Components render kari ne ek “RSC Payload” (React Server Component Payload) banave che.
+=> E ek binary data format che je page ni structure batave che.
+
+2. Client ma send kare che:-
+=> Server thi aavti HTML + RSC Payload use thai ne
+=> Browser ma “Hydration” thay che (HTML + event attach kare che).
+
+5️⃣ Hydration su che?
+=> Hydration = React nu process jya Static HTML (server thi aaveli) ne interactive banave che.
+
+Example:-
+1. Server HTML show kare (fast)
+2. Pachhi React JS load thay → event handlers attach thay
+3. Page interactive bane (click, hover, etc.)
+
+6️⃣ Subsequent Navigation ma su thay che?
+=> Subsequent navigation” etle ke —Tamari website ma pehli vaar page load thaya pachhi,
+je baaki pages par tame navigate karo cho (click karo cho),
+tene Next.js “subsequent navigation” kahe che.
+
+=> Jare tu pehla page visit kare chuke che,
+Next.js fast banave che:-
+1. RSC Payload prefetch + cache thay che
+2. Pachhi navigation instant lage che
+3. Client Components browser ma run thay che (server ne call karva ni jarurat nathi).
+
+7️⃣ Summary Table
+| Feature                            | Server Component | Client Component  |
+| ---------------------------------- | ---------------- | ----------------- |
+| Runs on                            | Server           | Browser           |
+| Interactivity                      | ❌ No             | ✅ Yes             |
+| Can use `useState`, `useEffect`    | ❌ No             | ✅ Yes             |
+| Data fetching                      | ✅ Yes            | ⚠️ Only via props |
+| Access to `window`, `localStorage` | ❌ No             | ✅ Yes             |
+| "use client" required              | ❌ No             | ✅ Yes             |
+| Reduces JS bundle                  | ✅ Yes            | ❌ No              |
+| Security (API keys safe)           | ✅ Yes            | ❌ No              |
+
+
+🔹 Server-only
+=> “Server-only” means — aa file ya code sirf server par run thashe,
+client (browser) ma kabhi send nai thashe.
+
+👉 In short:
+“Server ma chale, browser ma na jaye.”
+
+🔹 Client-only
+=> “Client-only” means — aa file ya code sirf browser (client side) par run thashe,
+server par run nai thashe.
+
+👉 In short:
+“Browser ma chale, server ma nai.”
+
+🖥️ Example – Server-only code
+// lib/data.ts
+import 'server-only'
+
+export async function getData() {
+  const res = await fetch('https://api.example.com/data', {
+    headers: {
+      authorization: process.env.API_KEY, // secret key
+    },
+  })
+  return res.json()
+}
+
+🧩 Explanation:-
+=> import 'server-only' = aa file server-side j chale.
+=> API_KEY je secret che, browser ma leak nai thaye.
+=> Jo koi aa file client component ma import karse to error aavse build-time par.
+
+🌐 Example – Client-only code
+// lib/client-utils.ts
+import 'client-only'
+
+export function getUserLocation() {
+  return navigator.geolocation.getCurrentPosition((pos) => {
+    console.log(pos)
+  })
+}
+🧩 Explanation:-
+=> navigator browser ma j hoy che (server ma nai).
+=> import 'client-only' = aa file client-side j run thashe.
+=> Server component ma import karva try karso to error aavse.
+
+------------------------------ 7. Cache Components -------------------------------
+
+7. Cache Components ? 
+=> cache Components atle Dynamic Rendering mate use thy che.
+=> data ne fetching karava mate ke je Server side thi ave te ne cache karava mate Suspense no use thy che.
+ Cache Components means —
+Next.js ma tame decide kari sako ke page na kaya parts cache (save) karva
+ane kaya parts live (dynamic) rakha.
+
+🧠 Simple Example samajh:-
+Imagine tu ek Product Page banavi che.
+
+🧱 Static part (Cache karva jevu)
+Navbar
+Product title & image
+Footer
+
+⚙️ Dynamic part (Live data jevu)
+=> “Add to Cart” button (user specific)
+=> “Recommended products” (real-time data)
+
+Next.js automatically:-
+1. Static parts ne cache kare che (so fast load).
+2. Dynamic parts ne alag render kare che (so updated data male).
+
+🧰 Code Example:
+// Dynamic part wrapped in Suspense
+import { Suspense } from "react";
+
+export default function ProductPage() {
+  return (
+    <>
+      <Navbar /> {/* Cached part */}
+      <ProductInfo /> {/* Cached part */}
+      <Suspense fallback={<p>Loading cart...</p>}>
+        <UserCart /> {/* Dynamic live part */}
+      </Suspense>
+    </>
+  );
+}
+
+💾 use cache() Example
+=> use cache() hook data ne temporarily store kare che,
+so Next.js next time same request ma fast response aape.
+
+import { cache } from "react";
+
+const getProducts = cache(async () => {
+  const res = await fetch("https://api.example.com/products");
+  return res.json();
+});
+
+🔹 Meaning: Next.js “getProducts” ni result ne memory ma rakhe che.
+🔹 So next time same call mate new fetch karvu padtu nathi.
+
+------------------------------- 8. Fetching Data ------------------------------
+
+8. What is “Fetching Data”?
+=> Fetching data means —
+API, Database, ya koi external source mathi data laavvu (jaise blog posts, users, products, etc.)
+
+Next.js ma data fetch karva 2 jagya hoy che:-
+1. Server Components
+2. Client Components
+
+1. Fetching Data in Server Components
+=> Server Components automatically server side par render thay che,
+so tya directly API ya database call kari sako.
+
+Example 1: Using fetch()
+// app/blog/page.tsx
+export default async function Page() {
+  const data = await fetch('https://api.vercel.app/blog')
+  const posts = await data.json()
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+🧠 Explain:-
+1. fetch() use kari API call kari.
+2. await thi result wait karvo.
+3. Data parse kari JSON ma convert karyo.
+4. UI ma render karyo.
+
+fetch caching tips:- 
+=> Default ma Next.js route ne pre-render + cache kare che for performance.
+=> Jo tame har request par navo data joiye to:-
+
+fetch('https://api.vercel.app/blog', { cache: 'no-store' })
+→ means data cache nai thay, always fresh fetch thay.
+
+Example 2: Fetching from Database
+import { db, posts } from '@/lib/db'
+
+export default async function Page() {
+  const allPosts = await db.select().from(posts)
+  return (
+    <ul>
+      {allPosts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+🧠 Explain:-
+=> Server Components ma tame ORM (like Prisma, Drizzle) ya direct SQL query pan use kari sako.
+=> Safe che because server side code user ne send thatu nathi.
+
+2. Fetching Data in Client Components
+=> Client Components ma data fetch karva na 2 main ways che:
+
+✅ (a) Using React’s use() Hook + Suspense
+✅ (b) Using Community Libraries (like SWR or React Query)
+🪄 Example (React use() Hook)
+// app/blog/page.tsx
+import Posts from '@/app/ui/posts'
+import { Suspense } from 'react'
+
+export default function Page() {
+  const posts = getPosts() // Promise return kare che (await nahi karvu)
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Posts posts={posts} />
+    </Suspense>
+  )
+}
+➡️ getPosts() async data return kare che.
+➡️ <Suspense> fallback UI show kare che jya sudhi data load nai thay.
+
+👇 Client Component ma use() Hook vapravu
+'use client'
+import { use } from 'react'
+
+export default function Posts({ posts }) {
+  const allPosts = use(posts)
+
+  return (
+    <ul>
+      {allPosts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+🧠 Explain:-
+=> use() promise ne resolve kare che (data read kare che).
+=> Fallback UI show thay jya sudhi promise resolve na thay.
+
+Example (Community Library — SWR)
+'use client'
+import useSWR from 'swr'
+
+const fetcher = (url) => fetch(url).then((r) => r.json())
+
+export default function BlogPage() {
+  const { data, error, isLoading } = useSWR('https://api.vercel.app/blog', fetcher)
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+
+  return (
+    <ul>
+      {data.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+🧠 Explain:-
+=> useSWR ek React hook che (Client side data fetching mate).
+=> E automatically caching, refetching, ane stale data handle kare che.
+=> Lightweight ane fast che.
+
+🚀 Summary Table
+| Type                   | Location         | Example         | Advantage                          |
+| ---------------------- | ---------------- | --------------- | ---------------------------------- |
+| **Server Fetch**       | Server Component | `await fetch()` | Secure, Fast, No API key leak      |
+| **Client Fetch (use)** | Client Component | `use(posts)`    | Streaming data                     |
+| **Client Fetch (SWR)** | Client Component | `useSWR()`      | Auto cache, refresh, easy handling |
+
+
+Deduplicate Requests ane Cache Data su che ?
+=> Normally, jo tame ek page ma same fetch() URL 2-3 vaar call karo,
+to duplicate network requests jaay che.
+=> Next.js automatically e requests ne combine (merge) kari de che = Deduplication.
+
+✅ Example:-
+await fetch("https://api.example.com/posts")
+await fetch("https://api.example.com/posts")
+➡️ Next.js ena mate only ek request kare che internally (performance better thaay).
+
+⚙️ Request Memoization
+=> Aa process automatic thay che when:-
+=> Request method = GET or HEAD
+=> URL ane fetch options same hoy
+=> E ek render pass lifetime ma limited che (means ek render ma j cache kare che).
+
+Tame opt-out (disable) karva mate Abort signal pass kari sako:-
+
+fetch(url, { signal: new AbortController().signal })
+
+💾 Next.js Data Cache
+=> Aa ek global caching layer che je multiple requests ma data share kare che.
+
+Use:-
+fetch(url, { cache: 'force-cache' })
+→ e data ne cache kare ane reuse kare future requests ma.
+
+Jo tame live/fresh data joiye to use:-
+fetch(url, { cache: 'no-store' })
+
+⚙️ Non-fetch data caching (ORM / DB)
+=> Jo tame fetch() ni jagyae ORM (like Prisma, Drizzle) use karo,
+to tame React ni cache() function vapri ne cache karva sako.
+
+Example:-
+import { cache } from 'react'
+import { db, posts, eq } from '@/lib/db'
+
+export const getPost = cache(async (id: string) => {
+  const post = await db.query.posts.findFirst({
+    where: eq(posts.id, parseInt(id)),
+  })
+  return post
+})
+🧠 Meaning:-
+=> cache() e function ne memoize kare che.
+=> Same id mate next request ma DB query again nai thay.
+
+Streaming in Next.js
+💡 Problem:-
+Normally, server render ma pura page wait kare che jya sudhi badha data fetch thai jaye.
+Ethi slow API hoy to pura page delay thay.
+
+✅ Solution: Streaming
+Streaming means →
+Page na HTML ne parts (chunks) ma server thi client taraf moklavu —
+so user ne pehla partial content dekhay, baaki load thay pachhi.
+
+🔄 How Streaming Works
+1. Server first sends a static shell (layout, header, skeleton UI, etc.)
+2. Slow parts wrapped in <Suspense> load progressively in background.
+3. When ready, e parts dynamically replace fallback UI.
+
+2 Ways to Implement Streaming
+
+🅰️ Using loading.js
+Next.js ma tame route folder ma loading.tsx add karo:
+
+app/blog/page.tsx
+app/blog/loading.tsx
+
+// app/blog/loading.tsx
+export default function Loading() {
+  return <div>Loading...</div>
+}
+
+
+🧠 Meaning:-
+=> Automatically Next.js page ne wrap kare che <Suspense> ma.
+=> Layout load thay — page data aave tyare loading UI replace thay.
+
+🅱️ Using <Suspense> manually
+
+import { Suspense } from 'react'
+import BlogList from '@/components/BlogList'
+import BlogListSkeleton from '@/components/BlogListSkeleton'
+
+export default function BlogPage() {
+  return (
+    <div>
+      <header>
+        <h1>Welcome to the Blog</h1>
+        <p>Read the latest posts below.</p>
+      </header>
+      <main>
+        <Suspense fallback={<BlogListSkeleton />}>
+          <BlogList />
+        </Suspense>
+      </main>
+    </div>
+  )
+}
+🧠 Meaning:-
+=> <Suspense> fallback UI show kare che (like skeleton loader).
+=> <BlogList> data load thay tyare render thay.
+
+
+💡 Tips for Better UX
+=> Fallback UI meaningful banavo — e user ne batave ke app “kaam karu che”.
+Example: Skeletons, spinners, ya partial info.
+
+⚡ Sequential vs Parallel Data Fetching
+🔹 Sequential Fetching
+Each fetch waits for previous one → slow
+
+const artist = await getArtist(username)
+const albums = await getAlbums(username)
+
+🔹 Parallel Fetching
+Start all fetch together → fast
+
+const artistData = getArtist(username)
+const albumsData = getAlbums(username)
+
+const [artist, albums] = await Promise.all([artistData, albumsData])
+
+🧠 Promise.all = start together, wait for all finish
+Promise.allSettled = even if one fails, others continue.
+
+⚙️ Preloading Data
+Sometimes tame pehla thi data fetch start kari sako for better speed:
+
+import { getItem, checkIsAvailable } from '@/lib/data'
+
+export default async function Page({ params }) {
+  const { id } = await params
+  preload(id) // start fetching early
+  const isAvailable = await checkIsAvailable()
+  return isAvailable ? <Item id={id} /> : null
+}
+
+export const preload = (id) => {
+  void getItem(id) // start async call but don't wait
+}
+
+🔒 Combine Cache + Server Only
+=> Server-only code ne accidentally client par run na thay te mate:
+
+import { cache } from 'react'
+import 'server-only'
+
+export const getItem = cache(async (id) => {
+  const res = await fetch(`/api/item/${id}`)
+  return res.json()
+})
+➡️ 'server-only' ensure kare che ke aa code client bundle ma na jaye.
+➡️ cache() avoid kare che duplicate calls.
+
+🧾 Summary Table
+| Concept              | Meaning                      | Example                       |
+| -------------------- | ---------------------------- | ----------------------------- |
+| **Deduplication**    | Same request → single fetch  | `fetch(url)` twice = 1 call   |
+| **Data Cache**       | Global cache layer           | `cache: 'force-cache'`        |
+| **Streaming**        | Load parts of page gradually | `<Suspense>` or `loading.tsx` |
+| **Sequential Fetch** | One-by-one calls             | `await` chain                 |
+| **Parallel Fetch**   | Start all fetches together   | `Promise.all()`               |
+| **Preload**          | Start fetching early         | `void getItem(id)`            |
+| **server-only**      | Restrict code to server      | `import 'server-only'`        |
+| **cache()**          | Memoize async data function  | `cache(async ()=>{})`         |
+
+
+------------------------------- 9. Updating Data -------------------------
+
+What are Server Functions?
+👉 Server Function ek async function hoti hai jo sirf server pe run hoti hai.
+Client (browser) se jab user kuch action karta hai — jaise form submit, button click — tab ye function server pe call hoti hai.
+
+Isse aap database ya file update kar sakte ho bina API route likhe 😍
+
+⚙️ Basic Syntax
+'use server'
+
+export async function createPost(formData: FormData) {
+  const title = formData.get('title')
+  const content = formData.get('content')
+
+  // Update your data yaha karo
+  // Example: Save to JSON, database, etc.
+
+  // Cache refresh karne ke liye
+  revalidatePath('/blog')
+
+  // Redirect karne ke liye
+  redirect('/blog')
+}
+Yaha 'use server' likhne se Next.js samajh jata hai
+→ "Ye function sirf server pe run hoga" 🧩
+
+💡 Server Component ke andar bhi likh sakte ho
+=> Agar aap page.tsx me ho (Server Component hai by default), to aap function andar likh sakte ho:
+
+export default function Page() {
+  async function createPost(formData: FormData) {
+    'use server'
+    // yaha data update karlo
+  }
+
+  return <form action={createPost}>...</form>
+}
+Isme fayda ye hai ki form tab bhi submit hoga agar JavaScript load nahi hua hai!
+(Progressive enhancement — yani page reload karke bhi chalega ✅)
+
+🚫 Client Components me “use server” nahi chalega
+=> Client Components (jisme 'use client' likha hai) ke andar aap server function define nahi kar sakte,
+lekin use/import kar sakte ho:
+
+// app/lib/actions.ts
+'use server'
+
+export async function createPost() {
+  // database update
+}
+
+// app/ui/Button.tsx
+'use client'
+
+import { createPost } from '@/app/lib/actions'
+
+export function Button() {
+  return <button formAction={createPost}>Create</button>
+}
+🟢 Yaha button jab click hota hai → formAction call hota hai → createPost() server pe run hota hai.
+
+
+💫 Passing Server Action as Prop
+=> Aap server function ko Client Component me prop ke through pass bhi kar sakte ho:
+
+<ClientComponent updateItemAction={updateItem} />
+
+// app/client-component.tsx
+'use client'
+
+export default function ClientComponent({ updateItemAction }) {
+  return <form action={updateItemAction}>...</form>
+}
+
+🧩 How to Call Server Functions
+2 main ways:-
+
+1. Forms ke through
+2. Event handlers (onClick, useEffect) ke through
+
+1. Form se call karna (most common)
+import { createPost } from '@/app/lib/actions'
+
+export function Form() {
+  return (
+    <form action={createPost}>
+      <input name="title" />
+      <input name="content" />
+      <button type="submit">Create</button>
+    </form>
+  )
+}
+Jab form submit hota hai →
+Server function call hota hai with a FormData object.
+
+2. Event handler (Client Component) se call karna
+'use client'
+
+import { incrementLike } from './actions'
+import { useState } from 'react'
+
+export default function LikeButton({ initialLikes }) {
+  const [likes, setLikes] = useState(initialLikes)
+
+  return (
+    <>
+      <p>Total Likes: {likes}</p>
+      <button
+        onClick={async () => {
+          const updated = await incrementLike()
+          setLikes(updated)
+        }}
+      >
+        Like 👍
+      </button>
+    </>
+  )
+}
+
+⏳ Pending (Loading) State dikhana
+=> React ka useActionState() hook pending state dikhane ke liye hai:
+
+'use client'
+
+import { useActionState, startTransition } from 'react'
+import { createPost } from '@/app/lib/actions'
+
+export function Button() {
+  const [state, action, pending] = useActionState(createPost, false)
+
+  return (
+    <button onClick={() => startTransition(action)}>
+      {pending ? 'Loading...' : 'Create Post'}
+    </button>
+  )
+}
+
+🔄 Cache Revalidation
+=> Agar aap data change karte ho (create/update/delete),to Next.js ka cache refresh karna padta hai:
+
+import { revalidatePath } from 'next/cache'
+
+export async function createPost(formData: FormData) {
+  'use server'
+  // Update data
+  revalidatePath('/posts') // refresh UI
+}
+
+Redirect karna
+=> Data update hone ke baad page change karna ho to:
+
+import { redirect } from 'next/navigation'
+
+export async function createPost(formData: FormData) {
+  'use server'
+  // Update data
+  revalidatePath('/posts')
+  redirect('/posts') // page change
+}
+⚠️ redirect() ke baad code aage execute nahi hota!
+
+🍪 Cookies manage karna
+=> Server Function ke andar aap cookies bhi handle kar sakte ho:
+
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function exampleAction() {
+  const cookieStore = await cookies()
+  cookieStore.set('name', 'Delba')  // set cookie
+  cookieStore.delete('name')        // delete cookie
+}
+
+🔁 useEffect se automatic call
+=> Agar aap chaho to server function component mount hone par call kar sakte ho:
+
+'use client'
+
+import { incrementViews } from './actions'
+import { useEffect, useState, useTransition } from 'react'
+
+export default function ViewCount({ initialViews }) {
+  const [views, setViews] = useState(initialViews)
+  const [isPending, startTransition] = useTransition()
+
+  useEffect(() => {
+    startTransition(async () => {
+      const updated = await incrementViews()
+      setViews(updated)
+    })
+  }, [])
+
+  return <p>Total Views: {views}</p>
+}
+
+🧾 Summary 
+| Action                    | Kaha likho                 | Kaise chalega            |
+| ------------------------- | -------------------------- | ------------------------ |
+| `'use server'`            | File ya function ke top pe | Server-only function     |
+| `<form action={fn}>`      | Form submit karega         | Automatic call           |
+| `formAction`              | Button click se call       | Manual call              |
+| `revalidatePath('/blog')` | Cache update karega        | UI refresh               |
+| `redirect('/blog')`       | Page redirect karega       | Next.js handled redirect |
+
+
+------------------------------- 10. Caching and Revalidating ------------------------------
+
+1. Caching su che?
+=> Caching etle —“Ek vaar data fetch karine, ene memory (cache) ma store karvo,
+jethi biji vaar fast load thai, server par load na pade.” ⚡
+
+👉 Example:
+Tame blog list load karo —Next.js ene cache ma muki de che.
+Pachhi user feri thi page khole to, Next.js fast serve kare che cache mathi —
+navi request moklavani jarur nathi.
+
+2. “Revalidation” su che?
+=> Revalidation etle —“Cache ma data stale (purano) thai jaye to,
+ene fresh data thi update karvo — bina poori app rebuild karya.”
+
+➡️ So, caching speed ape che
+➡️ ane revalidation freshness ape che ✅
+
+⚙️ Next.js ma Caching & Revalidation karva na 5 main tools che:
+| API                | Kaam                                                       |
+| ------------------ | ---------------------------------------------------------- |
+| `fetch()`          | Data fetch karvu ane cache/revalidate karvu                |
+| `unstable_cache()` | Async function ya DB query cache karvi                     |
+| `revalidatePath()` | Khas route ni cache refresh karvi                          |
+| `revalidateTag()`  | Khas tag thi related cache refresh karvi                   |
+| `updateTag()`      | Cache immediately expire karvi (server action ma use thay) |
+
+1️⃣ fetch()
+=> By default, fetch() cache nathi karti.
+Tame manually set karvi pade:
+
+await fetch('https://api.example.com', { cache: 'force-cache' })
+
+Aa request cache ma store thai jase.Next time, data fast load thase.
+
+Ane agar tame chaho ke data thodi vaar pachi auto refresh thay —
+to next.revalidate use karo:
+
+await fetch('https://api.example.com', {
+  next: { revalidate: 3600 } // 3600 sec = 1 hour
+})
+
+➡️ Etle 1 hour pachi cache refresh thai jase background ma.
+
+2️⃣ unstable_cache()
+=> Aa fetch() jevu che,but custom functions ya DB queries cache karva mate vapraye che.
+
+Example:-
+import { unstable_cache } from 'next/cache'
+
+const getCachedUser = unstable_cache(
+  async () => {
+    return db.user.findFirst({ where: { id: userId } })
+  },
+  [userId], // cache key
+  {
+    tags: ['user'],      // tag add karvi
+    revalidate: 3600,    // 1 hour pachi revalidate
+  }
+)
+➡️ So, tame getCachedUser() call karo to,
+Next.js ene cache kare ane auto revalidate kare.
+
+3️⃣ revalidateTag()
+=> Aa ek powerful function che tamare “tag” adharit cache refresh karvi hoy to use karo.
+
+➡️ Meaning: “Tag ne stale mark karo (puranu data) — background ma navo data fetch thase.”
+🧠 Behavior:-
+=> User ne old (cached) data turant male che (fast).
+=> Background ma Next.js navo data fetch kare che ane cache update kare che.
+
+📘 Example:-
+import { revalidateTag } from 'next/cache'
+
+export async function updatePost() {
+  // Update karo database ma
+  revalidateTag('posts') // background ma refresh thase
+}
+🔁 Result:-
+=> User ne site immediately load thase (no delay)
+=> But background ma fresh data fetch thai jase
+
+import { revalidateTag } from 'next/cache'
+
+export async function updateUser() {
+  // Database update
+  revalidateTag('user', 'max') // stale-while-revalidate
+}
+➡️ Etle jya jya ‘user’ tag vaprayu che —
+badha cache entries refresh thai jase ek sathe 🔄
+
+🧠 “max” profile vapraye to stale data serve thay,
+background ma navo data fetch thay — fast + fresh combo!
+
+4️⃣ revalidatePath()
+=> Aa route-level revalidation kare che.
+
+import { revalidatePath } from 'next/cache'
+
+export async function updateUser() {
+  // Update DB
+  revalidatePath('/profile') // refresh profile page cache
+}
+➡️ So jya /profile pre-render thayu hatu,
+ena cache clear thai jase ane fresh render thase.
+
+5️⃣ updateTag()
+=> Aa mostly Server Actions ma use thay che.
+revalidateTag() ni jem che,but difference — immediately expire kare che cache
+(stale-while-revalidate nathi karto).
+
+=> ➡️ Meaning: “Immediately invalidate karo cache — navo data laavo right now!”
+🧠 Behavior:-
+=> Cache expire thai jase instantly.
+=> Next request wait kare che fresh data mate (no stale data).
+
+📘 Example (usually Server Actions ma vapray che):-
+
+import { updateTag } from 'next/cache'
+export async function createPost(formData: FormData) {
+  // New post DB ma add karo
+  updateTag('posts') // turant cache expire thai jase
+}
+🔁 Result:-
+=> Agli request ma fresh data j male che
+=> No old data show thati (read-your-own-writes scenario)
+
+import { updateTag } from 'next/cache'
+
+export async function createPost(formData: FormData) {
+  // Create new post
+  updateTag('posts') // immediately expire
+  redirect('/posts')
+}
+➡️ Etle “read-your-own-writes” scenario ma (jevo ke user turant navi post joye) —
+aa best option che ✅
+
+🧩 Summary Table:
+| Function                                  | Kaam                         | Use Case              |
+| ----------------------------------------- | ---------------------------- | --------------------- |
+| `fetch(..., { cache: 'force-cache' })`    | API response cache karvu     | Simple GET APIs       |
+| `fetch(..., { next: { revalidate: 60 }})` | Auto revalidate after X sec  | Periodic data refresh |
+| `unstable_cache()`                        | Async func ya DB cache karvi | Query result caching  |
+| `revalidatePath('/route')`                | Specific page cache refresh  | After update/delete   |
+| `revalidateTag('tag')`                    | Tagged cache refresh         | Multiple related data |
+| `updateTag('tag')`                        | Immediate cache clear        | Server Action updates |
+
+
+
+----------------------------------- 11. Error Handling ---------------------------------
+
+Error Handling ma 2 types na error hoy che:
+| Type                       | Meaning                                                        |
+| -------------------------- | -------------------------------------------------------------- |
+| ✅ **Expected Errors**      | Je normal flow ma aave — jaise form validation fail, API error |
+| 💥 **Uncaught Exceptions** | Je unexpected bugs che — jaise null reference, crash, etc.     |
+
+1️⃣ Expected Errors (normal errors)
+=> Aa errors tame gracefully handle kari sako cho app crash thay vina.
+
+📍 Example: Server Action ma handle karvu
+
+👉 Instead of using try/catch and throw,
+Next.js suggest kare che ke tame return value ma error message aapo.
+
+'use server'
+
+export async function createPost(prevState: any, formData: FormData) {
+  const title = formData.get('title')
+  const content = formData.get('content')
+
+  const res = await fetch('https://api.vercel.app/posts', {
+    method: 'POST',
+    body: { title, content },
+  })
+  const json = await res.json()
+
+  if (!res.ok) {
+    // Instead of throwing, return a message
+    return { message: 'Failed to create post' }
+  }
+
+  return { message: 'Post created successfully!' }
+}
+➡️ Etle app crash nathi thati,pan tame UI ma user ne error show kari sako cho.
+
+🧩 useActionState() thi error UI ma show karvu
+=> Aa hook Client Component ma use thay che Server Action na state manage karva mate.
+
+'use client'
+import { useActionState } from 'react'
+import { createPost } from '@/app/actions'
+
+const initialState = { message: '' }
+
+export function Form() {
+  const [state, formAction, pending] = useActionState(createPost, initialState)
+
+  return (
+    <form action={formAction}>
+      <label>Title</label>
+      <input type="text" name="title" required />
+
+      <label>Content</label>
+      <textarea name="content" required />
+
+      {state?.message && <p>{state.message}</p>}
+
+      <button disabled={pending}>Create Post</button>
+    </form>
+  )
+}
+➡️ So, agar API fail thay state.message ma error message show thase. No crash, only feedback ✅
+
+2️⃣ Handling Errors in Server Components
+=> Server Components ma fetch() karta hoy,to res.ok check karine tame error handle kari sako cho.
+
+export default async function Page() {
+  const res = await fetch('https://api.example.com/posts')
+  const data = await res.json()
+
+  if (!res.ok) {
+    return 'There was an error fetching posts.'
+  }
+
+  return <div>{data.title}</div>
+}
+➡️ Simple “conditional rendering” thi handle thai jaye.
+
+🔍 3️⃣ notFound() (404 handling)
+=> Agar koi resource exist nathi karto (for example — slug match nathi thayo),
+to tame Next.js ni built-in notFound() function vapri sako cho.
+
+import { notFound } from 'next/navigation'
+import { getPostBySlug } from '@/lib/posts'
+
+export default async function Page({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug)
+
+  if (!post) {
+    notFound()
+  }
+
+  return <div>{post.title}</div>
+}
+Ane same folder ma not-found.tsx banaavo:
+
+export default function NotFound() {
+  return <div>404 - Page Not Found 😢</div>
+}
+➡️ Etle custom 404 UI mile che, automatically render thai jase.
+
+4️⃣ Uncaught Exceptions (unexpected bugs)
+=> Aa “serious” errors che — je crash karave che Aa handle karva mate Next.js ma Error Boundaries che.
+
+🧱 Nested Error Boundaries (error.tsx)
+=> Tame koi route folder (jaise /dashboard) ma error.tsx file banaavi sako cho:
+
+'use client'
+import { useEffect } from 'react'
+
+export default function Error({ error, reset }: { error: Error, reset: () => void }) {
+  useEffect(() => {
+    console.error(error)
+  }, [error])
+
+  return (
+    <div>
+      <h2>Something went wrong! 😬</h2>
+      <button onClick={() => reset()}>Try again</button>
+    </div>
+  )
+}
+➡️ Aa component automatically render thase,jya koi error aave to — instead of crashing whole app.
+➡️ reset() try kare che page re-render karva.
+
+🧩 Error Hierarchy (nested concept)
+=> Next.js ma tame multiple levels par error.tsx muki sako cho:-
+=> app/error.tsx → entire app ni error handle kare
+=> app/dashboard/error.tsx → only dashboard section ni errors handle kare
+Errors nearest parent boundary sudhi bubble up thay che.
+
+Event Handlers ma Errors
+=> Error boundaries rendering time ma errors pakde che,
+pan event handler (jaise button click) ma nahi pakde.
+
+So, event handlers ma manually handle karvu pade:-
+'use client'
+import { useState } from 'react'
+
+export function Button() {
+  const [error, setError] = useState<Error | null>(null)
+
+  const handleClick = () => {
+    try {
+      throw new Error('Something broke!')
+    } catch (err) {
+      setError(err as Error)
+    }
+  }
+
+  if (error) return <p>{error.message}</p>
+
+  return <button onClick={handleClick}>Click me</button>
+}
+
+⏳ Errors in useTransition
+=> Agar tame useTransition vapro cho ane
+error throw karo cho — to e nearest error boundary sudhi bubble up thay che:
+
+'use client'
+import { useTransition } from 'react'
+
+export function Button() {
+  const [pending, startTransition] = useTransition()
+
+  const handleClick = () =>
+    startTransition(() => {
+      throw new Error('Oops! Exception 🚨')
+    })
+
+  return <button onClick={handleClick}>Click me</button>
+}
+
+🌍 Global Errors (global-error.tsx)
+=> Agar koi root level crash thay Next.js ena mate app/global-error.tsx file vapre che.
+=> Aa global error page ma <html> ane <body> tags jaruri che (kyare root layout replace kare che).
+
+'use client'
+
+export default function GlobalError({ error, reset }: { error: Error, reset: () => void }) {
+  return (
+    <html>
+      <body>
+        <h2>Something went wrong globally 😢</h2>
+        <button onClick={() => reset()}>Try again</button>
+      </body>
+    </html>
+  )
+}
+
+🧩 Quick Recap Table:
+| Type                   | File / Hook               | Purpose                          |
+| ---------------------- | ------------------------- | -------------------------------- |
+| ✅ Expected Errors      | `useActionState`          | Handle normal API/form errors    |
+| ⚠️ 404 Errors          | `not-found.tsx`           | Show custom “not found” page     |
+| 💥 Uncaught Exceptions | `error.tsx`               | Catch unexpected runtime errors  |
+| 🌍 Global Error        | `global-error.tsx`        | Handle root-level crashes        |
+| 🧠 Manual Handling     | `try/catch` or `useState` | For event handlers or async work |
+
+
+-------------------------------------- 12. CSS ---------------------------------------
+
+1. Tailwind CSS
+👉 Tailwind ek utility-first CSS framework hai.
+Matlab — aap pre-defined classes ka use karke design bana sakte ho (bina CSS likhe).
+
+🧩 Setup Steps:
+pnpm add -D tailwindcss @tailwindcss/postcss
+
+postcss.config.mjs me likho:-
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+}
+
+Phir app/globals.css me import karo:-
+@import 'tailwindcss';
+
+
+Aur app/layout.tsx me:-
+import './globals.css'
+
+
+Ab aap classes use kar sakte ho:-
+<h1 className="text-4xl font-bold text-blue-500">Hello Next.js!</h1>
+
+✅ Fast, responsive aur modern UI ke liye best.
+
+2. CSS Modules
+👉 CSS Modules aapke styles ko component ke andar hi limit kar dete hain.
+To class name clash nahi hota.
+
+Example:-
+app/blog/blog.module.css
+
+.blog {
+  padding: 24px;
+  background: lightblue;
+}
+
+app/blog/page.tsx
+
+import styles from './blog.module.css'
+
+export default function Blog() {
+  return <div className={styles.blog}>Blog Page</div>
+}
+✅ Component-specific styling ke liye perfect.
+
+3. Global CSS
+👉 Yeh pura app me apply hota hai (jaise background color, fonts, etc.)
+
+Example:-
+app/global.css
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+Phir layout.tsx me import karo:-
+import './global.css'
+
+✅ App-wide consistent design ke liye use hota hai.
+
+🌐 4. External Stylesheets
+👉 Agar aap Bootstrap, Animate.css, ya koi aur library use karna chahte ho:
+
+import 'bootstrap/dist/css/bootstrap.css'
+
+
+Phir direct classes use karo:-
+
+<button className="btn btn-primary">Click</button>
+
+✅ External libraries ke styles directly la sakte ho.
+
+💅 5. Sass / CSS-in-JS
+=> Sass: Advance CSS likhne ke liye (nesting, variables, mixins)
+=> CSS-in-JS: (jaise styled-components, emotion) jaha CSS JS ke andar likhte ho.
+
+Example:-
+import styled from 'styled-components'
+
+const Button = styled.button`
+  background: blue;
+  color: white;
+  padding: 10px;
+`
+✅ Large apps me maintain karna easy hota hai.
+
+🧠 CSS Ordering & Optimization
+Next.js production build me sab CSS ko optimize karta hai:-
+=> Duplicate CSS hata deta hai
+=> Minimal CSS load karta hai per route
+=> CSS load hoti hai even agar JS disable ho
+
+💡 Recommendations (Best Practice)
+✅ Use Tailwind for most design
+✅ Use CSS Modules for custom unique styles
+✅ Use Global CSS for overall app layout
+✅ Use external stylesheets for 3rd-party UI (like Bootstrap)
+
+------------------------------ 13. Image Optimization ----------------------
+
+1. Next.js <Image> Component kya karta hai?
+=> Next.js ka <Image> tag basically HTML <img> ka advanced version hai.
+Yeh image loading ko fast, optimized aur responsive banata hai 🚀
+
+🔥 Features (Fayde)
+
+1. Size Optimization →
+Automatically har device ke liye correct size ka image load karta hai (jaise mobile ke liye chhota, desktop ke liye bada).
+⚙️ WebP jaisi modern format me image serve karta hai.
+
+2. Visual Stability →
+Jab image load hoti hai tab layout jump nahi hota (Cumulative Layout Shift avoid karta hai).
+
+3. Lazy Loading →
+Image tabhi load hoti hai jab wo screen pe aane wali hoti hai (viewport me enter karti hai) — page fast banta hai.
+
+4. Blur Placeholder →
+Jab tak image load ho rahi hai, ek blur version dikhata hai.
+
+5. Remote Image Support →
+Aap external URLs (jaise AWS, Cloudinary) se image la sakte ho aur Next.js unhe bhi optimize karta hai.
+
+Local Images (Public Folder)
+=> Local images public folder me rakho (ye root directory me hota hai).
+
+Phir image ko import karke use karo:-
+import Image from 'next/image'
+
+export default function Page() {
+  return (
+    <Image
+      src="/profile.png"
+      alt="Picture of the author"
+      width={500}
+      height={500}
+    />
+  )
+}
+✅ Ye image /public/profile.png se aayegi.
+✅ Width aur height dene se layout shift nahi hoga.
+
+🧠 Static Import ka fayda
+
+Agar aap image ko import karte ho:-
+import Image from 'next/image'
+import ProfileImage from './profile.png'
+
+export default function Page() {
+  return <Image src={ProfileImage} alt="Author" placeholder="blur" />
+}
+Next.js automatically:-
+1. Image ka width/height detect karega
+2. Blur placeholder generate karega
+3. Aur optimize karega ⚡
+
+🌐 Remote Images
+Agar image kisi external URL pe hai (jaise AWS ya Cloudinary):-
+
+<Image
+  src="https://s3.amazonaws.com/my-bucket/profile.png"
+  alt="Picture of the author"
+  width={500}
+  height={500}
+/>
+⚠️ Note:-
+=> Width aur height manually dena padta hai
+=> Next.js ko batana padta hai ki kaunse external domains safe hain
+
+🔒 Allow Remote Domains
+next.config.ts me likho:-
+
+import type { NextConfig } from 'next'
+
+const config: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's3.amazonaws.com',
+        pathname: '/my-bucket/**',
+      },
+    ],
+  },
+}
+
+export default config
+✅ Isse Next.js ko pata chalega ki AWS S3 ke ye images allowed hain.
+
+
+⚡ Summary (Ek Line Me)
+| Feature          | Fayda                                 |
+| ---------------- | ------------------------------------- |
+| `next/image`     | Fast, optimized aur responsive images |
+| Local images     | Directly from `/public` folder        |
+| Remote images    | Allowed domains se optimized          |
+| Lazy loading     | Faster load time                      |
+| Blur placeholder | Smooth loading effect                 |
+
+
+------------------------- 14. Font Optimization --------------------
+
+Font Optimization kya hai?
+=> Next.js me next/font ek built-in system hai jo tumhare fonts ko automatically optimize karta hai taaki:
+✅ Website fast load ho
+✅ External requests (like Google Fonts ke CDN) na lagein
+✅ Layout shift (text jump) na ho
+
+Yaani — fonts self-hosted ho jaate hain (tumhare server se load hote hain, Google ke nahi).
+
+2 Ways to Use Fonts
+1️⃣ Google Fonts (next/font/google)
+=> Next.js directly Google Fonts se font download karke tumhare project ke andar host kar deta hai.
+
+Example 👇
+
+// app/layout.tsx
+import { Roboto } from 'next/font/google'
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: '400', // optional (for variable fonts, zarurat nahi hoti)
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={roboto.className}>
+      <body>{children}</body>
+    </html>
+  )
+}
+🧠 Explanation:
+=> Roboto() → Google font import ho gaya
+=> subsets: ['latin'] → Latin alphabet ke glyphs load honge
+=> className={roboto.className} → Poore HTML tag pe font apply ho gaya
+=> ⚡ Result → Font page ke saath hi load hota hai, koi external Google CDN request nahi lagti.
+
+2️⃣ Local Fonts (next/font/local)
+=> Agar tumhare paas apna custom font hai (.woff, .woff2, .ttf etc.), to tum usse bhi optimize kar sakte ho.
+
+Example 👇
+
+// app/layout.tsx
+import localFont from 'next/font/local'
+
+const myFont = localFont({
+  src: './my-font.woff2', // app folder ke andar font file
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={myFont.className}>
+      <body>{children}</body>
+    </html>
+  )
+}
+Ya agar tumhare font ke multiple variants hain (bold, italic, etc.) 👇
+
+const roboto = localFont({
+  src: [
+    { path: './Roboto-Regular.woff2', weight: '400', style: 'normal' },
+    { path: './Roboto-Italic.woff2', weight: '400', style: 'italic' },
+    { path: './Roboto-Bold.woff2', weight: '700', style: 'normal' },
+    { path: './Roboto-BoldItalic.woff2', weight: '700', style: 'italic' },
+  ],
+})
+🧠 Explanation:
+=> Tum apne font ke sab versions define kar sakte ho.
+=> Next.js automatically font-face generate karta hai aur preload bhi kar deta hai.
+
+✨ Benefits of next/font
+
+| Feature                 | Benefit                               |
+| ----------------------- | ------------------------------------- |
+| ⚡ Self-Hosting          | Font tumhare domain se load hota hai  |
+| 🔒 Privacy              | No Google CDN requests                |
+| 🧱 No Layout Shift      | Text jump hone se bachta hai          |
+| 🎯 Automatic Preloading | Fast page render                      |
+| 🔤 Scoped Fonts         | Specific component tak font lagta hai |
+
+✅ Best Practice
+=> Global font → app/layout.tsx me lagao
+=> Component-specific font → sirf us component ke andar import karo
+=> Variable fonts (e.g. Geist, Inter) use karo for better performance
+
+
+--------------------------- 15. Metadata and OG images ----------------------
+
+15. Metadata kya hota hai?
+=> Metadata basically woh information hoti hai jo browser aur search engines ko batati hai ke aapki page ke baare me kya hai — jaise:
+
+1. 🧠 Title (page ka naam)
+2. 📝 Description (short summary)
+3. 🖼️ OG (Open Graph) image — jab aap link WhatsApp ya Twitter me share karte ho to image dikhti hai
+4. 🔖 Favicon (chhoti site icon jo tab me dikhti hai)
+5. 🗺️ Sitemap / robots.txt (SEO ke liye)
+Next.js me ye sab automatically handle kar sakte ho through Metadata APIs.
+
+2 Ways to Add Metadata
+1️⃣ Static Metadata (fixed info)
+
+Agar page ka metadata fix hai, aap simple metadata object export kar sakte ho.
+
+// app/blog/layout.tsx
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'My Blog',
+  description: 'Welcome to my awesome blog!',
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <section>{children}</section>
+}
+👉 Ye build time pe fix ho jata hai (static).
+
+2️⃣ Dynamic Metadata (data ke basis pe change hone wala)
+=> Agar page ka title ya description API ya database se aata hai, to generateMetadata() function use karo:
+
+// app/blog/[slug]/page.tsx
+import type { Metadata } from 'next'
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = await fetch(`https://api.vercel.app/blog/${params.slug}`).then(res => res.json())
+
+  return {
+    title: post.title,
+    description: post.description,
+  }
+}
+
+export default function Page({ params }: { params: { slug: string } }) {
+  return <h1>Blog Post: {params.slug}</h1>
+}
+🪄 Isse har post ke liye unique title/description milega.
+
+⚡ Streaming Metadata
+=> Next.js dynamic pages me metadata ko stream karta hai matlab page load hone me delay nahi hota.
+=> Pehle content show hota hai
+=> Baad me metadata <head> me inject hota hai
+Bots (like Google, Twitter, etc.) ke liye streaming disable hoti hai — taki SEO me issue na aaye.
+
+🔁 Memoizing Data (Duplicate Fetch Avoid Karna)
+=> Agar aap same data dono jagah fetch kar rahe ho — ek generateMetadata() me aur ek page me —
+to cache() use karo:
+
+import { cache } from 'react'
+import { db } from '@/app/lib/db'
+
+export const getPost = cache(async (slug: string) => {
+  return db.query.posts.findFirst({ where: { slug } })
+})
+
+🖼️ File-based Metadata
+Special files ke through Next.js automatically metadata handle karta hai:
+
+| File name             | Use                       |
+| --------------------- | ------------------------- |
+| `favicon.ico`         | Browser tab icon          |
+| `apple-icon.jpg`      | iPhone home screen icon   |
+| `opengraph-image.png` | OG image for social share |
+| `twitter-image.png`   | Twitter share image       |
+| `robots.txt`          | SEO crawling rules        |
+| `sitemap.xml`         | Sitemap for Google        |
+
+
+Static OG Image Example
+=> Agar sab pages ke liye same OG image chahiye:
+
+app/opengraph-image.png
+
+Agar blog page ke liye alag chahiye:-
+app/blog/opengraph-image.png
+
+⚙️ Dynamic OG Image Example
+=> Agar har blog post ke liye unique OG image generate karna hai:
+
+// app/blog/[slug]/opengraph-image.tsx
+import { ImageResponse } from 'next/og'
+import { getPost } from '@/app/lib/data'
+
+export const size = { width: 1200, height: 630 }
+export const contentType = 'image/png'
+
+export default async function Image({ params }: { params: { slug: string } }) {
+  const post = await getPost(params.slug)
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          fontSize: 64,
+          background: '#fff',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        📝 {post.title}
+      </div>
+    )
+  )
+}
+➡️ Isme Next.js background me OG image generate karega (server-side JSX se image banti hai 😎).
+
+💡 Summary 
+| Feature               | Purpose                                  |
+| --------------------- | ---------------------------------------- |
+| `metadata`            | Static meta info                         |
+| `generateMetadata()`  | Dynamic meta info                        |
+| `opengraph-image.tsx` | Dynamic OG image banata hai              |
+| `favicon.ico`         | Browser tab icon                         |
+| `cache()`             | Data ko repeat fetch hone se bachata hai |
+| Streaming metadata    | Fast render, no delay                    |
+
+
+--------------------------- 16. Route Handlers --------------------------
+
+16. Route Handlers kya hote hain?
+👉 Route Handlers Next.js me ek feature hai jo aapko custom backend API endpoints banane deta hai — bina alag backend setup kiye.
+=> Ye basically “API Routes” (pages folder ke andar) ka new version hai, lekin App Router ke liye.
+
+Simple words me:-
+Route Handlers = API routes inside the app folder 🔥
+
+📁 Kaha likhte hain Route Handlers
+
+Aap koi bhi folder ke andar route.ts ya route.js file banate ho.
+Example 👇
+app/
+ ├── api/
+ │   └── route.ts
+ ├── page.tsx
+Ab ye /api route ban gaya hai.
+Aap browser me jaake /api likhoge, toh ye route.ts wala code run karega.
+
+🧩 Basic Example
+// app/api/route.ts
+export async function GET(request: Request) {
+  return Response.json({ message: 'Hello from API!' })
+}
+
+👉 Jab browser me /api open karte ho, toh output milega:
+
+{ "message": "Hello from API!" }
+
+🧑‍💻 Supported HTTP Methods
+Route Handlers me aap ye methods likh sakte ho:
+| Method      | Use                       |
+| ----------- | ------------------------- |
+| **GET**     | Data fetch karna          |
+| **POST**    | Data create karna         |
+| **PUT**     | Data update karna         |
+| **PATCH**   | Partially update karna    |
+| **DELETE**  | Data delete karna         |
+| **HEAD**    | Header info check karna   |
+| **OPTIONS** | CORS ke liye use hota hai |
+Agar koi method supported nahi hai → Next.js 405 (Method Not Allowed) error dega ⚠️
+
+Example with GET and POST
+// app/api/users/route.ts
+import { NextResponse } from 'next/server'
+
+export async function GET() {
+  const users = [{ id: 1, name: 'Amit' }, { id: 2, name: 'Priya' }]
+  return NextResponse.json(users)
+}
+
+export async function POST(request: Request) {
+  const body = await request.json()
+  return NextResponse.json({ message: 'User created!', user: body })
+}
+✅ /api/users pe GET request → users list milti hai
+✅ /api/users pe POST request → user create hota hai
+
+🔁 Caching in Route Handlers
+=> By default, Route Handlers cache nahi karte.
+Lekin agar aap chaho toh GET request ke liye cache enable kar sakte ho.
+
+Example 👇
+// app/items/route.ts
+export const dynamic = 'force-static'  // cache enable
+
+export async function GET() {
+  const res = await fetch('https://api.example.com/data')
+  const data = await res.json()
+  return Response.json(data)
+}
+🧠 Note:
+=> Sirf GET method cache hota hai.
+=> POST, PUT, DELETE kabhi cache nahi hote.
+
+🧭 Route Resolution (Rules)
+| Scenario                                         | Valid / Invalid |
+| ------------------------------------------------ | --------------- |
+| `app/page.js` aur `app/route.js` ek hi folder me | ❌ Conflict      |
+| `app/page.js` aur `app/api/route.js`             | ✅ Valid         |
+| `app/[user]/page.js` aur `app/api/route.js`      | ✅ Valid         |
+
+Simple rule:-
+page.tsx aur route.ts ek hi level par nahi ho sakte.
+
+🧠 NextRequest aur NextResponse
+=> Next.js ne NextRequest aur NextResponse diye hain jo default Request/Response se zyada powerful hain.
+
+Example 👇
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function GET(req: NextRequest) {
+  const name = req.nextUrl.searchParams.get('name')
+  return NextResponse.json({ message: `Hello ${name}` })
+}
+✅ /api?name=Ravi → { "message": "Hello Ravi" }
+
+🧩 Dynamic Route Handler Example
+// app/users/[id]/route.ts
+import { NextResponse } from 'next/server'
+
+export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  return NextResponse.json({ userId: params.id })
+}
+URL: /users/5
+Response: { "userId": "5" }
+
+🧰 Route Context Helper (TypeScript only)
+=> Agar aap TypeScript use kar rahe ho, to aapko RouteContext helper milta hai:
+
+import type { NextRequest } from 'next/server'
+
+export async function GET(_req: NextRequest, ctx: RouteContext<'/users/[id]'>) {
+  const { id } = await ctx.params
+  return Response.json({ id })
+}
+
+💡 Important Notes :-
+=> ✅ Sirf app directory ke andar hi Route Handlers use hote hain
+=> ⚙️ Ek hi route pe page.tsx aur route.ts ek sath nahi ho sakte
+=> 🧱 Route Handlers UI me nahi dikhte — ye sirf backend APIs hain
+=> 🔐 Advanced use ke liye NextRequest, NextResponse, cookies, headers, redirect sab support karte hain
+
+⚡ Summary 
+| Concept               | Explanation                                   |
+| --------------------- | --------------------------------------------- |
+| **Route Handlers**    | Custom API logic likhne ke liye               |
+| **File Name**         | `route.ts` / `route.js`                       |
+| **Location**          | `app/api/...` ke andar                        |
+| **Supported Methods** | GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS  |
+| **Cache**             | Sirf GET ke liye (`dynamic = 'force-static'`) |
+| **Conflict Rule**     | Same folder me `page.tsx` + `route.ts` nahi   |
+| **Dynamic Routes**    | `[param]` folder ke andar route.ts likho      |
+
+---------------------- 17. ISR (Incremental Static Regeneration) -------------------------
+
+17. ISR (Incremental Static Regeneration) kya hota hai?
+=> Normally jab tu Next.js app build karta hai (next build), toh sabhi static pages ek baar hi generate hote hain (SSG).
+👉 ISR allow karta hai tu static pages ko automatically update kar sake
+bina pura site rebuild kiye.
+
+Matlab:
+1. Page pehli baar build time par generate hota hai
+2. Baad mein, kuch time baad (e.g. 60 seconds), page background mein re-generate hota hai
+3. Users ko hamesha fast static page milta hai, but content bhi updated rehta hai
+
+🧠 Simple Example — Blog page ke liye ISR
+📁 app/blog/[id]/page.tsx
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+}
+
+// ✅ Yeh batata hai ki page ko kitne seconds baad re-generate karna hai
+export const revalidate = 60; // 60 sec baad background mein update hoga
+
+// ✅ Build ke time par sabhi blog post ke paths generate karne ke liye
+export async function generateStaticParams() {
+  const posts: Post[] = await fetch("https://api.vercel.app/blog").then((res) =>
+    res.json()
+  );
+
+  // sabhi blog ke ids return karo
+  return posts.map((post) => ({
+    id: String(post.id),
+  }));
+}
+
+// ✅ Page component
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const post: Post = await fetch(`https://api.vercel.app/blog/${id}`).then(
+    (res) => res.json()
+  );
+
+  return (
+    <main>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </main>
+  );
+}
+
+⚙️ Yeh kaise kaam karta hai step-by-step:
+1. 🔨 Build time par — sabhi existing posts (/blog/1, /blog/2, ...) pre-render ho jaate hain
+2. ⚡ User jab page open karta hai → cached static HTML serve hota hai
+3. ⏰ 60 seconds baad (revalidate = 60) → page background mein regenerate hota hai
+4. ✅ Jab regeneration complete hota hai → naye data ke sath page serve hone lagta hai
+5. 🚫 Agar koi new post (e.g. /blog/26) milta hai → woh on-demand generate hoga
+=> Agar exist karta hai → naya page ban jaata hai
+=> Agar nahi karta → 404 milta hai
+
+🧩 revalidatePath() aur revalidateTag() kya karte hain?
+=> Yeh dono functions manual revalidation ke liye use hote hain.
+
+🔁 revalidatePath()
+=> Kisi specific route ka static cache manually refresh karne ke liye.
+
+Example:-
+import { revalidatePath } from "next/cache";
+
+export async function POST() {
+  // jaise hi koi new blog post add kare
+  revalidatePath("/blog");
+  return Response.json({ message: "Blog revalidated!" });
+}
+
+🏷️ revalidateTag()
+=> Yeh caching ke sath tags use karta hai (useful for API data invalidation).
+
+Example:-
+import { revalidateTag } from "next/cache";
+
+export async function POST() {
+  // e.g. jab new comment add kare
+  revalidateTag("comments");
+  return Response.json({ message: "Comments cache cleared!" });
+}
+
+⚡ Benefits of ISR
+✅ Fast static performance
+✅ Auto content updates
+✅ No full rebuilds
+✅ Great for blogs, products, docs, etc.
+
+💡 Real-life example
+Suppose tera blog 1000 posts ka hai.
+Tu revalidate = 60 rakhta hai.
+Ab har post 1 minute mein background mein update hota rahega — bina puri site rebuild kiye.
+
+Time-based Revalidation (Automatic Refresh)
+=> Yeh method tab use hota hai jab tu chahta hai ki page automatically refresh ho jaaye after a fixed time — jaise har 1 ghante baad, bina manually kuch kare.
+
+📘 Example:
+// app/blog/page.tsx
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+}
+
+export const revalidate = 3600; // page har 1 hour baad background mein regenerate hoga
+
+export default async function Page() {
+  const data = await fetch("https://api.vercel.app/blog");
+  const posts: Post[] = await data.json();
+
+  return (
+    <main>
+      <h1>Blog Posts</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+
+⚙️ Kaise kaam karta hai:
+1. Jab tu pehli baar /blog open karega → page statically generate hoga aur cache ho jaayega.
+2. Next requests pe wohi cached page milega (fast load 🚀).
+3. 1 ghante (3600 seconds) ke baad, jab koi next user page kholega →
+=> Usko purana (stale) version milega (fast response ✅)
+=> Background mein Next.js new version regenerate karega
+4. Jab regeneration complete ho jaata hai → naya version cache mein replace ho jaata hai
+5. Ab sabko updated content milega 🔄
+
+👉 Tip: hamesha bada revalidation time (like 1hr, 6hr) set karo — taaki server pe load kam ho.
+Agar tu chhoti interval chaahta hai (like 10 sec), toh use On-Demand ISR.
+
+🔄 On-Demand Revalidation (Manual Refresh)
+
+Kab use kare:-
+=> Jab tu data database se laa raha hai (e.g., MongoDB, PostgreSQL)
+=> Jab tu admin dashboard bana raha hai aur “Update Content” button se refresh karna chahta hai
+
+💥 Method 1 — revalidatePath()
+
+Yeh poore route ka cache clear karta hai (e.g. /posts ya /blog).
+
+Example:
+// app/actions.ts
+'use server'
+
+import { revalidatePath } from 'next/cache'
+
+export async function createPost() {
+  // Jab new post add kare → cache clear karo
+  revalidatePath('/posts')
+}
+⚡ Next request /posts route pe aayegi →
+Next.js naya fresh data fetch karke page regenerate karega.
+
+💥 Method 2 — revalidateTag()
+=> Yeh granular control deta hai — tu specific data ko tag kar sakta hai aur wahi invalidate kar sakta hai.
+
+Example 1 — Fetch ke sath Tag lagana:
+// app/blog/page.tsx
+export default async function Page() {
+  const data = await fetch("https://api.vercel.app/blog", {
+    next: { tags: ["posts"] }, // tag added
+  });
+  const posts = await data.json();
+
+  return (
+    <main>
+      <h1>Blog Posts</h1>
+      {posts.map((post) => (
+        <p key={post.id}>{post.title}</p>
+      ))}
+    </main>
+  );
+}
+
+Example 2 — On-demand invalidate karna:
+// app/actions.ts
+'use server'
+
+import { revalidateTag } from 'next/cache'
+
+export async function createPost() {
+  // Sirf 'posts' tag wale cache invalidate karo
+  revalidateTag('posts')
+}
+Ab jab tu createPost() run karega →
+Next.js saare “posts” tag wale data ko refresh karega 🚀
+
+💾 unstable_cache()
+=> Agar tu database (MongoDB ya ORM) se data la raha hai
+to tu unstable_cache se us data ko cache bhi kar sakta hai 👇
+
+import { unstable_cache } from "next/cache";
+import { db, posts } from "@/lib/db";
+
+const getCachedPosts = unstable_cache(
+  async () => {
+    return await db.select().from(posts);
+  },
+  ["posts"], // cache key
+  { revalidate: 3600, tags: ["posts"] } // revalidate after 1hr
+);
+
+export default async function Page() {
+  const posts = await getCachedPosts();
+  // ...
+}
+
+⚠️ Error Handling
+Agar regeneration ke time error aata hai 😅
+→ Next.js automatically purana (last successfully generated) data serve karega
+→ Next request pe dobara try karega
+
+🧰 Cache Location Customize Karna
+Next.js ka cache by default file system (local) pe hota hai.
+Tu ise customize karke:
+1. Cloud storage
+2. Redis
+3. Shared cache between containers
+mein bhi rakh sakta hai (for large-scale apps).
+
+💡 In Short:
+| Type                     | Trigger                  | Example Function          | Use Case                    |
+| ------------------------ | ------------------------ | ------------------------- | --------------------------- |
+| **Time-based ISR**       | Automatically after time | `revalidate = 3600`       | Blog, Docs, Product List    |
+| **On-Demand ISR (Path)** | Manually                 | `revalidatePath('/blog')` | New Post Added              |
+| **On-Demand ISR (Tag)**  | Manually (granular)      | `revalidateTag('posts')`  | DB Change for specific data |
+
+
+🧩 Troubleshooting ISR (Incremental Static Regeneration)
+=> Kabhi kabhi ISR sahi se kaam nahi karta — jaise page update nahi ho raha, cache clear nahi ho raha, ya revalidation delay ho raha.
+Toh yeh steps follow karke tu easily debug kar sakta hai 👇
+
+🧠 1. Debug karna — fetch caching logs dekhna
+=> Next.js mein tu fetch requests ke logs enable kar sakta hai
+taaki tu dekh sake kaunsi request cached hai aur kaunsi fresh.
+
+📄 Add this in next.config.js:
+// next.config.js
+module.exports = {
+  logging: {
+    fetches: {
+      fullUrl: true, // fetch URL pura show karega
+    },
+  },
+};
+🪵 Ab jab tu app run karega (npm run dev ya next build && next start),
+terminal mein tu dekh sakega ki:
+1. Kaunsi fetch request cache se aayi hai
+2. Kaunsi network se freshly fetch hui hai
+
+⚙️ 2. Production jaisa test karna (Local environment mein)
+=> Agar tu production jaise environment mein ISR test karna chahta hai,
+toh development mode (next dev) se kaam nahi chalega ❌
+
+Use kar:-
+next build
+next start
+
+Yeh command tera Next.js app ko production mode mein run karega,
+aur ISR exactly waise hi behave karega jaise server pe karta hai.
+
+🪄 3. Cache debugging enable kar (Advanced Logging)
+=> Next.js ek hidden env variable deta hai
+jo cache hits aur misses ko log karta hai —
+bataata hai ki kaunsa page cache se serve hua aur kaunsa regenerate ho raha hai.
+
+📄 Add this in .env file:
+NEXT_PRIVATE_DEBUG_CACHE=1
+
+
+Ab jab tu next start run karega,
+console mein tu logs dekh sakta hai jaise:
+
+Cache hit for /blog
+Cache miss for /blog/3 — regenerating...
+Revalidated /blog successfully
+
+Yeh helpful hota hai samajhne ke liye ki ISR background mein kaise chal raha hai 🧠
+
+⚠️ 4. Common ISR Caveats (Jaanne layak baatein)
+
+| ❌ Problem                                                               | 💡 Explanation                                                                                                   |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| ISR **sirf Node.js runtime** mein kaam karta hai                        | Agar tu static export (`next export`) kar raha hai, ISR work nahi karega                                         |
+| **Docker mein** run kare to supported hai                               | ✅ Supported                                                                                                      |
+| **Static export** apps (purely static) mein                             | ❌ ISR support nahi                                                                                               |
+| Agar ek route ke multiple fetch hain aur sabka alag revalidate time hai | Next.js **lowest time** lega ISR ke liye                                                                         |
+| Agar koi fetch `revalidate: 0` ya `no-store` hai                        | Toh poora page **dynamic render** hoga, ISR disable ho jaayega                                                   |
+| On-demand ISR revalidatePath ya revalidateTag                           | Proxy ya rewrite ke through path change mat karna — exact path hi revalidate karna (`/post/1` ✅ not `/post-1` ❌) |
+
+
+🧰 5. Platform Support Table
+| Platform                            | ISR Support                             |
+| ----------------------------------- | --------------------------------------- |
+| 🟢 Node.js server                   | ✅ Supported                             |
+| 🐳 Docker container                 | ✅ Supported                             |
+| 📦 Static export (`next export`)    | ❌ Not supported                         |
+| 🧩 Adapters (Vercel, Netlify, etc.) | ⚙️ Platform-specific (most support ISR) |
+
+📜 6. Version History (Chhoti Summary)
+| Version     | Feature                                    |
+| ----------- | ------------------------------------------ |
+| **v14.1.0** | Custom cache handler stable hua            |
+| **v13.0.0** | App Router introduce hua (new ISR system)  |
+| **v12.2.0** | Pages Router mein On-Demand ISR stable hua |
+| **v12.0.0** | Bot-aware ISR fallback added               |
+| **v9.5.0**  | Pehli baar ISR launch hua (stable)         |
+
+💬 Simple Summary
+👉 Agar tu data update kar raha hai aur page auto refresh nahi ho raha —
+toh pehle ensure kar:
+1. revalidate ya revalidatePath properly set hai ✅
+2. App Node.js runtime pe run ho raha hai ✅
+3. .env mein NEXT_PRIVATE_DEBUG_CACHE=1 daal ke logs dekh ✅
+4. next build && next start se test kar ✅
+
+🧩 4️⃣ Real-Life Analogy
+Soch —
+tu ek newspaper website chala raha hai 📰
+
+Cache:
+Ek baar user ne “Today’s News” dekha — wo content store ho gaya.
+Agla user ko wahi news milti rahegi jab tak tu manually cache clear na kare.
+
+ISR:
+Tu bolta hai “update every 60 seconds”.
+Matlab har 60s ke baad Next.js background mein fresh news page generate karega,
+bina users ko delay diye.
+
+------------------------------- 18. Lazy loading ---------------------------------------
+
+18. Lazy Loading kya hota hai?
+=> "Component ya library ko tabhi load karna jab wo zarurat mein aaye, pehle se nahi."
+👉 Isse app ka initial load fast hota hai, kyunki unnecessary code pehle download nahi hota.
+
+⚙️ Example samajh le:
+
+Soch tu ek Modal component banata hai lekin wo tabhi dikhna chahiye jab user “Open Modal” pe click kare.
+
+Agar tu us Modal ko normally import karega —
+toh wo bundle ke saath hi load ho jaayega, chahe user usse kabhi khole hi nahi 😅
+
+Par agar tu lazy load (dynamic import) karega toh wo sirf tab load hoga jab user button click kare 💪
+
+🔩 Lazy Loading ke 2 tareeke hain:
+1️⃣ Using next/dynamic
+=> Next.js ka built-in function — ye React.lazy() aur Suspense dono ka combined version hai.
+Yani easy aur recommended way 😎
+
+'use client'
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+
+// Components
+const ComponentA = dynamic(() => import('../components/A')) // Lazy loaded
+const ComponentB = dynamic(() => import('../components/B')) // Lazy loaded on toggle
+const ComponentC = dynamic(() => import('../components/C'), { ssr: false }) // Client-only
+
+export default function Page() {
+  const [showMore, setShowMore] = useState(false)
+
+  return (
+    <div>
+      {/* Load immediately but in a separate bundle */}
+      <ComponentA />
+
+      {/* Load on demand */}
+      {showMore && <ComponentB />}
+      <button onClick={() => setShowMore(!showMore)}>Toggle</button>
+
+      {/* Load only on the client */}
+      <ComponentC />
+    </div>
+  )
+}
+
+
+💡 Notes:-
+=> { ssr: false } ka matlab hai — “server-side rendering disable karo, ye component sirf client pe chalega”.
+=> Ye option sirf Client Components ke liye kaam karta hai, Server Components ke liye nahi.
+
+2️⃣ Using React.lazy() and Suspense
+=> Ye React ka native method hai.
+=> Lekin Next.js mein next/dynamic use karna better hai, kyunki SSR ke sath smoothly kaam karta hai.
+
+Example:
+
+'use client'
+import React, { lazy, Suspense } from 'react'
+
+const LazyComp = lazy(() => import('../components/Example'))
+
+export default function Page() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <LazyComp />
+    </Suspense>
+  )
+}
+
+🧱 Skipping SSR (Server-Side Rendering)
+=> Agar tu chahta hai koi component sirf client pe chale,toh tu { ssr: false } likh sakta hai.
+
+Example:-
+const ComponentC = dynamic(() => import('../components/C'), { ssr: false })
+
+=> Yani ye component server-side render nahi hoga, sirf client pe mount hoga.
+
+📚 Lazy Loading External Libraries
+=> Agar tu koi external library jaise fuse.js use kar raha hai,aur nahi chahta ke wo pehle se load ho,
+toh tu usse runtime pe import() kar sakta hai:
+
+'use client'
+import { useState } from 'react'
+
+const names = ['Tim', 'Joe', 'Bel', 'Lee']
+
+export default function Page() {
+  const [results, setResults] = useState()
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search"
+        onChange={async (e) => {
+          const Fuse = (await import('fuse.js')).default // Lazy import
+          const fuse = new Fuse(names)
+          setResults(fuse.search(e.currentTarget.value))
+        }}
+      />
+      <pre>{JSON.stringify(results, null, 2)}</pre>
+    </div>
+  )
+}
+💡 Is tarah large libraries tabhi load hoti hain jab user actual mein unhe use kare.
+
+🪄 Custom Loading Component
+=> Tu loading ke time pe apna UI dikhana chahe to loading: prop use kar sakta hai:
+
+'use client'
+import dynamic from 'next/dynamic'
+
+const WithCustomLoading = dynamic(() => import('../components/WithCustomLoading'), {
+  loading: () => <p>Loading...</p>,
+})
+
+export default function Page() {
+  return <WithCustomLoading />
+}
+
+📦 Named Exports Lazy Load karna
+=> Agar component named export hai, to use aise import kare:
+
+// components/hello.js
+'use client'
+export function Hello() {
+  return <p>Hello!</p>
+}
+
+// app/page.js
+import dynamic from 'next/dynamic'
+
+const ClientComponent = dynamic(() =>
+  import('../components/hello').then((mod) => mod.Hello)
+)
+
+✅ Summary
+| Concept               | Meaning                                           |
+| --------------------- | ------------------------------------------------- |
+| **Lazy Loading**      | Component/library ko tab load karo jab zarurat ho |
+| **next/dynamic**      | Recommended method for Client Components          |
+| **ssr: false**        | Component sirf client pe chale                    |
+| **Custom Loading UI** | `loading: () => <p>Loading...</p>`                |
+| **Dynamic import()**  | External library ko on-demand load karne ke liye  |
+
+-------------------------------- 19. Font Module -------------------------------------
+
+19. Font Module kya hota hai?
+=> Next.js 13+ ne ek naya feature diya hai — next/font
+Ye automatically optimize karta hai fonts ko (Google Fonts ya custom local fonts)
+aur external network request (jaise Google ke server se font load karna) hata deta hai ⚡
+
+Yani fonts self-hosted hote hain → better performance, privacy aur no layout shift 👌
+
+🔤 Font Module ke 2 types hote hain
+
+1. Google Fonts → next/font/google
+2. Local Fonts → next/font/local
+
+Example 1: Google Fonts use karna
+
+Agar tu Inter font use karna chahta hai 👇
+
+// app/layout.tsx
+import { Inter } from 'next/font/google'
+
+// Agar variable font hai toh weight dene ki zarurat nahi
+const inter = Inter({
+  subsets: ['latin'], // subset specify karna important hai
+  display: 'swap',    // page flickering avoid karta hai
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.className}>
+      <body>{children}</body>
+    </html>
+  )
+}
+💡 Ye automatically Google Font ko download karke locally host karega
+(no Google request in browser ✅)
+
+🧩 Example 2: Specific font weight dena
+import { Roboto } from 'next/font/google'
+
+const roboto = Roboto({
+  weight: '400', // ya ['400', '700'] multiple bhi de sakte ho
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={roboto.className}>
+      <body>{children}</body>
+    </html>
+  )
+}
+
+⚙️ Subsets kya hote hain?
+=> Fonts ke andar different character sets hote hain — jaise:
+
+1. latin
+2. latin-ext
+3. devanagari
+4. cyrillic
+
+Tujhe jo chahiye, wo subset specify karna hota hai:-
+const inter = Inter({ subsets: ['latin'] })
+
+🧱 Example 3: Multiple Fonts use karna
+=> Tu ek project me ek se zyada font chah raha hai (e.g. headings aur body text alag):
+
+// app/fonts.ts
+import { Inter, Roboto_Mono } from 'next/font/google'
+
+export const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+export const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+
+Ab tu use kar sakta hai:
+
+// app/layout.tsx
+import { inter } from './fonts'
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.className}>
+      <body>{children}</body>
+    </html>
+  )
+}
+
+// app/page.tsx
+import { robotoMono } from './fonts'
+
+export default function Page() {
+  return <h1 className={robotoMono.className}>My Blog</h1>
+}
+
+💾 Example 4: Local Font use karna
+=> Agar tu khudka .woff2 ya .ttf font use karna chahta hai 👇
+
+// app/layout.tsx
+import localFont from 'next/font/local'
+
+const myFont = localFont({
+  src: './my-font.woff2',
+  display: 'swap',
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={myFont.className}>
+      <body>{children}</body>
+    </html>
+  )
+}
+
+
+Agar multiple font files hain (italic, bold, etc):
+
+const roboto = localFont({
+  src: [
+    { path: './Roboto-Regular.woff2', weight: '400', style: 'normal' },
+    { path: './Roboto-Italic.woff2', weight: '400', style: 'italic' },
+    { path: './Roboto-Bold.woff2', weight: '700', style: 'normal' },
+  ],
+})
+
+🎨 Tailwind CSS ke sath integration
+Bahut easy hai!
+Tu apne fonts ke liye CSS variables define karega 👇
+
+import { Inter, Roboto_Mono } from 'next/font/google'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  variable: '--font-roboto-mono',
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+      <body>{children}</body>
+    </html>
+  )
+}
+
+Tailwind config me add kar:
+// tailwind.config.js
+theme: {
+  extend: {
+    fontFamily: {
+      sans: ['var(--font-inter)'],
+      mono: ['var(--font-roboto-mono)'],
+    },
+  },
+}
+Ab tu simply likh sakta hai:-
+<p class="font-sans">This is Inter font</p>
+<p class="font-mono">This is Roboto Mono font</p>
+
+🎭 Font lagane ke 3 tareeke
+| Method           | Description                                           | Example                                    |
+| ---------------- | ----------------------------------------------------- | ------------------------------------------ |
+| **className**    | Directly add class to HTML element                    | `<p className={inter.className}>Text</p>`  |
+| **style**        | Inline style object                                   | `<p style={inter.style}>Text</p>`          |
+| **CSS Variable** | Use `variable` property aur `var(--font-name)` CSS me | `.text { font-family: var(--font-inter) }` |
+
+🚀 Best Practices
+
+✅ Use variable fonts whenever possible (better performance).
+✅ Always specify subsets.
+✅ Use multiple fonts sparingly — har font ek extra request hoti hai.
+✅ Place font config in one file (e.g., /styles/fonts.ts) for reusability.
+
+
+-------------------------------- 20. Form Components ----------------------------------------
+
+20. <Form> Component 
+=> Next.js nu <Form> component basically ek supercharged <form> tag che.
+Aa form ni help thi tame URL maa search params update, client-side navigation, ane loading states smooth banavi sako cho — bina extra code lakhya.
+
+🔰 Basic Example
+import Form from 'next/form'
+
+export default function Page() {
+  return (
+    <Form action="/search">
+      {/* form submit karta /search?query=abc javu thase */}
+      <input name="query" />
+      <button type="submit">Search</button>
+    </Form>
+  )
+}
+
+
+🪄 Aa shu kare che?
+=> Form submit thay to /search?query=abc URL pr navigate kare che.
+=> Full page reload nathi thatu, Next.js client-side navigation kare che.
+=> Page load fast thai (kyare layout ane loading UI prefetch thay che).
+
+⚙️ <Form> na 2 Modes
+1️⃣ When action = string
+=> Form behave kare che normal HTML form javu pan Next.js extra magic add kare che 👇
+
+✅ URL maa query params add kare
+✅ Prefetch kare route (fast loading)
+✅ Client-side navigation kare (no reload)
+✅ Shared layout/UI retain kare che
+
+Example:
+
+<Form action="/search">
+  <input name="q" />
+  <button>Go</button>
+</Form>
+
+2️⃣ When action = function
+=> Aa case maa, Form ek React form javu kaam kare che.Form submit thay to aa function (Server Action) call thay.
+
+Example:-
+'use server'
+
+async function myAction(formData: FormData) {
+  console.log(formData.get('name'))
+}
+
+export default function Page() {
+  return (
+    <Form action={myAction}>
+      <input name="name" />
+      <button type="submit">Save</button>
+    </Form>
+  )
+}
+🧠 Yad rakho:
+Aa case maa replace ane scroll props ignore thay che, karan ke form page navigate nathi karto — server action perform kare che.
+
+🧩 Props (when action = string)
+| Prop       | Type    | Description                                   |
+| ---------- | ------- | --------------------------------------------- |
+| `action`   | string  | URL ya relative path (`/search`)              |
+| `replace`  | boolean | History replace kare (default false)          |
+| `scroll`   | boolean | Page scroll top pr jaye ke nai (default true) |
+| `prefetch` | boolean | Route prefetch kare che (default true)        |
+
+Example:
+
+<Form action="/search" replace scroll={false} prefetch={false}>
+  <input name="query" />
+</Form>
+
+🧠 Props (when action = function)
+| Prop     | Type     | Description                         |
+| -------- | -------- | ----------------------------------- |
+| `action` | function | Server Action function              |
+| (others) | ignored  | `replace`, `scroll` ignore thay che |
+
+⚠️ Caveats / Limitations
+
+❌ method, encType, target — support nathi karta (use native <form> for that).
+❌ <input type="file"> submit karta file name submit thase, file object nai.
+✅ formAction use kari sakay button ya input maa alag route mate.
+✅ onSubmit vapri sakay che, pan event.preventDefault() karsho to Next.js nu navigation disable thai jase.
+
+Example:
+<button formAction="/other">Submit to Other</button>
+
+🪄 Summary (Easy Version)
+| Feature                 | HTML `<form>` | Next `<Form>` |
+| ----------------------- | ------------- | ------------- |
+| Page reload             | ✅ Yes         | ❌ No          |
+| Prefetch                | ❌ No          | ✅ Yes         |
+| Client navigation       | ❌ No          | ✅ Yes         |
+| Supports Server Actions | ❌ No          | ✅ Yes         |
+| Update search params    | ✅ Yes         | ✅ Yes (auto)  |
+
+💬 Example Use Cases
+1. 🔍 Search bar je URL maa query update kare
+2. 📝 Server action form (create/update data)
+3. ⚡ Quick filters with no reload
+4. 🔄 URL-driven pagination ya sorting
+
+🧭 Example 1: Search Form → Search Result Page
+=> Tame ek simple search form banaavi sako cho je /search page par redirect kare che
+ane query URL maa append kare che.
+
+🧱 /app/page.tsx
+import Form from 'next/form'
+
+export default function Page() {
+  return (
+    <Form action="/search">
+      <input name="query" placeholder="Search..." />
+      <button type="submit">Submit</button>
+    </Form>
+  )
+}
+
+
+🔍 User je pan input maa lakhse, e URL maa add thase:-
+/search?query=abc
+
+
+💡 Tip: Jo tame action="" (empty string) mukso to form same route par jase, bas URL update thase.
+
+📄 /app/search/page.tsx
+=> Aa page URL maa avela search query na base par data fetch kare che 👇
+
+import { getSearchResults } from '@/lib/search'
+
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const results = await getSearchResults((await searchParams).query)
+ 
+  return (
+    <div>
+      <h1>Search Results</h1>
+      {/* results show karo */}
+    </div>
+  )
+}
+
+
+🧠 Next.js shu kare che?
+=> Form jya visible thay che, /search route automatically prefetch thay che.
+=> Submit karta page instantly navigate kare che.
+=> Jo data load thodu late thay to loading UI batave che.
+
+⚡ /app/search/loading.tsx
+=> Aa file loading fallback UI mate che:
+
+export default function Loading() {
+  return <div>Loading...</div>
+}
+Aa automatically show thay che jyare /search data fetch thay raha hoy.
+
+💬 Instant Feedback (useFormStatus)
+=> Tame form pending hoy tyare button maa “Searching…” javu feedback aapi sako cho.
+
+🧱 /app/ui/search-button.tsx
+'use client'
+import { useFormStatus } from 'react-dom'
+
+export default function SearchButton() {
+  const status = useFormStatus()
+  return (
+    <button type="submit">
+      {status.pending ? 'Searching...' : 'Search'}
+    </button>
+  )
+}
+
+🧱 /app/page.tsx (updated)
+import Form from 'next/form'
+import SearchButton from '@/ui/search-button'
+
+export default function Page() {
+  return (
+    <Form action="/search">
+      <input name="query" placeholder="Search something..." />
+      <SearchButton />
+    </Form>
+  )
+}
+🔁 Aa thi user ne instant “loading” feel male che jyare form submit thay.
+
+🧩 Example 2: Mutations with Server Actions
+=> Aa example maa tame form submit karta server par data create kari sako cho.
+(e.g. new post banavva)
+
+🧱 /app/posts/create/page.tsx
+import Form from 'next/form'
+import { createPost } from '@/posts/actions'
+
+export default function Page() {
+  return (
+    <Form action={createPost}>
+      <input name="title" placeholder="Post Title" />
+      <button type="submit">Create Post</button>
+    </Form>
+  )
+}
+
+⚙️ /app/posts/actions.ts
+'use server'
+import { redirect } from 'next/navigation'
+
+export async function createPost(formData: FormData) {
+  // Post create karo (database ma)
+  const title = formData.get('title')
+  const data = await savePostToDB(title)
+
+  // Post create thai gaya pachhi redirect karo
+  redirect(`/posts/${data.id}`)
+}
+📌 Note:
+Aa case maa <Form> automatically prefetch nathi karto,
+karan ke destination URL (/posts/[id]) submit pachi j jaanaay.
+
+🧱 /app/posts/[id]/page.tsx
+
+Aa page redirect pachi post ID thi data fetch kare che 👇
+
+import { getPost } from '@/posts/data'
+
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const data = await getPost(id)
+
+  return (
+    <div>
+      <h1>{data.title}</h1>
+      <p>{data.content}</p>
+    </div>
+  )
+}
+
+🔍 Summary (Short & Sweet)
+| Scenario    | Action Prop             | Behavior                                |
+| ----------- | ----------------------- | --------------------------------------- |
+| Search Form | String (`"/search"`)    | URL update + prefetch + fast navigation |
+| Create Post | Function (`createPost`) | Server action + redirect                |
+
+
+--------------------------------- 21. Image Comments ----------------------------------------
+
+21. Next.js Image Component 
+=> Next.js no <Image /> component HTML na <img> element ni upgraded version che 🚀
+
+Aa automatically kare che:
+1. Image optimization
+2. Lazy loading
+3. Responsive resizing
+4. Better performance (LCP improve kare)
+
+🔰 Basic Example
+import Image from 'next/image'
+
+export default function Page() {
+  return (
+    <Image
+      src="/profile.png"
+      width={500}
+      height={500}
+      alt="Picture of the author"
+    />
+  )
+}
+
+
+🧠 Explanation:
+=> src → Image file nu path
+=> width / height → Aspect ratio maintain kare
+=> alt → Accessibility & SEO mate description
+
+⚙️ Common Props (Simple Explanation)
+| Prop              | Use                                 | Example                                  |
+| ----------------- | ----------------------------------- | ---------------------------------------- |
+| **src**           | Image nu path (local ya external)   | `src="/profile.png"`                     |
+| **alt**           | Description for SEO & accessibility | `alt="User photo"`                       |
+| **width, height** | Image ni size px ma                 | `width={400} height={400}`               |
+| **fill**          | Parent container ma full fit karva  | `fill={true}`                            |
+| **sizes**         | Responsive image sizes define karva | `sizes="(max-width: 768px) 100vw, 50vw"` |
+| **quality**       | Image compression (1–100)           | `quality={80}`                           |
+| **placeholder**   | Loading time blur effect            | `placeholder="blur"`                     |
+| **blurDataURL**   | Small blur image URL                | `blurDataURL="data:image/png..."`        |
+| **loading**       | Lazy or eager load control          | `loading="lazy"`                         |
+| **unoptimized**   | Disable optimization                | `unoptimized={true}`                     |
+
+
+🧩 1️⃣ Static Local Image
+import Image from 'next/image'
+import profile from './profile.png'
+
+export default function Page() {
+  return <Image src={profile} alt="Me" />
+}
+✅ Optimization automatically handle thase
+✅ Blur placeholder auto-generate thase
+
+🌐 2️⃣ External Image
+=> Next.js maa external image use karva hoy to remotePatterns add karvu pade next.config.js ma 👇
+// next.config.js
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+      },
+    ],
+  },
+}
+
+Then:
+<Image
+  src="https://example.com/image.jpg"
+  width={500}
+  height={300}
+  alt="External image"
+/>
+
+🧱 3️⃣ fill prop (Full container fit)
+<div style={{ position: 'relative', width: '100%', height: '400px' }}>
+  <Image
+    src="/hero.jpg"
+    alt="Hero Banner"
+    fill
+    style={{ objectFit: 'cover' }}
+  />
+</div>
+💡 Parent div ne position: relative aapvu jaruri che.
+
+🌀 4️⃣ placeholder="blur"
+=> Blur effect show kare che until image load thay 👇
+
+<Image
+  src="/profile.png"
+  alt="Blur Example"
+  width={400}
+  height={400}
+  placeholder="blur"
+/>
+
+🛠️ 5️⃣ Custom Loader (Own Image CDN)
+'use client'
+import Image from 'next/image'
+
+const imageLoader = ({ src, width, quality }) => {
+  return `https://cdn.mysite.com/${src}?w=${width}&q=${quality || 75}`
+}
+
+export default function Page() {
+  return (
+    <Image
+      loader={imageLoader}
+      src="me.png"
+      alt="CDN Image"
+      width={500}
+      height={500}
+    />
+  )
+}
+
+⚡ 6️⃣ Responsive Sizes
+<div className="grid-item">
+  <Image
+    fill
+    src="/example.png"
+    alt="Responsive"
+    sizes="(max-width: 768px) 100vw, 33vw"
+  />
+</div>
+🧠 Browser ne su size load karvu e sizes batave che.
+
+🧠 7️⃣ Preload (Hero Image Mate)
+<Image
+  src="/hero.jpg"
+  alt="Hero"
+  width={1200}
+  height={600}
+  preload
+/>
+✅ Preload top hero images mate — fastest LCP (Largest Contentful Paint)
+
+🧰 8️⃣ onLoad / onError (Client Components Only)
+'use client'
+import Image from 'next/image'
+
+export default function ProfilePic() {
+  return (
+    <Image
+      src="/me.jpg"
+      alt="Profile"
+      width={300}
+      height={300}
+      onLoad={() => console.log("Loaded!")}
+      onError={() => console.log("Error!")}
+    />
+  )
+}
+
+⚠️ 9️⃣ unoptimized prop
+
+SVGs, GIFs ya small icons mate optimization disable karo 👇
+
+<Image src="/logo.svg" alt="Logo" width={100} height={100} unoptimized />
+
+⚙️ 🔟 next.config.js Options Summary
+
+| Option                | Description                     |
+| --------------------- | ------------------------------- |
+| `remotePatterns`      | Allow external image sources    |
+| `localPatterns`       | Allow only specific local paths |
+| `formats`             | Support `webp`, `avif` etc.     |
+| `qualities`           | Allowed quality values          |
+| `deviceSizes`         | Responsive breakpoints          |
+| `minimumCacheTTL`     | Image cache time                |
+| `dangerouslyAllowSVG` | Allow SVGs (use with caution)   |
+| `path`                | Custom image optimization path  |
+| `unoptimized`         | Disable optimization globally   |
+
+💡 Bonus Tip:
+
+<Image /> = Always better performance than <img />
+Because Next.js:
+=> Lazy load kare che
+=> Responsive versions generate kare che
+=> Compress kare che
+=> Blur placeholder support kare che
+=> Optimize automatically for SEO & speed
+
+✅ Example Final Demo
+import Image from 'next/image'
+export default function HeroSection() {
+  return (
+    <div className="relative w-full h-[500px]">
+      <Image
+        src="/banner.jpg"
+        alt="Hero Banner"
+        fill
+        sizes="100vw"
+        placeholder="blur"
+        quality={80}
+        style={{ objectFit: 'cover' }}
+        preload
+      />
+      <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold bg-black/30">
+        Welcome to My Site 🚀
+      </div>
+    </div>
+  )
+}
+
+🖼 Styling Images
+=> Next.js ka Image component normal <img> jaisa hi style hota hai, bas kuch rules follow karne hote hain:
+
+1️⃣ Using className
+import styles from './styles.module.css'
+ 
+export default function MyImage() {
+  return <Image className={styles.image} src="/my-image.png" alt="My Image" />
+}
+👉 Yahaan humne ek CSS Module (styles.module.css) se class li aur className me di.
+styled-jsx mat use karo, kyunki woh component ke andar hi limited hota hai.
+
+2️⃣ Using style (inline styles)
+export default function MyImage() {
+  return (
+    <Image 
+      src="/my-image.png" 
+      alt="My Image" 
+      style={{ borderRadius: '8px' }} 
+    />
+  )
+}
+👉 Inline style simple aur fast hoti hai.
+
+3️⃣ Using fill
+<div style={{ position: 'relative' }}>
+  <Image fill src="/my-image.png" alt="My Image" />
+</div>
+👉 Agar fill use karte ho, toh parent div me position: relative lagana zaruri hai.
+
+📱 Responsive Images (Static Export)
+=> Agar image file tumhare project ke andar hai (import se), Next.js automatically uska width aur height detect karta hai.
+
+import Image from 'next/image'
+import mountains from '../public/mountains.jpg'
+ 
+export default function Responsive() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Image
+        alt="Mountains"
+        src={mountains}
+        sizes="100vw"
+        style={{
+          width: '100%',
+          height: 'auto',
+        }}
+      />
+    </div>
+  )
+}
+👉 Yeh image viewport ke hisaab se adjust hoti hai (full width, auto height).
+
+🌐 Responsive Remote Image
+=> Agar image URL se aa rahi hai, toh manually width aur height dene padenge:
+
+import Image from 'next/image'
+ 
+export default function Page({ photoUrl }) {
+  return (
+    <Image
+      src={photoUrl}
+      alt="Author"
+      sizes="100vw"
+      style={{
+        width: '100%',
+        height: 'auto',
+      }}
+      width={500}
+      height={300}
+    />
+  )
+}
+
+🧩 Responsive Image with fill
+=> Agar tumhe aspect ratio pata nahi hai (ya image ko pura container fill karwana hai):
+
+<div style={{ position: 'relative', width: '400px' }}>
+  <Image
+    alt="Mountains"
+    src={mountains}
+    fill
+    sizes="(min-width: 808px) 50vw, 100vw"
+    style={{ objectFit: 'cover' }}
+  />
+</div>
+👉 objectFit: 'cover' se image crop hoti hai taaki full area cover ho.
+
+🌄 Background Image
+=> Background jaisa effect chahiye toh fill + objectFit: cover use karo:
+
+import Image from 'next/image'
+import mountains from '../public/mountains.jpg'
+ 
+export default function Background() {
+  return (
+    <Image
+      alt="Mountains"
+      src={mountains}
+      placeholder="blur"
+      quality={100}
+      fill
+      sizes="100vw"
+      style={{
+        objectFit: 'cover',
+      }}
+    />
+  )
+}
+
+☀️🌙 Theme Detection (Light/Dark Mode)
+=> Agar light aur dark theme ke liye alag image chahiye ho:
+
+CSS:
+.imgDark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .imgLight {
+    display: none;
+  }
+  .imgDark {
+    display: unset;
+  }
+}
+
+
+Component:-
+import styles from './theme-image.module.css'
+import Image from 'next/image'
+ 
+export default function ThemeImage({ srcLight, srcDark, alt }) {
+  return (
+    <>
+      <Image src={srcLight} alt={alt} className={styles.imgLight} />
+      <Image src={srcDark} alt={alt} className={styles.imgDark} />
+    </>
+  )
+}
+👉 Browser automatically user ke theme ke hisaab se image badlega.
+
+🖼 Art Direction (Mobile vs Desktop Image)
+=> Different devices ke liye alag image chahiye ho:
+
+import { getImageProps } from 'next/image'
+ 
+export default function Home() {
+  const common = { alt: 'Art Direction Example', sizes: '100vw' }
+
+  const { props: { srcSet: desktop } } = getImageProps({
+    ...common,
+    width: 1440,
+    height: 875,
+    src: '/desktop.jpg',
+  })
+
+  const { props: { srcSet: mobile, ...rest } } = getImageProps({
+    ...common,
+    width: 750,
+    height: 1334,
+    src: '/mobile.jpg',
+  })
+
+  return (
+    <picture>
+      <source media="(min-width: 1000px)" srcSet={desktop} />
+      <source media="(min-width: 500px)" srcSet={mobile} />
+      <img {...rest} style={{ width: '100%', height: 'auto' }} />
+    </picture>
+  )
+}
+
+🧠 Summary
+| Feature                       | Purpose                                                 |
+| ----------------------------- | ------------------------------------------------------- |
+| `fill`                        | Image ko parent container ke hisaab se resize karta hai |
+| `sizes`                       | Responsive layouts me optimize karta hai                |
+| `objectFit`                   | Image crop/stretch control                              |
+| `placeholder="blur"`          | Blur effect jab tak image load nahi hoti                |
+| `remotePatterns`              | Allow remote URLs safely                                |
+| `preload` / `loading="eager"` | Important images pe fast load                           |
+| `unoptimized`                 | Disable optimization (useful for SVGs)                  |
+
+
+--------------------------------- 22. Link Comments ----------------------------------------
+
+22. <Link> Component 
+=> <Link> ek React component hai jo Next.js me navigation (page switch karna) ke liye use hota hai.
+Yeh client-side routing karta hai — matlab page reload nahi hota, sirf content change hota hai 🔄
+
+🧱 Basic Example
+import Link from 'next/link'
+
+export default function Page() {
+  return <Link href="/dashboard">Dashboard</Link>
+}
+👉 Jab user “Dashboard” pe click karega, browser bina reload hue /dashboard page pe chala jayega.
+
+🧩 Link Props Explained
+| Prop         | Example                | Type            | Required | Description                                       |
+| ------------ | ---------------------- | --------------- | -------- | ------------------------------------------------- |
+| `href`       | `href="/dashboard"`    | String / Object | ✅ Yes    | Kis route pe navigate karna hai                   |
+| `replace`    | `replace={true}`       | Boolean         | ❌        | History stack me naya URL add na kare             |
+| `scroll`     | `scroll={false}`       | Boolean         | ❌        | Page scroll top pe jaye ya nahi                   |
+| `prefetch`   | `prefetch={false}`     | Boolean / null  | ❌        | Page data pehle se load kare ya nahi              |
+| `onNavigate` | `onNavigate={(e)=>{}}` | Function        | ❌        | Client-side navigation ke dauran trigger hota hai |
+
+
+🔗 href (required)
+=> Yeh batata hai ki kis route pe jaana hai.Tum string de sakte ho ya object (agar query params chahiye).
+
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <Link
+      href={{
+        pathname: '/about',
+        query: { name: 'test' },
+      }}
+    >
+      About
+    </Link>
+  )
+}
+👉 Yeh navigate karega /about?name=test par.
+
+🔄 replace
+Default: false
+Agar true kar doge, toh Next.js current history ko replace karega, naya history entry add nahi karega.
+(Back button se previous page pe nahi ja paoge.)
+
+<Link href="/dashboard" replace>
+  Dashboard
+</Link>
+
+🧍‍♂️ scroll
+Default: true
+Normally jab new page load hota hai toh Next.js scroll top pe le jata hai.
+Agar scroll={false} karte ho, toh woh scroll position maintain karega.
+
+<Link href="/dashboard" scroll={false}>
+  Dashboard
+</Link>
+👉 Useful jab tumhe scroll position preserve karni ho (jaise infinite scrolling lists me).
+
+🚀 prefetch
+=> Next.js background me future pages ka data prefetch karta hai —
+Matlab agar <Link> viewport me aata hai, toh uska next page quietly load hone lagta hai 👀
+
+Values:
+=> "auto" (default): Static routes ke liye full page prefetch karta hai, dynamic ke liye partial.
+=> true: Hamesha prefetch karega.
+=> false: Kabhi prefetch nahi karega.
+
+<Link href="/dashboard" prefetch={false}>
+  Dashboard
+</Link>
+⚠️ Prefetching sirf production build me kaam karta hai (npm run build && npm start).
+
+🧠 onNavigate
+=> Yeh ek event handler hai jo sirf client-side navigation ke dauran trigger hota hai.
+Matlab jab Next.js ke andar page badalta hai — tab run hota hai.
+
+<Link
+  href="/dashboard"
+  onNavigate={(e) => {
+    console.log('Navigating...')
+    // e.preventDefault() — agar navigation cancel karna ho
+  }}
+>
+  Dashboard
+</Link>
+
+⚖️ onNavigate vs onClick
+| Behavior                         | onClick   | onNavigate                |
+| -------------------------------- | --------- | ------------------------- |
+| Har click pe chalega             | ✅         | ❌ sirf client-side nav pe |
+| Ctrl/Cmd + Click (new tab)       | ✅ chalega | ❌ nahi chalega            |
+| External link (jaise google.com) | ✅ chalega | ❌ nahi chalega            |
+| File download link               | ✅ chalega | ❌ nahi chalega            |
+👉 onNavigate sirf Next.js ke internal routes ke liye hota hai.
+
+💡 Extra Tip:
+=> Tum <Link> ke andar normal <a> tag props bhi de sakte ho —
+jaise className, target="_blank", style, etc.
+
+<Link href="/contact" className="text-blue-600" target="_blank">
+  Contact Us
+</Link>
+
+⚙️ Summary
+| Feature                | Use                                              |
+| ---------------------- | ------------------------------------------------ |
+| `href`                 | Route path define karta hai                      |
+| `replace`              | Browser history me new entry add na kare         |
+| `scroll`               | Page scroll maintain kare ya top pe le jaye      |
+| `prefetch`             | Pehle se data load karke navigation fast kare    |
+| `onNavigate`           | Client-side navigation ke time function run kare |
+| `className` / `target` | Style aur external behavior ke liye              |
+
+
+🌐 <Link> Component — Advanced Usage
+1️⃣ Dynamic Routes ke liye Link banana
+=> Agar tumhare paas dynamic pages hain (jaise blog posts /blog/[slug]),
+toh tum dynamically har post ke liye <Link> bana sakte ho.
+
+import Link from 'next/link'
+
+interface Post {
+  id: number
+  title: string
+  slug: string
+}
+
+export default function PostList({ posts }: { posts: Post[] }) {
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>
+          <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+
+👉 Example:
+=> Post slug: my-first-post
+=> Output link: /blog/my-first-post
+
+2️⃣ Active Link highlight karna (Current page dikhana)
+=> Tum usePathname() hook se current route le sakte ho,
+aur fir uske base par active link ko style kar sakte ho.
+
+'use client'
+
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
+
+export function Links() {
+  const pathname = usePathname()
+
+  return (
+    <nav>
+      <Link className={`link ${pathname === '/' ? 'active' : ''}`} href="/">
+        Home
+      </Link>
+
+      <Link
+        className={`link ${pathname === '/about' ? 'active' : ''}`}
+        href="/about"
+      >
+        About
+      </Link>
+    </nav>
+  )
+}
+👉 Jab tum “About” page par ho, pathname === '/about' true hoga, aur link pe active class lag jaayegi.
+
+3️⃣ Scroll to a Section (hash link)
+=> Agar page ke andar kisi specific section par scroll karna hai
+toh tum URL me #id use kar sakte ho — jaise HTML me hota hai.
+
+<Link href="/dashboard#settings">Settings</Link>
+
+➡ Output: <a href="/dashboard#settings">Settings</a>
+
+4️⃣ Replace URL instead of Push
+=> Normally <Link> ek new entry browser history me add karta hai.
+Agar tum nahi chahte ke user back ja sake, replace prop use karo:
+
+<Link href="/about" replace>
+  About us
+</Link>
+👉 Ye page change karega, lekin back button se wapas nahi ja paoge.
+
+5️⃣ Disable Scroll to Top
+=> By default jab naya page load hota hai, Next.js top pe scroll karta hai.
+Agar tum chahte ho ke scroll position maintain rahe:
+
+<Link href="/#hashid" scroll={false}>
+  Disable scrolling to top
+</Link>
+
+
+Ya programmatically:-
+import { useRouter } from 'next/navigation'
+
+const router = useRouter()
+router.push('/dashboard', { scroll: false })
+
+6️⃣ Prefetching with Proxy (Authentication ke sath)
+=> Kabhi kabhi Proxy ya authentication system use hota hai jo rewrite karta hai routes ko.
+Example: /dashboard internally /auth/dashboard ya /public/dashboard ban jata hai.
+Aise me <Link> ko dono paths batana padta hai — display aur prefetch dono ke liye.
+
+'use client'
+
+import Link from 'next/link'
+import useIsAuthed from './hooks/useIsAuthed' // tumhara custom auth hook
+
+export default function Page() {
+  const isAuthed = useIsAuthed()
+  const path = isAuthed ? '/auth/dashboard' : '/public/dashboard'
+
+  return (
+    <Link as="/dashboard" href={path}>
+      Dashboard
+    </Link>
+  )
+}
+👉 as="/dashboard" user ko visible URL deta hai,
+aur href={path} internal route handle karta hai.
+
+7️⃣ Block Navigation (Unsaved Changes Alert)
+=> Kabhi user form fill kar raha hota hai aur bina save kiye page badal deta hai —
+toh warning deni hoti hai 🧠
+
+Iske liye React Context + onNavigate() use hota hai 👇
+
+🔹 Step 1: Context banao
+'use client'
+import { createContext, useState, useContext } from 'react'
+
+export const NavigationBlockerContext = createContext({
+  isBlocked: false,
+  setIsBlocked: () => {},
+})
+
+export function NavigationBlockerProvider({ children }) {
+  const [isBlocked, setIsBlocked] = useState(false)
+  return (
+    <NavigationBlockerContext.Provider value={{ isBlocked, setIsBlocked }}>
+      {children}
+    </NavigationBlockerContext.Provider>
+  )
+}
+
+export function useNavigationBlocker() {
+  return useContext(NavigationBlockerContext)
+}
+
+🔹 Step 2: Form me state set karo
+'use client'
+import { useNavigationBlocker } from '../contexts/navigation-blocker'
+
+export default function Form() {
+  const { setIsBlocked } = useNavigationBlocker()
+
+  return (
+    <form
+      onChange={() => setIsBlocked(true)}
+      onSubmit={(e) => {
+        e.preventDefault()
+        setIsBlocked(false)
+      }}
+    >
+      <input type="text" name="name" />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+
+🔹 Step 3: Custom <Link> banao
+'use client'
+import Link from 'next/link'
+import { useNavigationBlocker } from '../contexts/navigation-blocker'
+
+export function CustomLink({ children, ...props }) {
+  const { isBlocked } = useNavigationBlocker()
+
+  return (
+    <Link
+      onNavigate={(e) => {
+        if (
+          isBlocked &&
+          !window.confirm('You have unsaved changes. Leave anyway?')
+        ) {
+          e.preventDefault()
+        }
+      }}
+      {...props}
+    >
+      {children}
+    </Link>
+  )
+}
+
+🔹 Step 4: Navigation component
+'use client'
+import { CustomLink as Link } from './custom-link'
+
+export default function Nav() {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+    </nav>
+  )
+}
+
+🔹 Step 5: Layout me wrap karo
+import { NavigationBlockerProvider } from './contexts/navigation-blocker'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <NavigationBlockerProvider>{children}</NavigationBlockerProvider>
+      </body>
+    </html>
+  )
+}
+
+🔹 Step 6: Use it in your page
+import Nav from './components/nav'
+import Form from './components/form'
+
+export default function Page() {
+  return (
+    <div>
+      <Nav />
+      <main>
+        <h1>Welcome to the Dashboard</h1>
+        <Form />
+      </main>
+    </div>
+  )
+}
+👉 Ab agar user form me kuch likhe aur bina save kiye dusre link pe jaye,
+toh confirm alert aayega:
+“You have unsaved changes. Leave anyway?”
+
+🧾 Summary
+| Use Case          | Solution                                                 |
+| ----------------- | -------------------------------------------------------- |
+| Dynamic Routes    | Template literals use karke `/blog/[slug]` links banao   |
+| Active Links      | `usePathname()` hook se compare karke active class lagao |
+| Scroll to Section | `href="/page#id"` use karo                               |
+| Replace History   | `replace` prop use karo                                  |
+| Disable Scroll    | `scroll={false}`                                         |
+| Proxy Prefetch    | `as` aur `href` dono path specify karo                   |
+| Block Navigation  | Context + `onNavigate` + `confirm()`                     |
+
+
+--------------------------------- 23. Script Comments --------------------------------------
+
+23. 🎬 <Script> Component 
+=> Next.js me <Script> component ka use hota hai third-party JS files (like analytics, chat widgets, etc.) load karne ke liye — optimized, controlled aur async way me.
+
+Example:
+
+import Script from 'next/script'
+
+export default function Dashboard() {
+  return (
+    <>
+      <Script src="https://example.com/script.js" />
+    </>
+  )
+}
+
+⚙️ Props (Properties)
+| Prop       | Example                               | Type     | Required                 |
+| ---------- | ------------------------------------- | -------- | ------------------------ |
+| `src`      | `src="https://example.com/script.js"` | string   | ✅ (unless inline script) |
+| `strategy` | `strategy="lazyOnload"`               | string   | ❌                        |
+| `onLoad`   | `onLoad={onLoadFunc}`                 | function | ❌                        |
+| `onReady`  | `onReady={onReadyFunc}`               | function | ❌                        |
+| `onError`  | `onError={onErrorFunc}`               | function | ❌                        |
+
+🧩 Required Prop
+🔹 src
+=> Ye external script ka URL ya path hota hai —
+jaise:
+
+<Script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" />
+
+Agar inline script likh rahe ho (direct JS inside), to src optional hai.
+
+⚡ Optional Props (Advanced Controls)
+1️⃣ strategy — Script load hone ka timing control karta hai
+
+Available options:
+| Strategy                  | Description                                      | Use Case                         |
+| ------------------------- | ------------------------------------------------ | -------------------------------- |
+| `beforeInteractive`       | Script Next.js code se pehle load hota hai       | Cookie consent, bot detector     |
+| `afterInteractive`        | (Default) Script hydration ke baad load hota hai | Analytics, tag managers          |
+| `lazyOnload`              | Browser idle hone ke baad load hota hai          | Chat widgets, background scripts |
+| `worker` *(experimental)* | Script ek web worker me run hota hai             | Advanced performance tuning      |
+
+🧠 beforeInteractive
+=> Ye script sabse pehle load hota hai, even before Next.js app starts.
+=> Sirf root layout (app/layout.tsx) me use hota hai.
+=> Critical scripts ke liye best.
+
+Example:
+
+import Script from 'next/script'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script
+          src="https://example.com/script.js"
+          strategy="beforeInteractive"
+        />
+      </body>
+    </html>
+  )
+}
+💡 Good to know: Ye script hamesha HTML <head> me inject hota hai — chahe tum body me likho.
+
+⚙️ afterInteractive
+=> Default behavior (agar strategy nahi diya to ye lagta hai).
+=> Script hydration ke baad load hota hai (page thoda render hone ke baad).
+=> Common use: Analytics, Tag Managers, Ads.
+
+Example:
+
+<Script src="https://example.com/analytics.js" strategy="afterInteractive" />
+
+💤 lazyOnload
+=> Page ke saare resources load hone ke baad, idle time me run hota hai.
+=> Low priority ya background scripts ke liye.
+
+Example:
+
+<Script src="https://example.com/chat-widget.js" strategy="lazyOnload" />
+
+Use cases:
+👉 Chat support, social media widgets, feedback popups.
+
+🧵 worker (Experimental ⚠️)
+=> Script ko web worker me run karta hai (main thread free rakhta hai).
+=> Abhi sirf pages directory me kaam karta hai.
+=> App Router ke saath unstable hai.
+
+Enable karna:-
+// next.config.js
+module.exports = {
+  experimental: {
+    nextScriptWorkers: true,
+  },
+}
+
+
+Example:
+
+import Script from 'next/script'
+
+export default function Home() {
+  return <Script src="https://example.com/script.js" strategy="worker" />
+}
+
+🎯 Event Props
+🔹 onLoad
+=> Jab script successfully load ho jaye, tab run hota hai.
+=> Sirf Client Components me kaam karta hai.
+=> beforeInteractive ke sath nahi chalega.
+
+Example:
+
+'use client'
+
+import Script from 'next/script'
+
+export default function Page() {
+  return (
+    <Script
+      src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"
+      onLoad={() => {
+        console.log(_.sample([1, 2, 3, 4]))
+      }}
+    />
+  )
+}
+
+🔹 onReady
+=> Jab script load ho jaye aur har baar component mount ho (navigation ke baad bhi) — tab chalega.
+=> Perfect for re-initializing third-party widgets.
+
+Example (Google Maps):
+
+'use client'
+
+import { useRef } from 'react'
+import Script from 'next/script'
+
+export default function Page() {
+  const mapRef = useRef()
+
+  return (
+    <>
+      <div ref={mapRef}></div>
+      <Script
+        id="google-maps"
+        src="https://maps.googleapis.com/maps/api/js"
+        onReady={() => {
+          new google.maps.Map(mapRef.current, {
+            center: { lat: -34.397, lng: 150.644 },
+            zoom: 8,
+          })
+        }}
+      />
+    </>
+  )
+}
+
+🔹 onError
+=> Jab script load fail ho jaye (network error ya invalid URL), tab chalega.
+=> Sirf Client Components me kaam karega.
+
+Example:
+
+'use client'
+
+import Script from 'next/script'
+
+export default function Page() {
+  return (
+    <Script
+      src="https://wrong-url.com/script.js"
+      onError={(e) => {
+        console.error('Script failed to load', e)
+      }}
+    />
+  )
+}
+
+🧾 Summary (Hinglish Recap)
+| Prop       | Use                             | Notes                                                           |
+| ---------- | ------------------------------- | --------------------------------------------------------------- |
+| `src`      | External JS ka path             | Required                                                        |
+| `strategy` | Script kab load ho              | `beforeInteractive`, `afterInteractive`, `lazyOnload`, `worker` |
+| `onLoad`   | Jab script load ho jaye         | Only client                                                     |
+| `onReady`  | Jab script re-mount pe ready ho | Only client                                                     |
+| `onError`  | Agar load fail ho jaye          | Only client                                                     |
+
+💡 Real-World Use Cases
+| Script Type                    | Recommended Strategy |
+| ------------------------------ | -------------------- |
+| Cookie Consent / Bot Detection | `beforeInteractive`  |
+| Google Analytics / Tag Manager | `afterInteractive`   |
+| Chat Widgets / Support Bots    | `lazyOnload`         |
+| Heavy Background Script        | `worker`             |
+
+🔥 TOP Third-Party Packages (Images / Media)
+
+🥇 Cloudinary (Images + Video)
+📦 Package
+npm install cloudinary next-cloudinary
+
+🔹 Use kya mate?
+Image upload
+
+Resize / crop
+
+Auto format (webp, avif)
+
+CDN built-in
+
+🔹 Real-world usage
+import { CldImage } from "next-cloudinary";
+
+<CldImage
+  src="product/image"
+  width="400"
+  height="400"
+  alt="Product"
+/>
+✔ Ecommerce
+✔ SaaS dashboards
+✔ Marketing sites
+
+🥈 AWS SDK (S3 uploads)
+📦 Package
+npm install @aws-sdk/client-s3
+
+🔹 Use kya mate?
+Upload images to S3
+
+Generate signed URLs
+
+Backend-only (secure)
+
+🔹 Example
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+✔ Enterprise apps
+✔ Private images
+✔ High control
+
+🥉 UploadThing (Next.js friendly)
+📦 Package
+npm install uploadthing @uploadthing/react
+
+🔹 Use kya mate?
+Easy uploads
+
+Built-in auth support
+
+Works great with App Router
+
+✔ Startups
+✔ MVPs
+✔ Fast setup
+
+⭐ Sharp (Image optimization – server side)
+📦 Package
+npm install sharp
+
+🔹 Use kya mate?
+Resize images on server
+
+Compress before upload
+
+✔ Custom pipelines
+✔ Heavy image processing
+
+⭐ next-themes (Theme based images)
+📦 Package
+npm install next-themes
+
+🔹 Use kya mate?
+
+Dark / Light theme images
+
+Logo switching
+
+🧩 Others (Sometimes used)
+| Package          | Use                   |
+| ---------------- | --------------------- |
+| `multer`         | File upload handling  |
+| `react-dropzone` | Drag & drop upload UI |
+| `plaiceholder`   | Blur placeholder      |
+| `next-s3-upload` | S3 upload helper      |
+| `imgix`          | Image CDN             |

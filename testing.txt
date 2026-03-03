@@ -1,0 +1,6 @@
+1. Management Settings Header ma Management Settings and Exit Button Nathi
+2. Header ma padding 12px che te Proper nathi dekhatu 768px ma 
+3. /management-settings/users User ma Responsive ma scrollbar ma Table na    data show thay che pane 1 row show thy che  390 360 px ma 
+4. /management-settings/groups-permissions ma scrollbar ma data hidden thy    jay che 1024 768 576 390 360 px ma  
+5. /management-settings/groups-permissions ma Edit subgroup permissions ma   pane same issues
+6. /management-settings/users ma pane 390px 360px ma pane scrollbar issues 

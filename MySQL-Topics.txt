@@ -1,0 +1,22 @@
+1. What is SQL
+2. What is MySQL
+3. Database
+4. Tables & Columns & Rows 
+5. Primary Key & Foreign Key
+6. SQL Data type
+7. Create / Insert Query
+8. Retrieve / Select Query
+9. Update Query
+10. Delete Query
+11. Drop Statement
+12. Where Clause 
+13. ORDER BY Keyword
+14. In operator & Not In operator
+15. Between operator
+16. Like operator
+17. Group by
+18. Distinct statement
+19. Limit
+20. Constraints
+21. Join
+22. SubQuery

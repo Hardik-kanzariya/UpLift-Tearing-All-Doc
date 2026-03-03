@@ -1,0 +1,21 @@
+1.Intro to Typescript
+2.Basic Types in TypeScript
+3.Type Annotation
+4.Object Types
+5.Narrowing
+6.Classes 
+7.Modules
+8.TypeScript for JavaScript Programmers
+9.Type Manipulation
+10.Creating Types from Types
+11.Generics
+12.Keyof Type Operator
+13.Typeof Type Operator
+14.Indexed Access Types
+15.Conditional Types
+16.Mapped Types
+17.Template Literal Types
+18.Utility Types
+19.Explicit Types & Inference
+20.TypeScript Async Programming
+21.Decorators
