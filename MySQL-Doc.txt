@@ -815,30 +815,338 @@ SAVEPOINT → ek checkpoint banana (rollback ke liye)
 4. DCL → Control (permission ke liye)
 5. TCL → Transaction (save/undo karne ke liye)
 
+1. What is Cascading in SQL?
+=> SQL mein Cascading ek aisa mechanism hai jo foreign key relationships ke through data integrity maintain karta hai. 
+Iska matlab hai ki agar aap Parent Table mein koi badlav (update ya delete) karte hain, 
+toh woh change automatically Child Table (related records) mein bhi apply ho jata hai.
+
+=> MySQL mein Cascading ka matlab hota hai jab aap kisi parent table mein data change (update/delete) karte ho, toh woh change automatic child table mein bhi ho jaye.
+ Yeh feature Foreign Key constraints ke saath use hota hai takki database mein Referential Integrity bani rahe
+
+2. What are the types of Cascading in SQL?
+=> 1. ON DELETE CASCADE: Agar Parent Table ka record delete hota hai, toh uske related records Child Table mein bhi delete ho jate hain.
+   2. ON UPDATE CASCADE: Agar Parent Table ka record update hota hai, toh uske related records Child Table mein bhi update ho jate hain.   
+
+3. what is the use of Cascading in SQL?
+=> Cascading ka use data integrity maintain karne ke liye hota hai.    
+
+4. what is the syntax of Cascading in SQL?
+=> CREATE TABLE ChildTable (
+    id INT PRIMARY KEY,
+    parent_id INT,
+    FOREIGN KEY (parent_id) REFERENCES ParentTable(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+5. what is the difference between ON DELETE CASCADE and ON UPDATE CASCADE in SQL?
+=> ON DELETE CASCADE: Parent Table ke record delete hone par related Child Table ke records bhi delete ho jate hain.
+ON UPDATE CASCADE: Parent Table ke record update hone par related Child Table ke records bhi update
+
+6. what is the advantage of using Cascading in SQL?
+=> 1. Data Integrity: Cascading se aap ensure kar sakte hain ki Parent Table ke changes automatically Child Table mein reflect ho jaye,
+isse data consistency maintain hoti hai.
+2. Simplified Maintenance: Cascading se aapko manually Child Table ke records ko update
+ya delete karne ki zarurat nahi hoti, isse maintenance easy ho jata hai.
+
+7. what is the use of ALTER in SQL?
+=> SQL mein ALTER ek DDL (Data Definition Language) command hai jo kisi existing table ke structure (design) ko badalne ke liye use hoti hai. 
+Agar aapne table pehle se bana li hai aur ab usmein kuch changes karne hain—jaise naya column add karna ya purana delete karna—toh aap 
+ALTER use karenge.
+
+8. what is the syntax of ALTER in SQL?
+=> ALTER TABLE table_name
+
+// New column add karne ke liye
+ALTER TABLE table_name
+ADD column_name datatype;  -- Naya column add karne ke liye
+
+// Existing column ko modify karne ke liye
+ALTER TABLE table_name
+MODIFY column_name datatype new_constraint;  -- Existing column ko modify karne ke liye
+
+// Column delete karne ke liye
+ALTER TABLE table_name
+DROP COLUMN column_name;  -- Column delete karne ke liye
+
+// Change data type of existing column (rename bhi kar sakte hain)
+ALTER TABLE table_name
+CHANGE COLUMN old_name new_name datatype new_constraint ;  -- Column ka naam aur data type dono change karne ke liye
+                                      
+
+where table_name aapke existing table ka naam hai, column_name wo column jisme aap change karna chahte hain, 
+aur datatype us column ka data type specify karta hai.
+
+9. what is Truncate in SQL?
+=> SQL mein TRUNCATE ek DDL command hai jo table ke saare records ko delete karne ke liye use hoti hai, lekin table ka structure (schema) waise ka waise rehta hai.
+TRUNCATE TABLE table_name;
+
+10. what is the difference between DELETE and TRUNCATE in SQL?
+=> DELETE: Ye command table ke records ko row by row delete karta hai, aur iske sath WHERE clause use kar sakte hain specific records delete karne ke liye. DELETE ke baad aapko COMMIT karna padta hai changes ko save karne ke liye.
+TRUNCATE: Ye command table ke saare records ko ek hi baar me delete kar deta hai, aur isme WHERE clause use nahi hota. TRUNCATE ke baad aapko COMMIT karne ki zarurat nahi hoti, kyunki ye automatically changes ko save kar deta hai.
+
+11. what is the advantage of using TRUNCATE in SQL?
+=> 1. Speed: TRUNCATE DELETE ke comparison me bahut faster hota hai, kyunki ye row by row delete nahi karta, balki table ke data ko ek hi baar me remove kar deta hai.
+2. Resource Efficiency: TRUNCATE command table ke data ko delete karne ke liye kam resources use karta hai, kyunki ye transaction log me har row ke delete operation ko record nahi karta.
+3. Reset Identity: Agar aapke table me auto-increment column hai, toh TRUNCATE us auto-increment value ko reset kar deta hai, jabki DELETE aisa nahi karta.
+
+12. what is difference between DROP and TRUNCATE in SQL?
+=> DROP: Ye command table ya database ko puri tarah se delete kar deta hai, jisme uska structure aur data dono shamil hote hain. DROP ke baad aapko COMMIT karna padta hai changes ko save karne ke liye.
+TRUNCATE: Ye command table ke saare records ko delete kar deta hai, lekin table ka structure waise ka waise rehta hai. TRUNCATE ke baad aapko COMMIT karne ki zarurat nahi hoti, kyunki ye automatically changes ko save kar deta hai.
+
+13. what is Union in SQL?
+=> SQL mein UNION ek operator hai jo do ya zyada SELECT queries ke result sets ko combine karne ke liye use hota hai. UNION operator duplicate records ko remove kar deta hai, aur sirf unique records ko return karta hai.
+Syntax:
+SELECT column1, column2, ...
+FROM table1
+WHERE condition
+UNION
+SELECT column1, column2, ...
+FROM table2
+WHERE condition;
+
+14. what is Union All in SQL?
+=> SQL mein UNION ALL bhi do ya zyada SELECT queries ke result sets ko combine karne ke liye use hota hai, lekin ye duplicate records ko remove nahi karta. Iska matlab hai ki UNION ALL operator saare records (including duplicates) return karta hai.
+
+15. what is the difference between UNION and UNION ALL in SQL?
+=> UNION: Ye operator do ya zyada SELECT queries ke result sets ko combine karta hai aur duplicate records ko remove kar deta hai, sirf unique records return karta hai.
+UNION ALL: Ye operator do ya zyada SELECT queries ke result sets ko combine karta hai, lekin duplicate records ko remove nahi karta, yani saare records (including duplicates) return karta hai.
+
+16. what is Alias in SQL?
+=> SQL mein Alias ek temporary name hota hai jo aap kisi table ya column ko query ke andar de sakte hain. Alias ka use query ko zyada readable aur understandable banane ke liye hota hai, especially jab aap complex queries likh rahe hote hain ya multiple tables join kar rahe hote hain.
+Syntax:
+SELECT column_name AS alias_name
+FROM table_name AS alias_name
+WHERE condition;
+    
+17. what is the use of Alias in SQL?
+=> 1. Readability: Alias se aap apne queries ko zyada readable aur understandable bana sakte hain, especially jab aap complex queries likh rahe hote hain ya multiple tables join kar rahe hote hain.
+2. Shorter Names: Agar aapke table ya column ke naam bahut lamba hai, toh aap Alias ka use karke unhe chhota aur easy to remember bana sakte hain.
+
+create database if not exists Company;
+
+use Company;
+
+drop tables Departments;
+drop tables Employees;
+
+create table if not exists Departments (
+	id int primary key,
+    name varchar(50)
+);
+
+create table if not exists Employees(
+	id int primary key,
+    name varchar(50),
+    email varchar(20) unique,
+    dep_id int,
+    foreign key (dep_id) REFERENCES Departments(id)
+    on delete cascade <----- this use for parent table to delete to child to auto delete
+);
+
+select * from  Employees;
+select * from  Departments;
+
+insert into employees 
+values
+(101, 'Ravi', 'ravi@gmail.com', 1),
+(102, 'Amit', 'amit@gmail.com', 1),
+(103, 'Neha', 'neha@gmail.com', 2);
+;
+
+insert into Departments values(1,"Full-Stack") ,(2, 'HR');
+
+delete from Departments where id= 1;
+    
+    
+EX:- 2 
+
+create database if not exists c1;
+
+use c1;
+
+Create a table :-
+create table if not exists sal(
+	id int primary key,
+    salary varchar(50)
+);
+
+create table if not exists emp(
+	id int primary key,
+    name varchar(50),
+    email varchar(50) unique,
+    password varchar(10),
+    salary_id int,
+	foreign key (salary_id) REFERENCES sal(id) ON DELETE CASCADE
+);
+
+insert into :- 
+insert into sal (id, salary) values(1,25000),(2,35000),(3,45000);
+select * from sal;
+insert into sal (id, salary) values(4,55000);
+
+INSERT INTO emp (id, name, email, password, salary_id)
+VALUES
+(1, 'Vivek_Kanzariya', 'vk1@test.in', 'VK@123', 1),
+(2, 'Hardik_Kanzariya', 'hk@gmail.com', 'Hk@123', 2),
+(3, 'VK', 'vnk@gmail.com', 'Vnk@123', 3);
+select * from emp;
+
+INSERT INTO emp (id, name, email, password, salary_id)
+VALUES (4, 'Rahul', 'rahul@test.com', 'rahul123', 2); 
+
+INSERT INTO emp (id, name, email, password, salary_id)
+VALUES (5, 'Amit', 'amit@test.com', 'amit123', NULL);
+
+update emp password :-
+ALTER TABLE emp 
+MODIFY password VARCHAR(50);
+
+1. inner join table_name(emp)  in column_Name and table2_name(sal) in column_Name :-
+SELECT emp.id, emp.name, emp.email, sal.salary
+FROM emp
+INNER JOIN sal 
+ON emp.salary_id = sal.id;
+
+out put :-
+id       name             email             salary
+1	Vivek_Kanzariya	    vk1@test.in	        25000
+2	Hardik_Kanzariya	hk@gmail.com	    35000
+3	VK	                vnk@gmail.com	    45000  
 
 
+2. Left join table_name(sal)  in column_Name and table2_name(emp) in column_Name :-
+SELECT *
+FROM sal
+left JOIN emp
+ON emp.salary_id = sal.id;
+
+Out put :-
+id	salary	id	name	            email	        password	salary_id
+1	25000	1	Vivek_Kanzariya 	vk1@test.in	    VK@123	        1
+2	35000	2	Hardik_Kanzariya	hk@gmail.com	Hk@123	        2
+2	35000	4	Rahul	            rahul@test.com	rahul123	    2
+3	45000	3	VK	                vnk@gmail.com	Vnk@123	        3
+4	55000	NULL    NULL	            NULL	        NULL	        NULL				
+
+3. Right join table_name(sal)  in column_Name and table2_name(emp) in column_Name :-
+RIGHT table (emp)  LEFT table (sal) 
+SELECT *
+FROM sal
+right JOIN emp
+ON emp.salary_id = sal.id;
+
+Out put :-
+id	salary	id	name	            email	        password  salary_id
+1	 25000	1	Vivek_Kanzariya	    vk1@test.in	    VK@123	  1
+2	 35000	2	Hardik_Kanzariya	hk@gmail.com	Hk@123	  2
+3	 45000	3	VK	                vnk@gmail.com	Vnk@123	  3
+2	 35000	4	Rahul	            rahul@test.com	rahul123  2
+NULL NULL	5	Amit	            amit@test.com	amit123	  NULL  
+
+4. Full join Outer table_name(sal)  in column_Name and table2_name(emp) in column_Name :-
+RIGHT table (emp)  LEFT table (sal)
+SELECT *
+FROM sal
+left JOIN emp
+ON emp.salary_id = sal.id
+UNION
+SELECT *
+FROM sal
+right JOIN emp
+ON emp.salary_id = sal.id;
+
+Out put :-
+id	salary	id	    name	                email	        password	salary_id
+1	25000	1	    Vivek_Kanzariya	    vk1@test.in	        VK@123	        1
+2	35000	2	    Hardik_Kanzariya	hk@gmail.com	    Hk@123	        2
+2	35000	4	    Rahul	            rahul@test.com	    rahul123	    2
+3	45000	3	    VK	                vnk@gmail.com	    Vnk@123	        3
+4	55000	NULL	NULL	                NULL	           NULL	        NULL
+NULL NULL   5	    Amit	            amit@test.com	     amit123	    NULL
 
 
+5. LEFT EXCLUSIVE JOIN (LEFT JOIN with NULL condition)
+LEFT table (sal)  RIGHT table (emp)
+
+SELECT *
+FROM sal
+left JOIN emp
+ON emp.salary_id = sal.id
+WHERE emp.id IS NULL;
+
+out put :-
+id	salary	id	name	email	password	salary_id
+4	55000	NULL NULL   NULL    NULL		NULL	
+	
+6. RIGHT EXCLUSIVE JOIN (RIGHT JOIN with NULL condition)
+RIGHT table (emp)  LEFT table (sal)
+
+SELECT *
+FROM sal
+RIGHT JOIN emp
+ON emp.salary_id = sal.id
+WHERE sal.id IS NULL;
+
+Out put :-
+id	    salary	id	name	email	        password	salary_id
+NULL	NULL    5	Amit	amit@test.com	amit123	    NULL
+
+7. Self Join :-
+SELECT e1.id, e1.name, e2.name AS manager_name
+FROM emp e1
+LEFT JOIN emp e2 ON e1.salary_id = e2.salary_id AND e1.id != e2.id;
 
 
+Ex.3 :-
 
+create database if not exists bank;
+use bank;
 
+create table if not exists payment(
+	id int primary key,
+    customer_id int ,
+    customer varchar(50),
+    mode varchar(50),
+    city varchar(50)
+);
 
+INSERT INTO payment (id, customer_id, customer, mode, city)
+VALUES
+(1, 101, 'c1', 'NetBanking', 'Mumbai'),
+(2, 102, 'c2', 'Credit Card', 'Surat'),
+(3, 103, 'c3', 'Credit Card', 'Boston'),
+(4, 104, 'c4', 'NetBanking', 'Denver'),
+(5, 105, 'c5', 'Credit Card', 'Mumbai'),
+(6, 106, 'c6', 'Debit Card', 'Manali'),
+(7, 107, 'c7', 'Debit Card', 'Phoenix'),
+(8, 108, 'c8', 'NetBanking', 'Surat'),
+(9, 109, 'c9', 'NetBanking', 'Mumbai'),
+(10, 110, 'c10', 'Credit Card', 'Mumbai');
 
+select * from payment;
+select mode , count(customer)
+from payment
+group by mode ;
 
+Sql safe update mode enable karne ke liye:
+SET SQL_SAFE_UPDATES = 1;
+Sql safe update mode disable karne ke liye:
+SET SQL_SAFE_UPDATES = 0;
 
+UPDATE payment
+SET mode = 'Debit Card'
+WHERE mode = 'Debits ';
+SELECT * FROM payment;
 
+-- Disable safe update mode
+SET SQL_SAFE_UPDATES = 0;
 
+--Truncate the payment table delete for all records but structure is same
+TRUNCATE TABLE payment;
 
+-- Change the column name from customer to customer_name and data type to varchar(50) 
+ALTER TABLE payment
+CHANGE customer customer_name varchar(50);
 
-
-
-
-
-
-
-
-
-
-
-
+-- Drop the column city from payment table
+ALTER TABLE payment
+DROP COLUMN city;
