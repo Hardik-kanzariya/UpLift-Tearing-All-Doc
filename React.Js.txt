@@ -597,7 +597,7 @@ export default App;
 2. MyInput me jo ref aata hai, wo input element pe attach hota hai.
 3. Parent me useRef() se ek reference banate hain (inputRef).
 4. Jab button click hota hai → inputRef.current.focus()
-→ directly input pe focus ho jata hai ✨
+→ directly input pe focus ho jata hai ✨ 
 
 ⚙️ Without forwardRef:
 Agar hum normally ref pass karte hain:
