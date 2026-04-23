@@ -1,0 +1,1086 @@
+1.what is React.js
+2.React Install
+3.React Components
+4.React Class Components & Function Components
+5.State
+6.Props
+7.React JSX
+8.Virtual DOM & Real DOM
+9.Events
+10.Lists
+11.React Portals
+12.React Suspense 
+13.React Router
+14.React forwardRef
+15.React Hooks
+16.useState
+17.useEffect
+18.useContext
+19.useRef
+20.useReducer
+21.useCallback
+22.useMemo
+23.Custom Hooks
+
+
+
+
+------------------------------ 1. What is React.Js -----------------------------
+🔸 1. What is React?
+=> React ek JavaScript library hai jo UI (User Interface) banava mate use thay che.
+=> React create by Jordan Walke May 29 2011.
+=> Isse Facebook (Meta) ne banaya tha.
+=> First Name "F-Bolt" and "Fax-JS" and "React".
+=> React no use Single Page Application (SPA) mate use thay che.
+
+Overview and Features 
+✅ Fast Rendering (Virtual DOM)
+✅ Reusable Components
+✅ Easy to Learn & Debug
+✅ Strong Ecosystem
+✅ Backed by Meta (Facebook)
+✅ SEO Friendly (with SSR tools like Next.js)
+
+----------------------------- 2. React Install ----------------------
+
+2. Install 2 type  
+
+1. CRA ( Create React App )
+=> npx create-react-app@latest my-app
+
+2. Vite  
+=> npm create vite@latest
+
+----------------------------- 3. Components ---------------------------
+
+⚛️ 3. What is a Component ?
+=> React me Component ek chhota, reusable code ka piece hota hai
+=> jo ek particular UI (User Interface) ka part banata hai.
+=> React application components se milke banti hai, jaise LEGO blocks 🧱
+=> Components type 2 :-
+   1. Function Comment
+   2. Class Component
+
+----------------------- Component Life Cycle ------------------
+1.Mounting
+=> Component DOM me pehli baar render hota hai
+
+2.Updating	
+=> Props ya State change hone par component update hota hai
+
+3.Unmounting	
+=> Component DOM se remove hota hai
+
+-------------------- 4. React Class Components & Function Components ------------------
+
+1️. Function Component (Simple Definition)
+👉 Function Component ek simple JavaScript function hota hai
+jo React element (UI) return karta hai.
+=> Yeh React 16+ (Hooks) ke baad sabse common aur easy method hai component banane ka.
+
+Example:-
+function Welcome() {
+  return <h1>Hello from Function Component!</h1>;
+}
+export default Welcome;
+
+
+✅ Key Points:
+=> Simple aur short syntax hota hai
+=> Hooks (like useState, useEffect) ke sath state & logic handle kar sakte ho
+=> Fast aur modern React apps me mostly yehi use hota hai
+
+2️. Class Component (Simple Definition)
+👉 Class Component ek JavaScript class hoti hai
+jo React.Component se inherit karti hai
+=> aur uske andar ek render() method hota hai jo UI return karta hai.
+
+Example:-
+import React, { Component } from "react";
+
+class Welcome extends Component {
+  render() {
+    return <h1>Hello from Class Component!</h1>;
+  }
+}
+export default Welcome;
+
+
+✅ Key Points:
+=> Old (traditional) React component style
+=> render() method compulsory hota hai
+=> State aur lifecycle methods (componentDidMount, etc.) use karte the
+=> Aajkal mostly function components + hooks use kiye jaate hain
+
+-------------------------------------- 5. State --------------------------------
+
+1.State (Functional Component me)
+👉 State ek data container hota hai jisme component ke andar ka dynamic data store hota hai.
+Functional component me state ko handle karne ke liye useState() hook use hota hai.
+
+🧠 Example:
+import { useState } from "react";
+function Counter() {
+  const [count, setCount] = useState(0); // Initial value 0
+    return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+    </div>
+  );
+}
+
+➡️ Jab button click hota hai, setCount() se state update hoti hai
+aur component re-render hota hai with new value.
+
+Summary:-
+=> State = component ka internal data
+=> Change hone par UI update hota hai
+=> Functional components me Hooks ke sath use hota hai
+
+---------------------------------------- 6. Props --------------------------------------
+
+2. Props (Passing Data Between Components)
+👉 Props (short for properties) ek read-only data hai jo parent se child component ko bheja jaata hai.
+
+🧠 Example:
+function Welcome(props) {
+  return <h2>Hello, {props.name}!</h2>;
+}
+function App() {
+  return (
+    <div>
+      <Welcome name="Amit" />
+      <Welcome name="Riya" />
+    </div>
+  );
+}
+➡️ Output:
+Hello, Amit!
+Hello, Riya!
+
+Summary:-
+=> Props = Data passing ka tarika
+=> Read-only (cannot be modified by child)
+=> Parent → Child direction me data flow hota hai
+
+
+--------------------------- 7. JSX --------------------------------
+
+🧩 3. Introduction to JSX
+=> JSX (JavaScript XML) ek syntax extension hai jo React me use hota hai.
+Yeh allow karta hai ki hum HTML aur JavaScript ko ek hi file me likh saken.
+
+Example:- const element = <h1>Hello, React!</h1>;
+
+👉 Yeh normal JavaScript nahi hai, lekin React compiler (Babel) isse JavaScript me convert kar deta hai.
+
+JSX Benefits:-
+1. Readable & simple syntax
+2. Component structure clear hoti hai
+3. JavaScript expressions directly likh sakte ho ({} ke andar)
+
+Example with JS Expression:-
+const name = "Amit";
+const element = <h1>Hello, {name}!</h1>;
+
+----------------------- 8. Virtual DOM & Real DOM ---------------- 
+
+1️. DOM kya hota hai
+=> DOM ka full form hai Document Object Model.
+=> Yeh browser ka ek tree-like structure hota hai jo HTML elements ko represent karta hai.
+
+👉 Jab browser HTML file read karta hai, to wo ek DOM tree banata hai.
+Har tag (like <div>, <p>, <h1>) ek node hota hai.
+
+Example (HTML):-
+<div>
+  <h1>Hello</h1>
+  <p>Welcome to React</p>
+</div>
+
+2️. Real DOM kya hota hai
+=> Real DOM browser ka actual structure hota hai jo HTML elements ko represent karta hai.
+=> Jab bhi koi change hota hai, poora page dobara update hota hai, isliye thoda slow hota hai.
+
+🔸 Real DOM ki problems:-
+1. Slow updates — Jab bhi koi chhoti change hoti hai (like text update), pura DOM reload ho jata hai.
+2. Re-rendering cost zyada hoti hai — Large applications me performance slow ho jata hai.
+3. Inefficient UI updates — Har update ke liye browser ko layout aur painting karni padti hai.
+
+3️. Virtual DOM kya hota hai
+=> Virtual DOM ek lightweight copy hota hai Real DOM ka.
+=> React Virtual DOM me changes karta hai aur phir sirf changed parts ko Real DOM me update karta hai —
+isse app fast aur efficient ban jati hai ⚡
+
+Matlab React:-
+=> Pehle Virtual DOM me changes karta hai
+=> Fir compare karta hai (Virtual DOM vs Real DOM)
+=> Sirf changed parts ko real DOM me update karta hai (using diffing algorithm)
+
+---------------------------- 9. Events ----------------------------------
+
+1. React Events kya hota hai?
+=> React ma Events wo actions hote hain jo user kare —
+jaise button click karna, input me likhna, mouse le jana, form submit karna, etc.
+=> React ma ye events JS ke events jaise hi hote hain,
+bas naming style aur use karne ka tarika thoda alag hota hai.
+
+1️. Button Click Event:-
+
+function App() {
+  const handleClick = () => {
+    alert("Button click hua!");
+  };
+  return (
+    <button onClick={handleClick}>Click Me</button>
+  );
+}
+
+👉 Explanation:
+1. onClick — React ka event name (camelCase me likhte hain)
+2. handleClick — function jo click hone par chalega
+3. JSX me event likhte time function call nahi karte (no ())
+
+2. Input Change Event
+function InputExample() {
+  const handleChange = (event) => {
+    console.log("User ne likha:", event.target.value);
+  };
+
+  return (
+    <input type="text" onChange={handleChange} placeholder="Type here..." />
+  );
+}
+👉 Explanation:
+1. onChange — jab user input me likhta hai tab trigger hota hai
+2. event.target.value — input box ki value milti hai
+
+3. Form Submit Event
+function FormExample() {
+  const handleSubmit = (event) => {
+    event.preventDefault(); // page reload hone se rokta hai
+    alert("Form submit hua!");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Enter name" />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+👉 Explanation:
+1. onSubmit — jab form submit hota hai tab call hota hai
+2. event.preventDefault() — page reload hone se rokta hai
+
+4. Mouse Events Example
+function MouseExample() {
+  const handleMouseOver = () => console.log("Mouse upar gaya!");
+  const handleMouseOut = () => console.log("Mouse bahar gaya!");
+
+  return (
+    <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+      Mujh par mouse le aao!
+    </div>
+  );
+}
+👉 Common Mouse Events:
+onClick
+onDoubleClick
+onMouseOver
+onMouseOut
+
+🧠 Synthetic Event:-
+=> React ke sare events actually SyntheticEvent hote hain —
+ye ek wrapper hota hai browser ke native event ka,
+taaki har browser me same tarah se kaam kare.
+
+function handleClick(event) {
+  console.log(event.type); // "click"
+}
+
+------------------------------ 10. Lists ----------------------------------
+
+1. React Lists — Simple Definition
+👉 List ka matlab hota hai — ek item ka collection (jaise array)
+React me hum List of data (array) ko loop (map) karke show karte hain.
+=> Jaise HTML me hum manually <li> likhte hain,
+React me hum dynamically list bana sakte hain using .map().
+=> Har list item ko ek unique key dena zaruri hai.
+Ye React ko batata hai ki konsa element add, remove, ya update hua hai.
+
+Example 1: Simple List:-
+function ListExample() {
+  const students = ["Rahul", "Priya", "Aman", "Sneha"];
+  return (
+    <ul>
+      {students.map((name) => (
+        <li>{name}</li>
+      ))}
+    </ul>
+  );
+}
+
+export default ListExample;
+
+🧠 Explanation (Hinglish me):
+1. students ek array hai jisme 4 names hain
+2. .map() se har name ko <li> me convert kiya gaya
+3. {} use kiya gaya JSX me JavaScript likhne ke liye
+
+
+Example 2: Object Array List:-
+function EmployeeList() {
+  const employees = [
+    { id: 1, name: "John", role: "Developer" },
+    { id: 2, name: "Aisha", role: "Designer" },
+    { id: 3, name: "Kunal", role: "Tester" },
+  ];
+  return (
+    <ul>
+      {employees.map((emp) => (
+        <li key={emp.id}>
+          {emp.name} - {emp.role}
+        </li>
+      ))}
+    </ul>
+  );
+}
+🧠 Explanation:
+1. Har employee ek object hai (id, name, role)
+2. .map() se unhe <li> me dikhaya gaya
+3. key={emp.id} har element ko unique rakhta hai
+
+------------------------- 11. React Portals ---------------------------------
+
+11. React Portals:-
+👉 React Portals ek feature hai jisse hum component ko root ke bahar render kar sakte hain.
+Normally, har React component <div id="root"> ke andar render hota hai.
+Lekin Portal ke through hum component ko kisi bhi DOM node me render kar sakte hain (root ke bahar bhi).
+
+🧠 Example Situation:
+
+Maan lo tumhara HTML aisa hai 👇
+
+<div id="root"></div>
+<div id="modal-root"></div>  <!-- Modal ke liye alag div -->
+
+
+Ab hum chahte hain ki ek popup/modal box #modal-root me render ho,
+root ke andar nahi — to hum use karenge React Portal.
+
+🔹 Syntax:
+ReactDOM.createPortal(child, container)
+
+child → wo React element/component jo render karna hai
+container → wo DOM node jahan render karna hai (e.g. document.getElementById('modal-root'))
+
+=> React Portals ka use tab hota hai jab hume koi component
+React root ke bahar render karna ho (jaise modal, tooltip, popup).
+
+Syntax:- 
+ReactDOM.createPortal(child, document.getElementById('target-id'));
+
+--------------------------- 12. React Suspense -----------------------------
+
+12. React Suspense
+=> React Suspense ek feature hai jo lazy loading ya data fetching ke time par
+“Loading state” dikhane ke liye use hota hai.
+
+Matlab — jab tak koi component ya data load ho raha hai,
+Suspense ek fallback UI (jaise “Loading...”) show karta hai.
+
+🔹 Example Situation:-
+Maan lo tumhara app me ek bada component hai — jaise “UserProfile”, 
+aur tum nahi chahte ke wo app ke saath hi load ho (kyunki bada hai).
+To tum usko lazy load kar sakte ho using Suspense.
+
+💡 Simple Example (Hinglish):
+const MyComp = lazy(() => import("./MyComp"));
+
+<Suspense fallback={<p>Loading...</p>}>
+  <MyComp />
+</Suspense>
+=> 🪄 Jab MyComp load hoga tab tak React “Loading...” show karega.
+
+🐢 Lazy Loading ke sath Suspense
+
+Lazy loading ka matlab — React component ko dynamically import karna
+(jab zarurat ho tab load karna, pehle nahi).
+
+Without Lazy Loading 👇
+import { Suspense } from 'react';
+import Cars from './Cars';
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Cars />
+    </Suspense>
+  );
+}
+⚠️ Ye example bahut fast load hota hai, to "Loading..." dikhai nahi deta.
+
+With Lazy Loading 👇
+import { Suspense, lazy } from 'react';
+import { createRoot } from 'react-dom/client';
+
+// Lazy load the component
+const Cars = lazy(() => import('./Cars'));
+
+function App() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Cars />
+      </Suspense>
+    </div>
+  );
+}
+createRoot(document.getElementById('root')).render(<App />);
+
+🧠 Explanation:-
+1. lazy(() => import('./Cars')) → ye component tabhi load hoga jab zarurat ho.
+2. Suspense → tab tak fallback show karega jab tak Cars component load nahi hota.
+
+🧩 Multiple Components ek hi Suspense me :-
+=> Tum ek se zyada lazy components ko ek hi Suspense ke andar wrap kar sakte ho 👇
+
+import { Suspense, lazy } from 'react';
+import { createRoot } from 'react-dom/client';
+
+const Header = lazy(() => import('./Header'));
+const Content = lazy(() => import('./Content'));
+const Sidebar = lazy(() => import('./Sidebar'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Header />
+      <div style={{ display: 'flex' }}>
+        <Sidebar />
+        <Content />
+      </div>
+    </Suspense>
+  );
+}
+createRoot(document.getElementById('root')).render(<App />);
+
+🧠 Yahan kya ho raha hai:-
+1. Header, Sidebar, Content teeno lazy load honge
+2. Tab tak Suspense "Loading..." show karega
+3. Jaise hi load complete hota hai, teeno render ho jate hain
+
+| Concept        | Description                                                     |
+| -------------- | --------------------------------------------------------------- |
+| `Suspense`     | Loading ke time fallback show karta hai                         |
+| `fallback`     | Alternative UI (like "Loading...") jab tak data/code ready nahi |
+| `React.lazy()` | Component ko dynamically import karta hai                       |
+| Use Case       | Lazy loading, data fetching, code-splitting                     |
+| Advantage      | App fast aur optimized banti hai                                |
+
+⚙️ Real Life Example:-
+
+Imagine karo ek e-commerce app me:-
+
+Homepage fast load ho raha hai
+
+Product details page thoda heavy hai
+
+To tum product page ko lazy load kar sakte ho aur Suspense fallback me
+“Loading product details…” likh sakte ho 😄
+
+-------------------------------- 13. React Router --------------------------
+13. React Router
+=> React Router ek library hai jo React apps me client-side routing provide karti hai.
+=> Matlab — ek single-page application (SPA) me alag-alag pages ya views dikhana
+bina page reload kiye.
+
+🔹 Why React Router?
+=> SPA me hum normally URL change karte hai par page reload nahi hota
+=> React Router se hum different URLs ke liye different components render kar sakte hain
+=> Navigation easy aur fast ho jata hai
+
+=> React Router ka use hota hai SPA me multiple pages create karne ke liye
+bina page reload ke, aur navigation smooth hota hai.
+
+⚙️ Step 1: Install React Router
+npm install react-router-dom
+
+🔹 Nested Routes Example
+<Route path="/dashboard" element={<Dashboard />}>
+  <Route path="stats" element={<Stats />} />
+  <Route path="settings" element={<Settings />} />
+</Route>
+
+=> Dashboard me <Outlet /> use karna hota hai nested routes show karne ke liye.
+
+| Concept       | Description                              |
+| ------------- | ---------------------------------------- |
+| BrowserRouter | Routing enable karta hai                 |
+| Routes        | All routes ka container                  |
+| Route         | Path aur component ko connect karta hai  |
+| Link          | Page reload kiye bina navigate karta hai |
+| NavLink       | Active link highlight karta hai          |
+| Outlet        | Nested route ka render area              |
+| useParams     | URL ke variable data ko access karta hai |
+
+🌐 URL Parameters (Dynamic Routing)
+import { BrowserRouter, Routes, Route, Link, useParams } from "react-router-dom";
+
+function Info() {
+  const { firstname } = useParams();
+  return <h1>Hello, {firstname} 👋</h1>;
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <nav>
+        <Link to="/customer/Emil">Emil</Link> |
+        <Link to="/customer/Tobias">Tobias</Link> |
+        <Link to="/customer/Linus">Linus</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/customer/:firstname" element={<Info />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+
+---------------------------------- 14. React forwardRef ---------------------
+
+14. React forwardRef :-
+=> forwardRef ek special React function hai
+jo parent component se child component ke andar ke DOM element ka direct reference (ref) bhejne ke liye use hota hai.
+Matlab:-
+normally parent directly child ke input ya button pe access nahi kar sakta,
+lekin forwardRef se wo possible hota hai ✅
+
+🧠 Use kab karte hain (Common Uses):
+1. Input field ko focus karna
+2. Animation trigger karna
+3. DOM element ka size ya position measure karna
+4. Third-party libraries ke saath integration
+
+🔹 Example (Simple & Clear)
+import { forwardRef, useRef } from "react";
+
+// 🔸 Child Component
+const MyInput = forwardRef((props, ref) => (
+  <input ref={ref} {...props} />
+));
+
+// 🔸 Parent Component
+function App() {
+  const inputRef = useRef();
+
+  const focusInput = () => {
+    inputRef.current.focus(); // direct input par focus
+  };
+  return (
+    <div>
+      <MyInput ref={inputRef} placeholder="Type here..." />
+      <button onClick={focusInput}>Focus Input</button>
+    </div>
+  );
+}
+
+export default App;
+
+🔍 Step-by-Step Samjho:
+1. forwardRef() se hum ek component wrap karte hain
+→ taaki wo ref ko as prop accept kar sake.
+2. MyInput me jo ref aata hai, wo input element pe attach hota hai.
+3. Parent me useRef() se ek reference banate hain (inputRef).
+4. Jab button click hota hai → inputRef.current.focus()
+→ directly input pe focus ho jata hai ✨
+
+⚙️ Without forwardRef:
+Agar hum normally ref pass karte hain:
+
+<MyInput ref={inputRef} />
+
+
+To React bolega ❌ — “ref sirf DOM elements ya class components pe lag sakta hai, functional components pe nahi.”
+
+Lekin forwardRef lagane ke baad ✅
+React ref ko child ke andar ke element tak forward kar deta hai.
+
+💡 In Short (Hinglish Me):
+
+forwardRef ka use tab hota hai jab hume parent component se
+child component ke DOM element par direct control chahiye.
+
+Ye ek “bridge” hai ref ko parent → child tak bhejne ka.
+
+
+--------------------------------------------- 15. React Hooks --------------------------------------------
+
+15. React Hook kya hota hai?
+=> React Hook ek special function hota hai jo hume React ke features (jaise state, lifecycle methods, context, etc.) ko functional component ke andar use karne deta hai.
+
+👉 Pehle yeh sab features sirf class components mein milte the,
+lekin Hooks ke aane ke baad hum functional components mein bhi use kar sakte hain.
+
+
+| Hook            | Kya karta hai                                                            |
+| --------------- | ------------------------------------------------------------------------ |
+| **useState**    | Component ke andar **state** handle karta hai                            |
+| **useEffect**   | Side effects (jaise API call, timer, ya event listener) handle karta hai |
+| **useRef**      | DOM element ka **reference** store karta hai                             |
+| **useContext**  | Context API se data directly access karta hai                            |
+| **useMemo**     | Performance improve karta hai (recalculate sirf jab zarurat ho)          |
+| **useCallback** | Function ko memoize karta hai taaki unnecessary re-render na ho          |
+
+
+🧩 Hook Rules ( important )
+
+1️⃣ Hooks sirf React function components ke andar hi use kar sakte ho.
+2️⃣ Hooks ko component ke top par call karna chahiye (loops, conditions, ya nested functions me nahi).
+3️⃣ Hooks conditionally call nahi kar sakte — unka order har render me same rehna chahiye.
+⚠️ Hooks class components me kaam nahi karte!
+
+
+🛠️ Custom Hooks kya hote hain?
+=> Agar tumhare paas aisi logic hai jo multiple components me repeat hoti hai (jaise API fetch karna ya form handle karna),
+to tum Custom Hook bana sakte ho.
+
+Custom hook ek normal JavaScript function hota hai jo apne naam ke aage use likh ke start hota hai — jaise:
+
+function useFetchData() { ... }
+
+
+| Concept         | Explanation                                                 |
+| --------------- | ----------------------------------------------------------- |
+| **useState**    | Component ke andar state handle karta hai                   |
+| **useEffect**   | Side effects (API calls, timers, etc.) ke liye use hota hai |
+| **useRef**      | DOM element ka reference store karta hai                    |
+| **Custom Hook** | Apne khud ke reusable hook banane ke liye                   |
+
+
+------------------------------------------- 16. Use State Hook ---------------------------------------------
+
+16. Use State Hook
+=> Use State Hook e 2 variable le che ek state and setvariable le che je state variable ne update karava mate use thay che.
+=> useState a state variable update karava mate use thay che.
+
+🧠 Example samjho:-
+
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0); // initial value = 0
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+    </div>
+  );
+}
+
+export default Counter;
+
+
+🔍 Explanation:-
+useState(0) → initial value 0 set kare che
+count → current value
+setCount → value update karva mate ni function
+jyare setCount call thay che → component re-render thay ane new value show kare che
+
+--------------------------------------- 17. useEffect Hooks -----------------------------------
+
+17. useEffect Hooks
+➡️ useEffect ek React Hook che je tame side effects perform karva mate vapro cho function component ma.
+
+🧠 Side Effects shu hoy?
+"Side effects" etle — koi pan action je React na normal rendering cycle ni bahar kare che.
+Jaise ke:
+🧭 API call karvi (data fetch karvu)
+⏱ Timer set karvo (setTimeout, setInterval)
+💾 LocalStorage ma data save karvu
+🎛️ DOM update manually karvu
+
+
+useEffect(() => {
+  // side effect logic here
+}, [dependencies]);
+
+🔍 Explanation:-
+1. useEffect andar ni function component render thay pachi chale che.
+2. [dependencies] array ma tame specify karo cho ke kya change pachi effect run thavu joiye.
+
+
+🔁 Example 2: Run when state changes
+
+import { useState, useEffect } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log(`Count badli gayu: ${count}`);
+  }, [count]); // runs every time 'count' changes
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>+</button>
+    </div>
+  );
+}
+
+
+------------------------------------- 18. Context API or useContext Hooks ----------------------------------------
+
+18. React useContext Hook
+=> useContext Hook ek React Hook che je data ne directly access karava mate use thay che. bina props drilling mate.
+
+=> useContext ek Hook hai jo hume React Context me stored value ko directly kisi child component me access karne deta hai, bina props ke through pass kiye.
+
+Context API:-
+=> React Context API ek feature hai jo global data ko multiple components me share karne deta hai bina props ko har level me pass kiye.
+
+=> React Context API ek feature hai jo hume global state ya data ko multiple components me share karne deta hai, bina props ko har level me pass kiye. Iska use tab hota hai jab deeply nested components ko same data chahiye, jaise theme, user info, ya authentication status.
+
+useContext Hook:-
+=> useContext ek Hook hai jo functional components me Context ki value ko directly access karne ke liye use hota hai.
+=> useContext ek React Hook hai jo functional components me context ki value ko directly read karne ke liye use hota hai. Ye hume easily Context Provider se value le kar component me use karne deta hai.
+
+💡 Solution: React Context + useContext Hook
+React me Context API se hum ye problem solve kar sakte hain.
+Context ek global state container hai jo kisi bhi child component me directly use kiya ja sakta hai.
+
+🛠️ Step 1: Create Context
+import { createContext, useState } from "react";
+
+const UserContext = createContext(); // Context create kiya
+
+🛠️ Step 2: Provide Context
+
+Provider component se hum state ko children components ke liye available kar dete hain:
+
+function Component1() {
+  const [user, setUser] = useState("Linus");
+
+  return (
+    <UserContext.Provider value={user}>
+      <h1>Hello {user}!</h1>
+      <Component2 />
+    </UserContext.Provider>
+  );
+}
+
+
+Ab Component2 aur Component3 directly user state ko access kar sakte hain.
+
+🛠️ Step 3: Consume Context using useContext Hook
+
+Child component me useContext hook ka use karke value access kar sakte hain:
+
+import { useContext } from "react";
+
+function Component3() {
+  const user = useContext(UserContext); // Context value access ki
+  return <h1>Hello {user} again!</h1>;
+}
+
+🏁 Full Example
+import { useState, createContext, useContext } from 'react';
+import { createRoot } from 'react-dom/client';
+
+const UserContext = createContext();
+
+function Component1() {
+  const [user, setUser] = useState("Linus");
+
+  return (
+    <UserContext.Provider value={user}>
+      <h1>Hello {user}!</h1>
+      <Component2 />
+    </UserContext.Provider>
+  );
+}
+
+function Component2() {
+  return <Component3 />;
+}
+
+function Component3() {
+  const user = useContext(UserContext);
+  return <h1>Hello {user} again!</h1>;
+}
+
+createRoot(document.getElementById('root')).render(<Component1 />);
+
+🔹 Key Points
+
+createContext() → Context banata hai.
+
+Provider → State ko children components tak pass karta hai.
+
+useContext(ContextName) → Context value ko directly access karta hai.
+
+Props drilling ka problem solve ho jata hai.
+
+
+-------------------------------------------- 19. useRef Hook ----------------------------------
+
+19. useRef hook su che ? 
+=> useRef Hook ek aisa hook hai jo component ke re-renders ke beech values ko persist karne me help karta hai aur directly DOM elements ko access karne ke liye use hota hai.
+
+Simple Definition:-
+useRef ek object return karta hai jiska current property hota hai. Ye value component ke multiple re-renders me bhi same rehti hai aur isse update karne se component re-render nahi hota
+
+1. Re-render ko avoid karte hue value store karna
+Example: Render count track karna
+
+import { useState, useRef, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+
+function App() {
+  const [inputValue, setInputValue] = useState("");
+  const count = useRef(0);
+
+  useEffect(() => {
+    count.current += 1; // render count increment
+  });
+
+  return (
+    <>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <h1>Render Count: {count.current}</h1>
+    </>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<App />);
+✅ Yaha count.current update hota hai lekin component baar-baar re-render nahi hota.
+
+🔹 useRef Hook
+=> Ye React Hook hai jo ek ref object return karta hai.
+=> Ye object me ek property hoti hai — .current
+=> Hum us .current me kuch bhi store kar sakte hai (DOM element, number, object, etc.)
+=> Mostly DOM element ko directly access karne ke liye use hota hai.
+
+import { useRef } from "react";
+function Example() {
+  const inputRef = useRef();
+
+  const focusInput = () => {
+    inputRef.current.focus(); // Direct DOM access
+  };
+  return (
+    <>
+      <input ref={inputRef} type="text" placeholder="Type here..." />
+      <button onClick={focusInput}>Focus Input</button>
+    </>
+  );
+}
+
+-------------------------------------------- 20. useReducer Hook --------------------------------
+
+20. useReducer hook su che ?
+=> useReducer ek React Hook hai jo state ko manage karne ke liye use hota hai,
+bilkul useState ki tarah — lekin jab logic thoda complex ho, tab useReducer use karna better hota hai.
+
+🔸 Why useReducer?
+=> Agar tumhare paas multiple states hain (like counter, form fields, ya nested data),
+aur un sab ka update logic complex hai — tab useReducer use karte hain.
+
+🔸 Syntax:
+const [state, dispatch] = useReducer(reducer, initialState)
+
+
+Yaha 3 cheeze hoti hain 👇
+1. reducer function → ye batata hai state kaise update hogi
+2. initialState → starting value of state
+3. dispatch function → state ko update karne ke liye action bhejta hai
+
+🔸 Reducer Function Example:
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "INCREASE":
+      return state + 1;
+    case "DECREASE":
+      return state - 1;
+    default:
+      return state;
+  }
+};
+
+state = current value
+
+action = object jisme likha hota hai type aur kabhi-kabhi payload
+
+🔸 Example (Score Counter):
+import { useReducer } from "react";
+
+const initialScore = [
+  { id: 1, name: "John", score: 0 },
+  { id: 2, name: "Sally", score: 0 },
+];
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "INCREASE":
+      return state.map((player) =>
+        player.id === action.id
+          ? { ...player, score: player.score + 1 }
+          : player
+      );
+    default:
+      return state;
+  }
+};
+
+function Score() {
+  const [score, dispatch] = useReducer(reducer, initialScore);
+
+  return (
+    <>
+      {score.map((player) => (
+        <div key={player.id}>
+          <button onClick={() => dispatch({ type: "INCREASE", id: player.id })}>
+            {player.name}
+          </button>
+          <span> Score: {player.score}</span>
+        </div>
+      ))}
+    </>
+  );
+}
+export default Score;
+
+🔹 How it works (step by step):
+
+Pehle useReducer se state aur dispatch milta hai.
+
+Jab button click hota hai → dispatch({ type: "INCREASE", id: 1 }) run hota hai.
+
+Ye reducer function ko call karta hai.
+
+Reducer state ko check karke naya value return karta hai.
+
+React component re-render hota hai with new state.
+
+💡 Short Definition for Interview:
+useReducer ek hook hai jo complex state logic ko handle karava mate use thay che.
+Ye ek reducer function aur dispatch method ke sath kaam karta hai,
+jaha reducer state ko update karne ka rule define karta hai.
+
+1. useReducer → React Hook for managing complex state
+2. reducer → ek function jo batata hai state kaise update karni hai
+3. dispatch → ek function jisse hum action bhejte hain (jaise INCREMENT, DECREMENT)
+
+--------------------------------------------- 21. useCallback Hook ----------------------------------
+
+21. useCallback hook su che 
+=> useCallback ek hook ek function ko memoize karta hai.
+Ye ensure karta hai ki function tabhi recreate ho jab uski dependencies change ho.
+Ye mostly performance optimization ke liye use hota hai
+
+=> useCallback hook ek memoized function return karta hai —
+jisse unnecessary re-renders aur performance issues avoid hote hain.
+
+const memoizedFunction = useCallback(() => {
+  // function logic yaha likho
+}, [dependencies]);
+
+🧠 Short Explanation:-
+1. useCallback() → React Hook hai jo function ko memoize (cache) karta hai
+2. () => {} → wo function jise React yaad rakhega
+3. [dependencies] → jab ye values change hoti hain tabhi function dobara create hota hai
+
+const handleClick = useCallback(() => {
+  console.log("Button clicked");
+}, []);
+
+🔹 Memoized Function :-
+=> Ek memoized function wo function hota hai jiska result React ya JavaScript yaad (cache) rakh leta hai —
+taa ki agar same input dobara mile, to function dobara calculate na kare, balki pehle se stored result return kar de.
+
+=> Memoized function wo hota hai jise React ya JavaScript yaad rakhta hai taa ki unnecessary recalculation ya re-creation na ho. ✅
+
+🔹 React ke context mein:-
+React mein useCallback() aur useMemo() dono memoization ke liye use hote hain.
+
+useCallback() → function ko memoize karta hai (yaad rakhta hai)
+
+useMemo() → function ke result/value ko memoize karta hai
+
+---------------------------------------------- 22. useMemo Hook -------------------------------------
+
+22. useMemo Hook
+=> useMemo ek hook che expensive calculation no result yaad (memoize) kare che,
+ane fakat dependencies change thay tyare j recalculate kare che — performance improve kare che
+
+=>  
+
+import { useState, useMemo } from "react";
+
+function App() {
+  const [count, setCount] = useState(0);
+  const [todos, setTodos] = useState([]);
+
+  const calculation = useMemo(() => {
+    console.log("Calculating...");
+    for (let i = 0; i < 1000000000; i++) {
+      count += 1;
+    }
+    return count;
+  }, [count]);
+
+  return (
+    <>
+      <button onClick={() => setTodos([...todos, "New Todo"])}>Add Todo</button>
+      <button onClick={() => setCount(c => c + 1)}>Increase</button>
+      <h3>Count: {count}</h3>
+      <h3>Calculation: {calculation}</h3>
+    </>
+  );
+}
+
+----------------------------------------------- 23. Custom Hook -------------------------------------
+
+23. Custom Hook su che ?
+=>  ape de banavi te ne Custom Hook kevay che.
+=> Custom Hook ek aapno banavel Hook che, je reusable logic (like data fetch, form handling, etc.) ne ek function ma store kare che, jethi tene multiple components ma use kari sakiye.
+
+
+
+✅ Solution: Custom Hook banavo
+1. useFetch.js file banao:
+
+import { useState, useEffect } from "react";
+
+const useFetch = (url) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(data => setData(data));
+  }, [url]);
+
+  return [data];
+};
+
+export default useFetch;
+
+
+useFetch ek function che, je URL lai ne fetch kare che.
+
+Return ma [data] aape che, je component ma use thase.
+
+
+
+
